@@ -1,0 +1,81 @@
+{
+  "name": "gemfolio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Jewelry catalog and e-commerce platform",
+  "keywords": [
+    "jewelry",
+    "catalog",
+    "e-commerce",
+    "astro",
+    "nextjs"
+  ],
+  "license": "MIT",
+  "author": "Gemfolio Team",
+  "type": "module",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=@gemfolio/web",
+    "dev:admin": "turbo run dev --filter=@gemfolio/admin",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --fix .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "check": "biome check .",
+    "check:fix": "biome check --fix .",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean && rm -rf node_modules .turbo",
+    "db:generate": "turbo run db:generate --filter=@gemfolio/db",
+    "db:migrate": "turbo run db:migrate --filter=@gemfolio/db",
+    "db:push": "turbo run db:push --filter=@gemfolio/db",
+    "db:seed": "turbo run db:seed --filter=@gemfolio/db",
+    "db:studio": "turbo run db:studio --filter=@gemfolio/db",
+    "db:start": "docker compose -f docker/docker-compose.yml up -d",
+    "db:stop": "docker compose -f docker/docker-compose.yml down",
+    "db:reset": "docker compose -f docker/docker-compose.yml down -v && docker compose -f docker/docker-compose.yml up -d",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest --watch",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:headed": "playwright test --headed",
+    "e2e:report": "playwright show-report",
+    "e2e:install": "playwright install --with-deps",
+    "prepare": "husky || true"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.8",
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@playwright/test": "^1.57.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@vitejs/plugin-react": "^5.1.1",
+    "@vitest/coverage-v8": "^4.0.14",
+    "@vitest/ui": "^4.0.14",
+    "happy-dom": "^20.0.10",
+    "husky": "^9.1.7",
+    "jsdom": "^27.2.0",
+    "lint-staged": "^16.2.7",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2",
+    "vitest": "^4.0.14"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "biome check --fix --no-errors-on-unmatched"
+    ],
+    "*.{json,css}": [
+      "biome format --write --no-errors-on-unmatched"
+    ]
+  }
+}
