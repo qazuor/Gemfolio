@@ -1,0 +1,107 @@
+'use client';
+
+import { signOut, useSession } from '@gemfolio/auth/client';
+import { LogOut, Settings, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+export function UserNav() {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const user = session?.user;
+
+  const initials = user?.name
+    ? user.name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+    : user?.email?.slice(0, 2).toUpperCase() || 'U';
+
+  async function handleSignOut() {
+    setIsLoading(true);
+    try {
+      await signOut();
+      router.push('/login');
+      router.refresh();
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 rounded-lg p-2 hover:bg-accent"
+      >
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
+          {initials}
+        </div>
+        <div className="hidden text-left md:block">
+          <p className="text-sm font-medium">{user?.name || 'Usuario'}</p>
+          <p className="text-xs text-muted-foreground">{user?.email}</p>
+        </div>
+      </button>
+
+      {isOpen && (
+        <>
+          <button
+            type="button"
+            className="fixed inset-0 z-40 cursor-default"
+            onClick={() => setIsOpen(false)}
+            onKeyDown={(e) => e.key === 'Escape' && setIsOpen(false)}
+            tabIndex={-1}
+            aria-label="Close menu"
+          />
+          <div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-lg border bg-popover p-1 shadow-lg">
+            <div className="border-b px-3 py-2">
+              <p className="text-sm font-medium">{user?.name || 'Usuario'}</p>
+              <p className="text-xs text-muted-foreground">{user?.email}</p>
+            </div>
+            <div className="py-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsOpen(false);
+                  router.push('/settings/profile');
+                }}
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
+              >
+                <User className="h-4 w-4" />
+                Mi Perfil
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsOpen(false);
+                  router.push('/settings');
+                }}
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
+              >
+                <Settings className="h-4 w-4" />
+                Configuración
+              </button>
+            </div>
+            <div className="border-t py-1">
+              <button
+                type="button"
+                onClick={handleSignOut}
+                disabled={isLoading}
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-destructive hover:bg-destructive/10 disabled:opacity-50"
+              >
+                <LogOut className="h-4 w-4" />
+                {isLoading ? 'Cerrando sesión...' : 'Cerrar Sesión'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

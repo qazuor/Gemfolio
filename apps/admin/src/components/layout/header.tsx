@@ -3,6 +3,8 @@
 import { Bell, Menu, Moon, Search, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
+import { UserNav } from '@/components/auth';
+
 export function Header() {
   const { theme, setTheme } = useTheme();
 
@@ -49,16 +51,8 @@ export function Header() {
         </button>
 
         {/* User menu */}
-        <div className="relative ml-2">
-          <button type="button" className="flex items-center gap-2 rounded-lg p-2 hover:bg-accent">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
-              AD
-            </div>
-            <div className="hidden text-left md:block">
-              <p className="text-sm font-medium">Admin</p>
-              <p className="text-xs text-muted-foreground">admin@gemfolio.com</p>
-            </div>
-          </button>
+        <div className="ml-2">
+          <UserNav />
         </div>
       </div>
     </header>
