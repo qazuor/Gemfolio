@@ -1,0 +1,66 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+.next/
+.astro/
+.turbo/
+.vercel/
+.output/
+build/
+
+# Cache
+*.tsbuildinfo
+.eslintcache
+.cache/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+!.env.example
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Playwright
+playwright-report/
+playwright/.cache/
+test-results/
+
+# Misc
+*.pem
+*.local
+
+# Drizzle
+drizzle/meta/
+
+# Docker
+docker/data/
