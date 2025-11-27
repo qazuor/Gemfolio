@@ -1,9 +1,10 @@
 // Users & Auth
 
+// Catalog
+export * from './attributes';
 export * from './bundles';
 // Commerce
 export * from './carts';
-// Catalog
 export * from './categories';
 export * from './coupons';
 export * from './inventory';
