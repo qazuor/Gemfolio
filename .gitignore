@@ -60,7 +60,7 @@ test-results/
 *.local
 
 # Drizzle
-drizzle/meta/
+**/drizzle/meta/
 
 # Docker
 docker/data/
