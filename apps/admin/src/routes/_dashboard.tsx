@@ -1,9 +1,17 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { authClient } from '@gemfolio/auth/client';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
 import { Header } from '@/components/layout/header';
 import { Sidebar } from '@/components/layout/sidebar';
 
 export const Route = createFileRoute('/_dashboard')({
+  beforeLoad: async () => {
+    const session = await authClient.getSession();
+    if (!session.data) {
+      throw redirect({ to: '/login' });
+    }
+    return { user: session.data.user };
+  },
   component: DashboardLayout,
 });
 
