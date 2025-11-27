@@ -14,6 +14,7 @@ import {
 
 import { createId } from '../utils';
 import { categories } from './categories';
+import { productTags } from './tags';
 
 // Product status enum
 export const productStatusEnum = pgEnum('product_status', ['draft', 'active', 'archived']);
@@ -148,6 +149,7 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   variants: many(productVariants),
   images: many(productImages),
   videos: many(productVideos),
+  productTags: many(productTags),
 }));
 
 export const productVariantsRelations = relations(productVariants, ({ one, many }) => ({
