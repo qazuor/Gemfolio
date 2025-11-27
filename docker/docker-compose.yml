@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: gemfolio_db
+    container_name: gemfolio-db
     restart: unless-stopped
     environment:
       POSTGRES_USER: gemfolio
@@ -13,10 +13,9 @@ services:
       - gemfolio_postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U gemfolio -d gemfolio_db"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 5
 
 volumes:
   gemfolio_postgres_data:
-    driver: local

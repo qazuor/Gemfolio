@@ -34,6 +34,7 @@
     "db:start": "docker compose -f docker/docker-compose.yml up -d",
     "db:stop": "docker compose -f docker/docker-compose.yml down",
     "db:reset": "docker compose -f docker/docker-compose.yml down -v && docker compose -f docker/docker-compose.yml up -d",
+    "db:setup": "pnpm db:start && sleep 3 && pnpm db:push && pnpm db:seed",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
