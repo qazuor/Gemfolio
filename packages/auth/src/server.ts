@@ -25,6 +25,18 @@ export const auth = betterAuth({
     requireEmailVerification: false, // Set to true in production if email verification is needed
   },
 
+  // Social OAuth providers
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    },
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID || '',
+      clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
+    },
+  },
+
   // Session configuration
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days

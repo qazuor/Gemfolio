@@ -11,16 +11,20 @@ export const authClient = createAuthClient({
 });
 
 // Re-export all client methods and hooks
-export const {
-  signIn,
-  signUp,
-  signOut,
-  useSession,
-  getSession,
-  // OAuth methods (if configured)
-  // signInWithGoogle,
-  // signInWithGitHub,
-} = authClient;
+export const { signIn, signUp, signOut, useSession, getSession } = authClient;
+
+// Social OAuth sign-in helpers
+export const signInWithGoogle = () =>
+  authClient.signIn.social({
+    provider: 'google',
+    callbackURL: '/',
+  });
+
+export const signInWithGitHub = () =>
+  authClient.signIn.social({
+    provider: 'github',
+    callbackURL: '/',
+  });
 
 // Export the client for advanced usage
 export { authClient as client };
