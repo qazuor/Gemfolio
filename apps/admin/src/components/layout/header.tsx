@@ -1,5 +1,3 @@
-'use client';
-
 import { Bell, Menu, Moon, Search, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
@@ -10,14 +8,11 @@ export function Header() {
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-background px-6">
-      {/* Left side */}
       <div className="flex items-center gap-4">
-        {/* Mobile menu button */}
         <button type="button" className="rounded-lg p-2 hover:bg-accent lg:hidden">
           <Menu className="h-5 w-5" />
         </button>
 
-        {/* Search */}
         <div className="hidden items-center gap-2 rounded-lg border bg-muted/50 px-3 py-2 md:flex">
           <Search className="h-4 w-4 text-muted-foreground" />
           <input
@@ -31,9 +26,7 @@ export function Header() {
         </div>
       </div>
 
-      {/* Right side */}
       <div className="flex items-center gap-2">
-        {/* Theme toggle */}
         <button
           type="button"
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -44,13 +37,11 @@ export function Header() {
           <span className="sr-only">Cambiar tema</span>
         </button>
 
-        {/* Notifications */}
         <button type="button" className="relative rounded-lg p-2 hover:bg-accent">
           <Bell className="h-5 w-5" />
           <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
         </button>
 
-        {/* User menu */}
         <div className="ml-2">
           <UserNav />
         </div>

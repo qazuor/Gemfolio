@@ -1,5 +1,4 @@
-'use client';
-
+import { Link, useLocation } from '@tanstack/react-router';
 import {
   Boxes,
   ChevronDown,
@@ -11,8 +10,6 @@ import {
   ShoppingCart,
   Users,
 } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -63,7 +60,8 @@ const navigation = [
 ];
 
 export function Sidebar() {
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
   const [expandedItems, setExpandedItems] = useState<string[]>(['Catálogo', 'Ventas']);
 
   const toggleExpand = (name: string) => {
@@ -79,9 +77,8 @@ export function Sidebar() {
 
   return (
     <aside className="hidden w-64 flex-col border-r bg-sidebar-background lg:flex">
-      {/* Logo */}
       <div className="flex h-16 items-center border-b px-6">
-        <Link href="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
             <Gift className="h-5 w-5 text-primary-foreground" />
           </div>
@@ -91,7 +88,6 @@ export function Sidebar() {
         </Link>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 overflow-y-auto p-4">
         <ul className="space-y-1">
           {navigation.map((item) => (
@@ -124,7 +120,7 @@ export function Sidebar() {
                       {item.children.map((child) => (
                         <li key={child.href}>
                           <Link
-                            href={child.href}
+                            to={child.href}
                             className={cn(
                               'block rounded-lg px-3 py-2 text-sm transition-colors',
                               isActive(child.href)
@@ -141,7 +137,7 @@ export function Sidebar() {
                 </div>
               ) : (
                 <Link
-                  href={item.href}
+                  to={item.href}
                   className={cn(
                     'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                     isActive(item.href)
@@ -158,7 +154,6 @@ export function Sidebar() {
         </ul>
       </nav>
 
-      {/* Footer */}
       <div className="border-t p-4">
         <div className="rounded-lg bg-muted/50 p-3">
           <p className="text-xs font-medium text-muted-foreground">Gemfolio Admin</p>

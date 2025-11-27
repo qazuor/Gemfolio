@@ -1,12 +1,10 @@
-'use client';
-
 import { signOut, useSession } from '@gemfolio/auth/client';
+import { useNavigate } from '@tanstack/react-router';
 import { LogOut, Settings, User } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export function UserNav() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -26,8 +24,7 @@ export function UserNav() {
     setIsLoading(true);
     try {
       await signOut();
-      router.push('/login');
-      router.refresh();
+      navigate({ to: '/login' });
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +66,7 @@ export function UserNav() {
                 type="button"
                 onClick={() => {
                   setIsOpen(false);
-                  router.push('/settings/profile');
+                  navigate({ to: '/' });
                 }}
                 className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
               >
@@ -80,7 +77,7 @@ export function UserNav() {
                 type="button"
                 onClick={() => {
                   setIsOpen(false);
-                  router.push('/settings');
+                  navigate({ to: '/' });
                 }}
                 className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
               >

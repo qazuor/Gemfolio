@@ -18,6 +18,13 @@ export const auth = betterAuth({
     },
   }),
 
+  // Advanced configuration for cookie handling
+  advanced: {
+    crossSubDomainCookies: {
+      enabled: false,
+    },
+  },
+
   // Email and password authentication
   emailAndPassword: {
     enabled: true,

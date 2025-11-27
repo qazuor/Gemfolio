@@ -1,12 +1,10 @@
-'use client';
-
 import { signIn } from '@gemfolio/auth/client';
+import { useNavigate } from '@tanstack/react-router';
 import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export function LoginForm() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -28,8 +26,7 @@ export function LoginForm() {
         return;
       }
 
-      router.push('/');
-      router.refresh();
+      navigate({ to: '/' });
     } catch (_err) {
       setError('Error al iniciar sesión. Por favor, intenta de nuevo.');
     } finally {
