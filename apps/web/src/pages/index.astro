@@ -1,0 +1,31 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Inicio">
+  <main class="container mx-auto px-4 py-16">
+    <div class="flex min-h-[60vh] flex-col items-center justify-center text-center">
+      <h1 class="mb-6 font-heading text-5xl font-bold tracking-tight md:text-6xl lg:text-7xl">
+        <span class="text-primary">Gem</span>folio
+      </h1>
+      <p class="mb-8 max-w-2xl text-lg text-muted-foreground md:text-xl">
+        Descubre nuestra exclusiva colección de joyería artesanal. Piezas únicas diseñadas para
+        brillar.
+      </p>
+      <div class="flex flex-col gap-4 sm:flex-row">
+        <a
+          href="/catalogo"
+          class="inline-flex items-center justify-center rounded-lg bg-primary px-8 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          Ver Catálogo
+        </a>
+        <a
+          href="/contacto"
+          class="inline-flex items-center justify-center rounded-lg border border-border bg-background px-8 py-3 font-medium transition-colors hover:bg-accent"
+        >
+          Contacto
+        </a>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
