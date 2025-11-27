@@ -2,6 +2,7 @@ import { db } from '@gemfolio/db/client';
 import * as schema from '@gemfolio/db/schema';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { tanstackStartCookies } from 'better-auth/tanstack-start';
 
 /**
  * Better Auth server configuration
@@ -17,13 +18,6 @@ export const auth = betterAuth({
       verification: schema.verifications,
     },
   }),
-
-  // Advanced configuration for cookie handling
-  advanced: {
-    crossSubDomainCookies: {
-      enabled: false,
-    },
-  },
 
   // Email and password authentication
   emailAndPassword: {
@@ -64,6 +58,9 @@ export const auth = betterAuth({
     'http://localhost:3001', // Admin
     'http://localhost:4321', // Web
   ],
+
+  // Plugins
+  plugins: [tanstackStartCookies()],
 });
 
 // Export auth type for client
