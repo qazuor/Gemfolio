@@ -319,6 +319,19 @@ importers:
         specifier: ^5.7.2
         version: 5.9.3
 
+  packages/validators:
+    dependencies:
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
+    devDependencies:
+      '@gemfolio/config':
+        specifier: workspace:*
+        version: link:../config
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
 packages:
 
   '@acemir/cssom@0.9.24':
