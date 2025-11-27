@@ -1,0 +1,28 @@
+{
+  "name": "@gemfolio/validators",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./product": "./src/product.ts",
+    "./category": "./src/category.ts",
+    "./order": "./src/order.ts",
+    "./cart": "./src/cart.ts",
+    "./user": "./src/user.ts",
+    "./coupon": "./src/coupon.ts",
+    "./page": "./src/page.ts",
+    "./settings": "./src/settings.ts",
+    "./bundle": "./src/bundle.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@gemfolio/config": "workspace:*",
+    "typescript": "^5.7.2"
+  }
+}
