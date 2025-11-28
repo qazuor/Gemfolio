@@ -38,7 +38,7 @@ export default defineConfig({
       name: 'admin-chromium',
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: 'http://localhost:3000',
+        baseURL: 'http://localhost:3001',
       },
       testMatch: '**/admin/**/*.spec.ts',
     },
@@ -48,13 +48,13 @@ export default defineConfig({
       command: 'pnpm dev:web',
       url: 'http://localhost:4321',
       reuseExistingServer: !process.env.CI,
-      timeout: 120000,
+      timeout: 180000,
     },
     {
       command: 'pnpm dev:admin',
-      url: 'http://localhost:3000',
+      url: 'http://localhost:3001',
       reuseExistingServer: !process.env.CI,
-      timeout: 120000,
+      timeout: 180000,
     },
   ],
 });
