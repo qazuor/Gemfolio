@@ -4,8 +4,14 @@ import { logger } from 'hono/logger';
 
 import { adminCategoriesRoutes } from './routes/admin/categories';
 import { adminProductsRoutes } from './routes/admin/products';
+import { bundlesRoutes } from './routes/bundles';
+import { cartRoutes } from './routes/cart';
 import { categoriesRoutes } from './routes/categories';
+import { ordersRoutes } from './routes/orders';
+import { pagesRoutes } from './routes/pages';
 import { productsRoutes } from './routes/products';
+import { searchRoutes } from './routes/search';
+import { settingsRoutes } from './routes/settings';
 
 // Create the main Hono app
 const app = new Hono()
@@ -32,7 +38,13 @@ const app = new Hono()
 // Mount public routes
 const publicApi = new Hono()
   .route('/products', productsRoutes)
-  .route('/categories', categoriesRoutes);
+  .route('/categories', categoriesRoutes)
+  .route('/bundles', bundlesRoutes)
+  .route('/search', searchRoutes)
+  .route('/cart', cartRoutes)
+  .route('/orders', ordersRoutes)
+  .route('/pages', pagesRoutes)
+  .route('/settings', settingsRoutes);
 
 // Mount admin routes
 const adminApi = new Hono()
