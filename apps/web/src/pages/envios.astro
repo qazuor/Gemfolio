@@ -1,0 +1,164 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Envíos y Devoluciones"
+  description="Información sobre envíos, tiempos de entrega y política de devoluciones de Gemfolio."
+>
+  <!-- Breadcrumb -->
+  <nav class="border-b">
+    <div class="container mx-auto px-4 py-3">
+      <ol class="flex items-center gap-2 text-sm text-muted-foreground">
+        <li>
+          <a href="/" class="hover:text-foreground">Inicio</a>
+        </li>
+        <li>/</li>
+        <li class="text-foreground">Envíos y Devoluciones</li>
+      </ol>
+    </div>
+  </nav>
+
+  <article class="py-12 md:py-16">
+    <div class="container mx-auto max-w-3xl px-4">
+      <h1 class="mb-8 font-heading text-3xl font-bold md:text-4xl">
+        Envíos y Devoluciones
+      </h1>
+
+      <!-- Quick Info -->
+      <div class="mb-12 grid gap-4 md:grid-cols-3">
+        <div class="rounded-lg border bg-muted/30 p-6 text-center">
+          <div class="mb-3 text-3xl">📦</div>
+          <h3 class="mb-1 font-heading font-bold">Envío a todo el país</h3>
+          <p class="text-sm text-muted-foreground">Llegamos a donde estés</p>
+        </div>
+        <div class="rounded-lg border bg-muted/30 p-6 text-center">
+          <div class="mb-3 text-3xl">🚚</div>
+          <h3 class="mb-1 font-heading font-bold">Envío gratis</h3>
+          <p class="text-sm text-muted-foreground">En compras mayores a $50.000</p>
+        </div>
+        <div class="rounded-lg border bg-muted/30 p-6 text-center">
+          <div class="mb-3 text-3xl">↩️</div>
+          <h3 class="mb-1 font-heading font-bold">10 días para cambios</h3>
+          <p class="text-sm text-muted-foreground">Devoluciones fáciles</p>
+        </div>
+      </div>
+
+      <div class="prose prose-lg dark:prose-invert max-w-none">
+        <h2>Información de Envíos</h2>
+
+        <h3>Zonas de Cobertura</h3>
+        <p>
+          Realizamos envíos a todo el territorio argentino a través de
+          servicios de correo confiables. Los envíos se realizan de lunes
+          a viernes en horario comercial.
+        </p>
+
+        <h3>Tiempos de Entrega</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Zona</th>
+              <th>Tiempo estimado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>CABA y GBA</td>
+              <td>2-4 días hábiles</td>
+            </tr>
+            <tr>
+              <td>Interior (principales ciudades)</td>
+              <td>4-7 días hábiles</td>
+            </tr>
+            <tr>
+              <td>Interior (otras localidades)</td>
+              <td>7-10 días hábiles</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="text-sm text-muted-foreground">
+          *Los tiempos son estimados y pueden variar según la disponibilidad
+          del servicio de correo y condiciones externas.
+        </p>
+
+        <h3>Costos de Envío</h3>
+        <ul>
+          <li><strong>Envío gratis:</strong> En compras superiores a $50.000</li>
+          <li><strong>Envío estándar:</strong> $2.500 (CABA y GBA)</li>
+          <li><strong>Envío estándar:</strong> $3.500 (Interior)</li>
+        </ul>
+
+        <h3>Seguimiento del Pedido</h3>
+        <p>
+          Una vez despachado tu pedido, recibirás un email con el número de
+          seguimiento para que puedas rastrear tu envío en todo momento.
+        </p>
+
+        <h2>Política de Devoluciones</h2>
+
+        <h3>Plazo para Devoluciones</h3>
+        <p>
+          Aceptamos devoluciones dentro de los <strong>10 días hábiles</strong>
+          posteriores a la recepción del producto.
+        </p>
+
+        <h3>Condiciones</h3>
+        <p>Para que tu devolución sea aceptada, el producto debe:</p>
+        <ul>
+          <li>Estar sin uso y en su estado original</li>
+          <li>Conservar todas las etiquetas y empaques originales</li>
+          <li>Incluir todos los accesorios y certificados (si aplica)</li>
+          <li>No presentar signos de uso, daños o alteraciones</li>
+        </ul>
+
+        <h3>Productos No Elegibles</h3>
+        <p>No aceptamos devoluciones de:</p>
+        <ul>
+          <li>Productos personalizados o hechos a medida</li>
+          <li>Productos con grabados personalizados</li>
+          <li>Aretes por razones de higiene (salvo defecto)</li>
+          <li>Productos en oferta o liquidación (salvo defecto)</li>
+        </ul>
+
+        <h3>Proceso de Devolución</h3>
+        <ol>
+          <li>Contáctanos a través de nuestra página de <a href="/contacto">Contacto</a> indicando el número de pedido</li>
+          <li>Te enviaremos las instrucciones para realizar la devolución</li>
+          <li>Envía el producto en su empaque original</li>
+          <li>Una vez recibido y verificado, procesaremos el reembolso o cambio</li>
+        </ol>
+
+        <h3>Reembolsos</h3>
+        <p>
+          Los reembolsos se realizan por el mismo medio de pago utilizado en
+          la compra original. El tiempo de acreditación depende de cada
+          entidad bancaria o procesador de pagos (generalmente 5-10 días hábiles).
+        </p>
+
+        <h3>Cambios</h3>
+        <p>
+          Si prefieres cambiar tu producto por otro, contáctanos y te
+          ayudaremos a gestionar el cambio. Los cambios están sujetos a
+          disponibilidad de stock.
+        </p>
+
+        <h2>Productos Defectuosos</h2>
+        <p>
+          Si recibiste un producto defectuoso o dañado durante el envío:
+        </p>
+        <ol>
+          <li>Contáctanos dentro de las 48 horas de recibido</li>
+          <li>Envíanos fotos del producto y el empaque</li>
+          <li>Coordinaremos el retiro y reemplazo sin costo adicional</li>
+        </ol>
+
+        <h2>¿Tenés dudas?</h2>
+        <p>
+          Si tienes alguna pregunta sobre envíos o devoluciones, no dudes en
+          <a href="/contacto">contactarnos</a>. Estamos para ayudarte.
+        </p>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

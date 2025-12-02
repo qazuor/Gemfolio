@@ -1,0 +1,46 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getPageBySlug } from '@/lib/api';
+
+const { slug } = Astro.params;
+
+// Try to get the page from API
+const page = slug ? await getPageBySlug(slug) : null;
+
+// If no page found, return 404
+if (!page) {
+  return Astro.redirect('/404');
+}
+---
+
+<BaseLayout
+  title={page.seoTitle || page.title}
+  description={page.seoDescription || `${page.title} - Gemfolio`}
+>
+  <!-- Breadcrumb -->
+  <nav class="border-b">
+    <div class="container mx-auto px-4 py-3">
+      <ol class="flex items-center gap-2 text-sm text-muted-foreground">
+        <li>
+          <a href="/" class="hover:text-foreground">Inicio</a>
+        </li>
+        <li>/</li>
+        <li class="text-foreground">{page.title}</li>
+      </ol>
+    </div>
+  </nav>
+
+  <article class="py-12 md:py-16">
+    <div class="container mx-auto max-w-3xl px-4">
+      <h1 class="mb-8 font-heading text-3xl font-bold md:text-4xl">
+        {page.title}
+      </h1>
+
+      {page.content ? (
+        <div class="prose prose-lg dark:prose-invert max-w-none" set:html={page.content} />
+      ) : (
+        <p class="text-muted-foreground">Esta página no tiene contenido aún.</p>
+      )}
+    </div>
+  </article>
+</BaseLayout>

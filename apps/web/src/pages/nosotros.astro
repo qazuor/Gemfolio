@@ -1,0 +1,125 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Sobre Nosotros"
+  description="Conoce la historia de Gemfolio, nuestra pasión por la joyería artesanal y nuestro compromiso con la calidad."
+>
+  <!-- Breadcrumb -->
+  <nav class="border-b">
+    <div class="container mx-auto px-4 py-3">
+      <ol class="flex items-center gap-2 text-sm text-muted-foreground">
+        <li>
+          <a href="/" class="hover:text-foreground">Inicio</a>
+        </li>
+        <li>/</li>
+        <li class="text-foreground">Sobre Nosotros</li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="bg-muted/30 py-16 md:py-24">
+    <div class="container mx-auto max-w-3xl px-4 text-center">
+      <h1 class="mb-6 font-heading text-4xl font-bold md:text-5xl">
+        Sobre Nosotros
+      </h1>
+      <p class="text-lg text-muted-foreground md:text-xl">
+        Creando joyas únicas con pasión y dedicación desde hace más de una década.
+      </p>
+    </div>
+  </section>
+
+  <!-- Story -->
+  <section class="py-16">
+    <div class="container mx-auto max-w-3xl px-4">
+      <div class="prose prose-lg dark:prose-invert max-w-none">
+        <h2>Nuestra Historia</h2>
+        <p>
+          Gemfolio nació de la pasión por crear piezas únicas que cuenten historias.
+          Cada joya que diseñamos está pensada para acompañar momentos especiales y
+          convertirse en un tesoro que perdure en el tiempo.
+        </p>
+        <p>
+          Comenzamos como un pequeño taller artesanal y hoy somos una marca reconocida
+          por la calidad de nuestros materiales y la excelencia en el diseño. Cada pieza
+          es creada con dedicación, combinando técnicas tradicionales con tendencias modernas.
+        </p>
+
+        <h2>Nuestra Filosofía</h2>
+        <p>
+          Creemos que las joyas son más que simples accesorios. Son expresiones de
+          personalidad, recuerdos de momentos especiales y símbolos de amor y amistad.
+          Por eso, ponemos nuestro corazón en cada creación.
+        </p>
+
+        <h2>Compromiso con la Calidad</h2>
+        <p>
+          Utilizamos únicamente materiales de primera calidad: oro, plata, piedras
+          preciosas y semipreciosas cuidadosamente seleccionadas. Cada pieza pasa por
+          rigurosos controles de calidad antes de llegar a tus manos.
+        </p>
+
+        <h2>Sustentabilidad</h2>
+        <p>
+          Nos comprometemos con prácticas responsables y sustentables. Trabajamos con
+          proveedores certificados y buscamos minimizar nuestro impacto ambiental en
+          cada etapa del proceso de producción.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="border-t bg-muted/30 py-16">
+    <div class="container mx-auto px-4">
+      <h2 class="mb-12 text-center font-heading text-2xl font-bold">Nuestros Valores</h2>
+      <div class="grid gap-8 md:grid-cols-3">
+        <div class="text-center">
+          <div class="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-3xl">
+            ✨
+          </div>
+          <h3 class="mb-2 font-heading text-lg font-bold">Calidad</h3>
+          <p class="text-muted-foreground">
+            Solo los mejores materiales y técnicas para crear joyas excepcionales.
+          </p>
+        </div>
+        <div class="text-center">
+          <div class="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-3xl">
+            💎
+          </div>
+          <h3 class="mb-2 font-heading text-lg font-bold">Exclusividad</h3>
+          <p class="text-muted-foreground">
+            Diseños únicos que te harán destacar en cualquier ocasión.
+          </p>
+        </div>
+        <div class="text-center">
+          <div class="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-3xl">
+            💚
+          </div>
+          <h3 class="mb-2 font-heading text-lg font-bold">Sustentabilidad</h3>
+          <p class="text-muted-foreground">
+            Compromiso con el medio ambiente y prácticas responsables.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="border-t py-16">
+    <div class="container mx-auto max-w-2xl px-4 text-center">
+      <h2 class="mb-4 font-heading text-2xl font-bold">¿Lista para brillar?</h2>
+      <p class="mb-8 text-muted-foreground">
+        Explora nuestra colección y encuentra la pieza perfecta para ti.
+      </p>
+      <a
+        href="/catalogo"
+        class="inline-flex items-center justify-center rounded-lg bg-primary px-8 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+      >
+        Ver Catálogo
+      </a>
+    </div>
+  </section>
+</BaseLayout>

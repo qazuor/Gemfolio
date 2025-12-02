@@ -88,6 +88,18 @@ export interface PaginatedResponse<T> {
   };
 }
 
+export interface Page {
+  id: string;
+  slug: string;
+  title: string;
+  content: string | null;
+  status: 'draft' | 'published';
+  seoTitle: string | null;
+  seoDescription: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ProductFilters {
   page?: number;
   limit?: number;
@@ -235,6 +247,18 @@ export async function getBundleBySlug(slug: string): Promise<Bundle | null> {
   }
   if (!response.ok) {
     throw new Error('Error al cargar bundle');
+  }
+  const result = await response.json();
+  return result.data;
+}
+
+export async function getPageBySlug(slug: string): Promise<Page | null> {
+  const response = await fetch(`${API_BASE}/pages/${slug}`);
+  if (response.status === 404) {
+    return null;
+  }
+  if (!response.ok) {
+    throw new Error('Error al cargar página');
   }
   const result = await response.json();
   return result.data;
