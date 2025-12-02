@@ -53,6 +53,31 @@ export interface Tag {
   color: string | null;
 }
 
+export interface Bundle {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  image: string | null;
+  price: string;
+  comparePrice: string | null;
+  status: 'draft' | 'active' | 'archived';
+  validFrom: string | null;
+  validUntil: string | null;
+  createdAt: string;
+  updatedAt: string;
+  items?: BundleItem[];
+}
+
+export interface BundleItem {
+  id: string;
+  bundleId: string;
+  productId: string;
+  variantId: string | null;
+  quantity: number;
+  product?: Product;
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   pagination: {
@@ -191,4 +216,26 @@ export async function getRelatedProducts(
     sortDirection: 'desc',
   });
   return response.data.filter((p) => p.id !== excludeProductId).slice(0, limit);
+}
+
+export async function getBundles(limit = 10): Promise<Bundle[]> {
+  const params = new URLSearchParams({ limit: String(limit) });
+  const response = await fetch(`${API_BASE}/bundles?${params}`);
+  if (!response.ok) {
+    throw new Error('Error al cargar bundles');
+  }
+  const result = await response.json();
+  return result.data;
+}
+
+export async function getBundleBySlug(slug: string): Promise<Bundle | null> {
+  const response = await fetch(`${API_BASE}/bundles/${slug}`);
+  if (response.status === 404) {
+    return null;
+  }
+  if (!response.ok) {
+    throw new Error('Error al cargar bundle');
+  }
+  const result = await response.json();
+  return result.data;
 }

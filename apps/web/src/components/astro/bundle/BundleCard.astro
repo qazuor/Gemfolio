@@ -1,0 +1,93 @@
+---
+import type { Bundle } from '@/lib/api';
+import { formatPrice } from '@/lib/utils';
+
+interface Props {
+  bundle: Bundle;
+}
+
+const { bundle } = Astro.props;
+
+const hasDiscount = bundle.comparePrice && Number(bundle.comparePrice) > Number(bundle.price);
+const savings = hasDiscount ? Number(bundle.comparePrice) - Number(bundle.price) : 0;
+const savingsPercent = hasDiscount
+  ? Math.round((1 - Number(bundle.price) / Number(bundle.comparePrice)) * 100)
+  : 0;
+
+const itemCount = bundle.items?.length || 0;
+---
+
+<a
+  href={`/bundle/${bundle.slug}`}
+  class="group relative flex flex-col overflow-hidden rounded-lg border bg-gradient-to-br from-primary/5 to-primary/10 transition-all hover:border-primary hover:shadow-lg"
+>
+  {/* Image */}
+  <div class="relative aspect-[4/3] overflow-hidden bg-muted">
+    {bundle.image ? (
+      <img
+        src={bundle.image}
+        alt={bundle.name}
+        class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        loading="lazy"
+      />
+    ) : (
+      <div class="flex h-full w-full items-center justify-center text-muted-foreground">
+        <svg class="h-16 w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" role="img" aria-label="Bundle">
+          <title>Bundle</title>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+      </div>
+    )}
+
+    {/* Savings Badge */}
+    {hasDiscount && (
+      <div class="absolute right-2 top-2 rounded-full bg-red-500 px-3 py-1 text-sm font-bold text-white">
+        Ahorra {savingsPercent}%
+      </div>
+    )}
+
+    {/* Bundle Badge */}
+    <div class="absolute left-2 top-2 rounded-full bg-primary px-3 py-1 text-sm font-medium text-primary-foreground">
+      Bundle
+    </div>
+  </div>
+
+  {/* Content */}
+  <div class="flex flex-1 flex-col p-4">
+    {/* Name */}
+    <h3 class="mb-2 line-clamp-2 font-heading text-lg font-bold group-hover:text-primary">
+      {bundle.name}
+    </h3>
+
+    {/* Description */}
+    {bundle.description && (
+      <p class="mb-3 line-clamp-2 text-sm text-muted-foreground">
+        {bundle.description}
+      </p>
+    )}
+
+    {/* Item count */}
+    <p class="mb-3 text-sm text-muted-foreground">
+      {itemCount} {itemCount === 1 ? 'producto' : 'productos'} incluidos
+    </p>
+
+    {/* Price */}
+    <div class="mt-auto">
+      <div class="flex items-baseline gap-2">
+        <span class="text-2xl font-bold text-primary">
+          {formatPrice(Number(bundle.price))}
+        </span>
+        {hasDiscount && (
+          <span class="text-sm text-muted-foreground line-through">
+            {formatPrice(Number(bundle.comparePrice))}
+          </span>
+        )}
+      </div>
+      {hasDiscount && (
+        <p class="mt-1 text-sm font-medium text-green-600">
+          ¡Ahorras {formatPrice(savings)}!
+        </p>
+      )}
+    </div>
+  </div>
+</a>

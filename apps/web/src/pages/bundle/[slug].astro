@@ -1,0 +1,210 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProductCard from '@/components/astro/product/ProductCard.astro';
+import AddToCart from '@/components/react/product/AddToCart';
+import { getBundleBySlug } from '@/lib/api';
+import { formatPrice } from '@/lib/utils';
+
+const { slug } = Astro.params;
+const bundle = await getBundleBySlug(slug!);
+
+if (!bundle) {
+  return Astro.redirect('/404');
+}
+
+// Calculate total if buying products individually
+const individualTotal = bundle.items?.reduce((sum, item) => {
+  const productPrice = item.product ? Number(item.product.price) : 0;
+  return sum + productPrice * item.quantity;
+}, 0) || 0;
+
+const bundlePrice = Number(bundle.price);
+const savings = individualTotal - bundlePrice;
+const savingsPercent = individualTotal > 0 ? Math.round((savings / individualTotal) * 100) : 0;
+
+const totalQuantity = bundle.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+---
+
+<BaseLayout
+  title={bundle.name}
+  description={bundle.description || `Bundle especial con ${totalQuantity} productos`}
+>
+  <!-- Breadcrumb -->
+  <nav class="border-b">
+    <div class="container mx-auto px-4 py-3">
+      <ol class="flex items-center gap-2 text-sm text-muted-foreground">
+        <li>
+          <a href="/" class="hover:text-foreground">Inicio</a>
+        </li>
+        <li>/</li>
+        <li>
+          <a href="/catalogo" class="hover:text-foreground">Catálogo</a>
+        </li>
+        <li>/</li>
+        <li class="text-foreground">Bundle: {bundle.name}</li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Bundle Detail -->
+  <section class="py-8 md:py-12">
+    <div class="container mx-auto px-4">
+      <div class="grid gap-8 lg:grid-cols-2 lg:gap-12">
+        <!-- Image -->
+        <div class="relative aspect-square overflow-hidden rounded-lg border bg-gradient-to-br from-primary/5 to-primary/10">
+          {bundle.image ? (
+            <img
+              src={bundle.image}
+              alt={bundle.name}
+              class="h-full w-full object-cover"
+            />
+          ) : (
+            <div class="flex h-full w-full items-center justify-center text-muted-foreground">
+              <svg class="h-32 w-32" fill="none" stroke="currentColor" viewBox="0 0 24 24" role="img" aria-label="Bundle">
+                <title>Bundle</title>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+            </div>
+          )}
+
+          {/* Bundle badge */}
+          <div class="absolute left-4 top-4 rounded-full bg-primary px-4 py-2 font-medium text-primary-foreground">
+            Bundle Especial
+          </div>
+
+          {/* Savings badge */}
+          {savings > 0 && (
+            <div class="absolute right-4 top-4 rounded-full bg-red-500 px-4 py-2 font-bold text-white">
+              Ahorra {savingsPercent}%
+            </div>
+          )}
+        </div>
+
+        <!-- Info -->
+        <div class="flex flex-col">
+          <h1 class="mb-4 font-heading text-2xl font-bold md:text-3xl lg:text-4xl">
+            {bundle.name}
+          </h1>
+
+          {bundle.description && (
+            <p class="mb-6 text-lg text-muted-foreground">
+              {bundle.description}
+            </p>
+          )}
+
+          {/* Products included count */}
+          <div class="mb-6 rounded-lg bg-muted/50 p-4">
+            <p class="text-sm text-muted-foreground">
+              Este bundle incluye:
+            </p>
+            <p class="mt-1 text-lg font-medium">
+              {totalQuantity} {totalQuantity === 1 ? 'producto' : 'productos'}
+            </p>
+          </div>
+
+          {/* Pricing */}
+          <div class="mb-6 rounded-lg border bg-gradient-to-r from-green-50 to-green-100 p-6 dark:from-green-950/20 dark:to-green-900/20">
+            <div class="flex items-baseline gap-3">
+              <span class="text-4xl font-bold text-primary">
+                {formatPrice(bundlePrice)}
+              </span>
+              {individualTotal > bundlePrice && (
+                <span class="text-xl text-muted-foreground line-through">
+                  {formatPrice(individualTotal)}
+                </span>
+              )}
+            </div>
+            {savings > 0 && (
+              <p class="mt-2 text-lg font-medium text-green-600 dark:text-green-400">
+                ¡Ahorras {formatPrice(savings)} comprando el bundle!
+              </p>
+            )}
+          </div>
+
+          {/* Add to Cart */}
+          <div class="mb-8">
+            <AddToCart
+              productId={bundle.id}
+              productName={bundle.name}
+              price={bundlePrice}
+              maxQuantity={10}
+              client:load
+            />
+          </div>
+
+          {/* Validity */}
+          {(bundle.validFrom || bundle.validUntil) && (
+            <div class="rounded-lg border border-orange-200 bg-orange-50 p-4 dark:border-orange-900 dark:bg-orange-950/20">
+              <p class="text-sm text-orange-700 dark:text-orange-300">
+                {bundle.validUntil && (
+                  <>Oferta válida hasta el {new Date(bundle.validUntil).toLocaleDateString('es-AR')}</>
+                )}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Included Products -->
+  {bundle.items && bundle.items.length > 0 && (
+    <section class="border-t py-12">
+      <div class="container mx-auto px-4">
+        <h2 class="mb-8 font-heading text-2xl font-bold">Productos Incluidos</h2>
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {bundle.items.map((item) => (
+            item.product && (
+              <div class="relative">
+                <ProductCard product={item.product} />
+                {item.quantity > 1 && (
+                  <div class="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
+                    x{item.quantity}
+                  </div>
+                )}
+              </div>
+            )
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Price Comparison -->
+  {bundle.items && bundle.items.length > 0 && savings > 0 && (
+    <section class="border-t bg-muted/30 py-12">
+      <div class="container mx-auto px-4">
+        <h2 class="mb-6 text-center font-heading text-2xl font-bold">Comparación de Precios</h2>
+        <div class="mx-auto max-w-lg">
+          <div class="rounded-lg border bg-background p-6">
+            {bundle.items.map((item) => (
+              item.product && (
+                <div class="flex items-center justify-between border-b py-3 last:border-0">
+                  <div class="flex items-center gap-3">
+                    <span class="text-muted-foreground">{item.quantity}x</span>
+                    <span>{item.product.name}</span>
+                  </div>
+                  <span class="font-medium">
+                    {formatPrice(Number(item.product.price) * item.quantity)}
+                  </span>
+                </div>
+              )
+            ))}
+            <div class="mt-4 flex items-center justify-between border-t pt-4">
+              <span class="text-muted-foreground">Total individual:</span>
+              <span class="text-lg line-through">{formatPrice(individualTotal)}</span>
+            </div>
+            <div class="flex items-center justify-between text-xl font-bold text-primary">
+              <span>Precio del Bundle:</span>
+              <span>{formatPrice(bundlePrice)}</span>
+            </div>
+            <div class="mt-4 rounded-lg bg-green-100 p-3 text-center text-green-700 dark:bg-green-900/30 dark:text-green-300">
+              <span class="font-bold">Tu ahorro: {formatPrice(savings)}</span>
+              <span class="ml-2">({savingsPercent}% menos)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>
