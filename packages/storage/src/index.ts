@@ -1,24 +1,12 @@
-// Client
-export { type StorageConfig, s3Client, storageConfig } from './client';
-// Delete
-export { deleteFile, deleteFileByUrl, deleteFiles, extractKeyFromUrl } from './delete';
-// Upload
-export {
-  type AssetFolder,
-  generateFileKey,
-  generatePresignedUploadUrl,
-  isImageType,
-  isVideoType,
-  uploadFile,
-  validateFileSize,
-  validateFileType,
-} from './upload';
+// Config
+export { ASSET_FOLDERS, type AssetFolder, FILE_CONFIG, isConfigured } from './config';
 
-// URL
+// Utils
 export {
-  getOptimizedImageUrl,
-  getPublicUrl,
-  getStorageStatus,
-  getThumbnailUrl,
-  isStorageUrl,
-} from './url';
+  deleteFile,
+  deleteFileByUrl,
+  deleteFiles,
+  extractKeyFromUrl,
+  getFileInfo,
+  isUploadthingUrl,
+} from './utils';
