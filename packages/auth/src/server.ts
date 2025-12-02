@@ -23,6 +23,15 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false, // Set to true in production if email verification is needed
+    // Password reset configuration
+    sendResetPassword: async ({ user, url }) => {
+      // TODO: Implement email sending in FASE 8
+      // For now, log the reset URL for development
+      console.log(`Password reset requested for ${user.email}`);
+      console.log(`Reset URL: ${url}`);
+      // In production, send email using Resend:
+      // await sendPasswordResetEmail({ to: user.email, resetUrl: url });
+    },
   },
 
   // Social OAuth providers
