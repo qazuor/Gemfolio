@@ -1,0 +1,70 @@
+---
+import MobileMenu from '@/components/react/layout/MobileMenu';
+import CartIcon from '@/components/react/layout/CartIcon';
+import ThemeToggle from '@/components/react/layout/ThemeToggle';
+import SearchBar from '@/components/react/layout/SearchBar';
+
+interface NavItem {
+  label: string;
+  href: string;
+}
+
+const navItems: NavItem[] = [
+  { label: 'Inicio', href: '/' },
+  { label: 'Catálogo', href: '/catalogo' },
+  { label: 'Ofertas', href: '/ofertas' },
+  { label: 'Contacto', href: '/contacto' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  <div class="container mx-auto flex h-16 items-center justify-between px-4">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2">
+      <span class="font-heading text-2xl font-bold">
+        <span class="text-primary">Gem</span>folio
+      </span>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden md:flex md:items-center md:gap-6">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class:list={[
+            'text-sm font-medium transition-colors hover:text-primary',
+            currentPath === item.href ? 'text-primary' : 'text-muted-foreground',
+          ]}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- Right Actions -->
+    <div class="flex items-center gap-2">
+      <!-- Search (Desktop) -->
+      <div class="hidden md:block">
+        <SearchBar client:load />
+      </div>
+
+      <!-- Theme Toggle -->
+      <ThemeToggle client:load />
+
+      <!-- Cart -->
+      <CartIcon client:load />
+
+      <!-- Mobile Menu -->
+      <div class="md:hidden">
+        <MobileMenu navItems={navItems} currentPath={currentPath} client:load />
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Search -->
+  <div class="border-t px-4 py-2 md:hidden">
+    <SearchBar client:load />
+  </div>
+</header>
