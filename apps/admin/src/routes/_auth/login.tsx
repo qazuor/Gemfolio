@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 
 import { LoginForm } from '@/components/auth/login-form';
 
@@ -16,12 +16,20 @@ function LoginPage() {
         <p className="mt-2 text-muted-foreground">Iniciar Sesión</p>
       </div>
       <LoginForm />
-      <p className="mt-4 text-center text-sm text-muted-foreground">
-        ¿Olvidaste tu contraseña?{' '}
-        <a href="/forgot-password" className="text-primary hover:underline">
-          Recuperar contraseña
-        </a>
-      </p>
+      <div className="mt-4 space-y-2 text-center text-sm text-muted-foreground">
+        <p>
+          ¿Olvidaste tu contraseña?{' '}
+          <Link to="/forgot-password" className="text-primary hover:underline">
+            Recuperar contraseña
+          </Link>
+        </p>
+        <p>
+          ¿No tienes cuenta?{' '}
+          <Link to="/register" className="text-primary hover:underline">
+            Crear cuenta
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }
