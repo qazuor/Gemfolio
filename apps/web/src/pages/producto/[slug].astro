@@ -1,0 +1,224 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProductGrid from '@/components/astro/product/ProductGrid.astro';
+import ProductGallery from '@/components/react/product/ProductGallery';
+import AddToCart from '@/components/react/product/AddToCart';
+import { getProductBySlug, getRelatedProducts } from '@/lib/api';
+import { formatPrice } from '@/lib/utils';
+
+const { slug } = Astro.params;
+const product = await getProductBySlug(slug!);
+
+if (!product) {
+  return Astro.redirect('/404');
+}
+
+const relatedProducts = product.categoryId
+  ? await getRelatedProducts(product.categoryId, product.id, 4)
+  : [];
+
+const primaryImage = product.images?.find((img) => img.isPrimary) || product.images?.[0];
+const hasDiscount = product.comparePrice && Number(product.comparePrice) > Number(product.price);
+const discountPercent = hasDiscount
+  ? Math.round((1 - Number(product.price) / Number(product.comparePrice)) * 100)
+  : 0;
+
+const isNew = product.tags?.some((tag) => tag.slug === 'nuevo');
+const isOnSale = product.tags?.some((tag) => tag.slug === 'oferta');
+const isOutOfStock = product.trackInventory && product.stock <= 0;
+
+// Structured data for SEO
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: product.name,
+  description: product.shortDescription || product.description,
+  image: primaryImage?.url,
+  sku: product.sku,
+  offers: {
+    '@type': 'Offer',
+    price: product.price,
+    priceCurrency: 'ARS',
+    availability: isOutOfStock
+      ? 'https://schema.org/OutOfStock'
+      : 'https://schema.org/InStock',
+  },
+};
+---
+
+<BaseLayout
+  title={product.seoTitle || product.name}
+  description={product.seoDescription || product.shortDescription || product.description || ''}
+>
+  <!-- Structured Data -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+  <!-- Breadcrumb -->
+  <nav class="border-b">
+    <div class="container mx-auto px-4 py-3">
+      <ol class="flex items-center gap-2 text-sm text-muted-foreground">
+        <li>
+          <a href="/" class="hover:text-foreground">Inicio</a>
+        </li>
+        <li>/</li>
+        <li>
+          <a href="/catalogo" class="hover:text-foreground">Catálogo</a>
+        </li>
+        {product.category && (
+          <>
+            <li>/</li>
+            <li>
+              <a href={`/categoria/${product.category.slug}`} class="hover:text-foreground">
+                {product.category.name}
+              </a>
+            </li>
+          </>
+        )}
+        <li>/</li>
+        <li class="truncate text-foreground">{product.name}</li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Product Detail -->
+  <section class="py-8 md:py-12">
+    <div class="container mx-auto px-4">
+      <div class="grid gap-8 lg:grid-cols-2 lg:gap-12">
+        <!-- Gallery -->
+        <div>
+          <ProductGallery
+            images={product.images || []}
+            productName={product.name}
+            client:load
+          />
+        </div>
+
+        <!-- Product Info -->
+        <div class="flex flex-col">
+          <!-- Category -->
+          {product.category && (
+            <a
+              href={`/categoria/${product.category.slug}`}
+              class="mb-2 text-sm text-muted-foreground hover:text-primary"
+            >
+              {product.category.name}
+            </a>
+          )}
+
+          <!-- Name -->
+          <h1 class="mb-4 font-heading text-2xl font-bold md:text-3xl lg:text-4xl">
+            {product.name}
+          </h1>
+
+          <!-- Badges -->
+          <div class="mb-4 flex flex-wrap gap-2">
+            {isNew && (
+              <span class="rounded bg-blue-500 px-3 py-1 text-sm font-medium text-white">
+                Nuevo
+              </span>
+            )}
+            {isOnSale && hasDiscount && (
+              <span class="rounded bg-red-500 px-3 py-1 text-sm font-medium text-white">
+                -{discountPercent}% OFF
+              </span>
+            )}
+            {isOutOfStock && (
+              <span class="rounded bg-muted px-3 py-1 text-sm font-medium text-muted-foreground">
+                Agotado
+              </span>
+            )}
+          </div>
+
+          <!-- Price -->
+          <div class="mb-6 flex items-baseline gap-3">
+            <span class="text-3xl font-bold text-primary">
+              {formatPrice(Number(product.price))}
+            </span>
+            {hasDiscount && (
+              <span class="text-xl text-muted-foreground line-through">
+                {formatPrice(Number(product.comparePrice))}
+              </span>
+            )}
+          </div>
+
+          <!-- Short Description -->
+          {product.shortDescription && (
+            <p class="mb-6 text-muted-foreground">
+              {product.shortDescription}
+            </p>
+          )}
+
+          <!-- Stock Status -->
+          {product.trackInventory && !isOutOfStock && (
+            <div class="mb-6">
+              {product.stock <= product.lowStockThreshold ? (
+                <p class="text-sm text-orange-600">
+                  ¡Últimas {product.stock} unidades!
+                </p>
+              ) : (
+                <p class="text-sm text-green-600">
+                  En stock
+                </p>
+              )}
+            </div>
+          )}
+
+          <!-- Add to Cart -->
+          <div class="mb-8">
+            <AddToCart
+              productId={product.id}
+              productName={product.name}
+              price={Number(product.price)}
+              maxQuantity={product.trackInventory ? product.stock : 99}
+              disabled={isOutOfStock}
+              client:load
+            />
+          </div>
+
+          <!-- SKU -->
+          {product.sku && (
+            <p class="mb-4 text-sm text-muted-foreground">
+              SKU: {product.sku}
+            </p>
+          )}
+
+          <!-- Tags -->
+          {product.tags && product.tags.length > 0 && (
+            <div class="flex flex-wrap gap-2">
+              {product.tags.map((tag) => (
+                <span
+                  class="rounded-full border px-3 py-1 text-xs"
+                  style={tag.color ? { backgroundColor: tag.color + '20', borderColor: tag.color, color: tag.color } : {}}
+                >
+                  {tag.name}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Description -->
+  {product.description && (
+    <section class="border-t py-12">
+      <div class="container mx-auto px-4">
+        <h2 class="mb-6 font-heading text-2xl font-bold">Descripción</h2>
+        <div class="prose prose-neutral max-w-none dark:prose-invert">
+          {product.description}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Related Products -->
+  {relatedProducts.length > 0 && (
+    <section class="border-t bg-muted/30 py-12">
+      <div class="container mx-auto px-4">
+        <h2 class="mb-8 font-heading text-2xl font-bold">También te puede gustar</h2>
+        <ProductGrid products={relatedProducts} columns={4} />
+      </div>
+    </section>
+  )}
+</BaseLayout>

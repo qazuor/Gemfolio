@@ -177,3 +177,18 @@ export async function getOfferProducts(limit = 8): Promise<Product[]> {
   });
   return response.data;
 }
+
+export async function getRelatedProducts(
+  categoryId: string,
+  excludeProductId: string,
+  limit = 4
+): Promise<Product[]> {
+  const response = await getProducts({
+    categoryId,
+    status: 'active',
+    limit: limit + 1, // Get one extra in case we need to filter
+    sortBy: 'createdAt',
+    sortDirection: 'desc',
+  });
+  return response.data.filter((p) => p.id !== excludeProductId).slice(0, limit);
+}
