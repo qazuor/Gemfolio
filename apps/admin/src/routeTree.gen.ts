@@ -17,6 +17,7 @@ import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-pass
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as ApiUploadthingSplatRouteImport } from './routes/api.uploadthing.$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 
 const DashboardRoute = DashboardRouteImport.update({
@@ -57,6 +58,11 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const ApiUploadthingSplatRoute = ApiUploadthingSplatRouteImport.update({
+  id: '/api/uploadthing/$',
+  path: '/api/uploadthing/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/api/$': typeof ApiSplatRoute
   '/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/uploadthing/$': typeof ApiUploadthingSplatRoute
 }
 export interface FileRoutesByTo {
   '/forgot-password': typeof AuthForgotPasswordRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/api/$': typeof ApiSplatRoute
   '/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/uploadthing/$': typeof ApiUploadthingSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/api/$': typeof ApiSplatRoute
   '/_dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/uploadthing/$': typeof ApiUploadthingSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -103,6 +112,7 @@ export interface FileRouteTypes {
     | '/api/$'
     | '/'
     | '/api/auth/$'
+    | '/api/uploadthing/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -112,6 +122,7 @@ export interface FileRouteTypes {
     | '/api/$'
     | '/'
     | '/api/auth/$'
+    | '/api/uploadthing/$'
   id:
     | '__root__'
     | '/_auth'
@@ -123,6 +134,7 @@ export interface FileRouteTypes {
     | '/api/$'
     | '/_dashboard/'
     | '/api/auth/$'
+    | '/api/uploadthing/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -130,6 +142,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRouteWithChildren
   ApiSplatRoute: typeof ApiSplatRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiUploadthingSplatRoute: typeof ApiUploadthingSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -190,6 +203,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/api/uploadthing/$': {
+      id: '/api/uploadthing/$'
+      path: '/api/uploadthing/$'
+      fullPath: '/api/uploadthing/$'
+      preLoaderRoute: typeof ApiUploadthingSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -233,6 +253,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
   ApiSplatRoute: ApiSplatRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiUploadthingSplatRoute: ApiUploadthingSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

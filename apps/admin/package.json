@@ -14,6 +14,7 @@
     "@gemfolio/api": "workspace:*",
     "@gemfolio/auth": "workspace:*",
     "@gemfolio/db": "workspace:*",
+    "@gemfolio/storage": "workspace:*",
     "@gemfolio/ui": "workspace:*",
     "@gemfolio/validators": "workspace:*",
     "@tailwindcss/vite": "^4.0.6",
