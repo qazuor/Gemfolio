@@ -1,0 +1,182 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProductGrid from '@/components/astro/product/ProductGrid.astro';
+import { searchProducts } from '@/lib/api';
+
+const query = Astro.url.searchParams.get('q') || '';
+const page = Number(Astro.url.searchParams.get('page')) || 1;
+const limit = 12;
+
+let products: Awaited<ReturnType<typeof searchProducts>> = [];
+let error = '';
+
+if (query.trim()) {
+  try {
+    products = await searchProducts(query, limit * page);
+    // Paginate results client-side since API doesn't return total
+    const startIndex = (page - 1) * limit;
+    products = products.slice(startIndex, startIndex + limit);
+  } catch (e) {
+    error = 'Error al realizar la búsqueda. Por favor, intenta de nuevo.';
+    console.error('Search error:', e);
+  }
+}
+
+const hasMore = products.length === limit;
+const hasPrev = page > 1;
+---
+
+<BaseLayout title={query ? `Búsqueda: ${query}` : 'Buscar'} description={`Resultados de búsqueda para "${query}"`}>
+  <!-- Breadcrumb -->
+  <nav class="border-b">
+    <div class="container mx-auto px-4 py-3">
+      <ol class="flex items-center gap-2 text-sm text-muted-foreground">
+        <li>
+          <a href="/" class="hover:text-foreground">Inicio</a>
+        </li>
+        <li>/</li>
+        <li class="text-foreground">Búsqueda</li>
+      </ol>
+    </div>
+  </nav>
+
+  <section class="py-8 md:py-12">
+    <div class="container mx-auto px-4">
+      <!-- Search Header -->
+      <div class="mb-8">
+        <h1 class="mb-4 font-heading text-2xl font-bold md:text-3xl">
+          {query ? (
+            <>
+              Resultados para: <span class="text-primary">"{query}"</span>
+            </>
+          ) : (
+            'Buscar productos'
+          )}
+        </h1>
+
+        <!-- Search Form -->
+        <form method="get" class="max-w-lg">
+          <div class="flex gap-2">
+            <input
+              type="search"
+              name="q"
+              value={query}
+              placeholder="Buscar productos..."
+              class="h-10 flex-1 rounded-lg border border-input bg-background px-4 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
+            <button
+              type="submit"
+              class="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-6 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Buscar
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {error && (
+        <div class="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-900 dark:bg-red-950/20 dark:text-red-300">
+          {error}
+        </div>
+      )}
+
+      {query && !error && (
+        <>
+          {products.length > 0 ? (
+            <>
+              <!-- Results count -->
+              <p class="mb-6 text-muted-foreground">
+                Mostrando {products.length} {products.length === 1 ? 'resultado' : 'resultados'}
+                {page > 1 && ` (página ${page})`}
+              </p>
+
+              <!-- Product Grid -->
+              <ProductGrid products={products} columns={4} />
+
+              <!-- Pagination -->
+              {(hasPrev || hasMore) && (
+                <nav class="mt-8 flex justify-center gap-2" aria-label="Paginación">
+                  {hasPrev && (
+                    <a
+                      href={`/buscar?q=${encodeURIComponent(query)}&page=${page - 1}`}
+                      class="inline-flex h-10 items-center justify-center rounded-lg border bg-background px-4 font-medium transition-colors hover:bg-accent"
+                    >
+                      ← Anterior
+                    </a>
+                  )}
+                  <span class="inline-flex h-10 items-center justify-center px-4 text-muted-foreground">
+                    Página {page}
+                  </span>
+                  {hasMore && (
+                    <a
+                      href={`/buscar?q=${encodeURIComponent(query)}&page=${page + 1}`}
+                      class="inline-flex h-10 items-center justify-center rounded-lg border bg-background px-4 font-medium transition-colors hover:bg-accent"
+                    >
+                      Siguiente →
+                    </a>
+                  )}
+                </nav>
+              )}
+            </>
+          ) : (
+            <div class="rounded-lg border bg-muted/30 p-12 text-center">
+              <div class="mb-4 text-5xl">🔍</div>
+              <h2 class="mb-2 font-heading text-xl font-bold">No se encontraron resultados</h2>
+              <p class="mb-6 text-muted-foreground">
+                No encontramos productos que coincidan con "{query}"
+              </p>
+              <div class="text-sm text-muted-foreground">
+                <p class="mb-2">Sugerencias:</p>
+                <ul class="list-inside list-disc space-y-1">
+                  <li>Verifica la ortografía de las palabras</li>
+                  <li>Usa palabras más generales</li>
+                  <li>Prueba con sinónimos</li>
+                </ul>
+              </div>
+              <a
+                href="/catalogo"
+                class="mt-6 inline-flex items-center justify-center rounded-lg bg-primary px-6 py-2 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              >
+                Ver todo el catálogo
+              </a>
+            </div>
+          )}
+        </>
+      )}
+
+      {!query && (
+        <div class="rounded-lg border bg-muted/30 p-12 text-center">
+          <div class="mb-4 text-5xl">💎</div>
+          <h2 class="mb-2 font-heading text-xl font-bold">¿Qué estás buscando?</h2>
+          <p class="text-muted-foreground">
+            Escribe en el campo de búsqueda para encontrar tus joyas favoritas
+          </p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Popular Categories -->
+  <section class="border-t bg-muted/30 py-12">
+    <div class="container mx-auto px-4">
+      <h2 class="mb-6 text-center font-heading text-xl font-bold">Explora por categoría</h2>
+      <div class="flex flex-wrap justify-center gap-3">
+        <a href="/categoria/anillos" class="rounded-full border bg-background px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary">
+          💍 Anillos
+        </a>
+        <a href="/categoria/collares" class="rounded-full border bg-background px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary">
+          📿 Collares
+        </a>
+        <a href="/categoria/pulseras" class="rounded-full border bg-background px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary">
+          ⌚ Pulseras
+        </a>
+        <a href="/categoria/aretes" class="rounded-full border bg-background px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary">
+          ✨ Aretes
+        </a>
+        <a href="/categoria/dijes" class="rounded-full border bg-background px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary">
+          🔮 Dijes
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
