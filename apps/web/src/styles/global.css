@@ -79,15 +79,18 @@
 
 @layer base {
   * {
-    @apply border-[--border];
+    border-color: hsl(var(--border));
   }
 
   html {
-    @apply scroll-smooth antialiased;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-family: "Inter", system-ui, sans-serif;
   }
 
@@ -98,7 +101,8 @@
   h5,
   h6 {
     font-family: "Playfair Display", Georgia, serif;
-    @apply font-semibold tracking-tight;
+    font-weight: 600;
+    letter-spacing: -0.025em;
   }
 }
 
@@ -147,11 +151,14 @@
 /* Product card hover effect */
 @layer utilities {
   .product-card-hover {
-    @apply transition-all duration-300 ease-out;
+    transition: all 300ms ease-out;
   }
 
   .product-card-hover:hover {
-    @apply -translate-y-1 shadow-lg shadow-gold-sm;
+    transform: translateY(-0.25rem);
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 }
 
@@ -211,19 +218,43 @@
 
   /* Skeleton loading */
   .skeleton {
-    @apply animate-pulse rounded bg-muted;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    border-radius: 0.25rem;
+    background-color: hsl(var(--muted));
   }
 
   .skeleton-text {
-    @apply h-4 w-full rounded bg-muted animate-pulse;
+    height: 1rem;
+    width: 100%;
+    border-radius: 0.25rem;
+    background-color: hsl(var(--muted));
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
   .skeleton-avatar {
-    @apply h-10 w-10 rounded-full bg-muted animate-pulse;
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 9999px;
+    background-color: hsl(var(--muted));
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
   .skeleton-image {
-    @apply aspect-square w-full rounded bg-muted animate-pulse;
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    border-radius: 0.25rem;
+    background-color: hsl(var(--muted));
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
   }
 
   /* Image zoom on hover */
@@ -241,11 +272,15 @@
 
   /* Focus ring animation */
   .focus-ring {
-    @apply outline-none ring-0 transition-shadow duration-200;
+    outline: none;
+    box-shadow: none;
+    transition: box-shadow 200ms;
   }
 
   .focus-ring:focus-visible {
-    @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+    box-shadow:
+      0 0 0 2px hsl(var(--background)),
+      0 0 0 4px hsl(var(--ring));
   }
 
   /* Spin animation for loading */
