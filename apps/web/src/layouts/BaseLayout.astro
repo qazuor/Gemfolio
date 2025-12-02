@@ -1,5 +1,6 @@
 ---
 import '@/styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 import Header from '@/components/astro/layout/Header.astro';
 import Footer from '@/components/astro/layout/Footer.astro';
 import CartDrawer from '@/components/react/cart/CartDrawer';
@@ -72,6 +73,9 @@ const socialImageURL = new URL(image, Astro.site);
       rel="stylesheet"
     />
 
+    <!-- View Transitions -->
+    <ClientRouter />
+
     <!-- Theme script (prevent FOUC) -->
     <script is:inline>
       const theme = (() => {
@@ -92,12 +96,12 @@ const socialImageURL = new URL(image, Astro.site);
     </script>
   </head>
   <body class="flex min-h-screen flex-col bg-background font-body text-foreground antialiased">
-    {!hideHeader && <Header />}
-    <main class="flex-1">
+    {!hideHeader && <Header transition:persist />}
+    <main class="flex-1" transition:animate="fade">
       <slot />
     </main>
-    {!hideFooter && <Footer />}
-    <CartDrawer client:load />
-    <InstallPrompt client:load />
+    {!hideFooter && <Footer transition:persist />}
+    <CartDrawer client:load transition:persist />
+    <InstallPrompt client:load transition:persist />
   </body>
 </html>

@@ -1,0 +1,26 @@
+---
+interface Props {
+  count?: number;
+  columns?: 2 | 3 | 4;
+}
+
+const { count = 8, columns = 4 } = Astro.props;
+
+const gridCols = {
+  2: 'grid-cols-2',
+  3: 'grid-cols-2 md:grid-cols-3',
+  4: 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
+};
+---
+
+<div class:list={['grid gap-4 md:gap-6', gridCols[columns]]}>
+  {Array.from({ length: count }).map(() => (
+    <div class="flex flex-col gap-3 animate-fade-in">
+      <div class="skeleton-image" />
+      <div class="space-y-2">
+        <div class="skeleton-text w-2/3" />
+        <div class="skeleton-text w-1/3" />
+      </div>
+    </div>
+  ))}
+</div>
