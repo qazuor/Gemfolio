@@ -1,0 +1,110 @@
+---
+import type { Product } from '@/lib/api';
+import { formatPrice } from '@/lib/utils';
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+
+const primaryImage = product.images?.find((img) => img.isPrimary) || product.images?.[0];
+const secondaryImage = product.images?.find((img) => !img.isPrimary && img.order === 1);
+const hasDiscount = product.comparePrice && Number(product.comparePrice) > Number(product.price);
+const discountPercent = hasDiscount
+  ? Math.round((1 - Number(product.price) / Number(product.comparePrice)) * 100)
+  : 0;
+
+const isNew = product.tags?.some((tag) => tag.slug === 'nuevo');
+const isOnSale = product.tags?.some((tag) => tag.slug === 'oferta');
+const isFeatured = product.tags?.some((tag) => tag.slug === 'destacado');
+const isOutOfStock = product.trackInventory && product.stock <= 0;
+---
+
+<a
+  href={`/producto/${product.slug}`}
+  class="group relative flex flex-col overflow-hidden rounded-lg border bg-background transition-all hover:border-primary hover:shadow-lg"
+>
+  {/* Image Container */}
+  <div class="relative aspect-square overflow-hidden bg-muted">
+    {primaryImage ? (
+      <>
+        <img
+          src={primaryImage.url}
+          alt={primaryImage.alt || product.name}
+          class="h-full w-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+          loading="lazy"
+        />
+        {secondaryImage && (
+          <img
+            src={secondaryImage.url}
+            alt={secondaryImage.alt || product.name}
+            class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            loading="lazy"
+          />
+        )}
+      </>
+    ) : (
+      <div class="flex h-full w-full items-center justify-center text-muted-foreground">
+        <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      </div>
+    )}
+
+    {/* Badges */}
+    <div class="absolute left-2 top-2 flex flex-col gap-1">
+      {isNew && (
+        <span class="rounded bg-blue-500 px-2 py-0.5 text-xs font-medium text-white">
+          Nuevo
+        </span>
+      )}
+      {isOnSale && hasDiscount && (
+        <span class="rounded bg-red-500 px-2 py-0.5 text-xs font-medium text-white">
+          -{discountPercent}%
+        </span>
+      )}
+      {isFeatured && !isNew && !isOnSale && (
+        <span class="rounded bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">
+          Destacado
+        </span>
+      )}
+    </div>
+
+    {/* Out of Stock Overlay */}
+    {isOutOfStock && (
+      <div class="absolute inset-0 flex items-center justify-center bg-background/80">
+        <span class="rounded-full bg-muted px-4 py-2 text-sm font-medium text-muted-foreground">
+          Agotado
+        </span>
+      </div>
+    )}
+  </div>
+
+  {/* Content */}
+  <div class="flex flex-1 flex-col p-4">
+    {/* Category */}
+    {product.category && (
+      <span class="mb-1 text-xs text-muted-foreground">
+        {product.category.name}
+      </span>
+    )}
+
+    {/* Name */}
+    <h3 class="mb-2 line-clamp-2 font-medium group-hover:text-primary">
+      {product.name}
+    </h3>
+
+    {/* Price */}
+    <div class="mt-auto flex items-center gap-2">
+      <span class="text-lg font-bold">
+        {formatPrice(Number(product.price))}
+      </span>
+      {hasDiscount && (
+        <span class="text-sm text-muted-foreground line-through">
+          {formatPrice(Number(product.comparePrice))}
+        </span>
+      )}
+    </div>
+  </div>
+</a>

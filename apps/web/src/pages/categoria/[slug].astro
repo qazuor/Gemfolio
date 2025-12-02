@@ -1,0 +1,129 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProductGrid from '@/components/astro/product/ProductGrid.astro';
+import { getCategoryBySlug, getCategories } from '@/lib/api';
+
+export async function getStaticPaths() {
+  const categories = await getCategories();
+  return categories.map((category) => ({
+    params: { slug: category.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const result = await getCategoryBySlug(slug);
+
+if (!result) {
+  return Astro.redirect('/404');
+}
+
+const { category, products } = result;
+const subcategories = category.children || [];
+---
+
+<BaseLayout
+  title={category.name}
+  description={category.description || `Explora nuestra colección de ${category.name}`}
+>
+  <!-- Breadcrumb -->
+  <nav class="border-b">
+    <div class="container mx-auto px-4 py-3">
+      <ol class="flex items-center gap-2 text-sm text-muted-foreground">
+        <li>
+          <a href="/" class="hover:text-foreground">Inicio</a>
+        </li>
+        <li>/</li>
+        <li>
+          <a href="/catalogo" class="hover:text-foreground">Catálogo</a>
+        </li>
+        <li>/</li>
+        <li class="text-foreground">{category.name}</li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Category Header -->
+  <section class="border-b bg-muted/30 py-12">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col items-center text-center md:flex-row md:text-left">
+        {category.image && (
+          <img
+            src={category.image}
+            alt={category.name}
+            class="mb-6 h-32 w-32 rounded-lg object-cover md:mb-0 md:mr-8"
+          />
+        )}
+        <div>
+          <h1 class="mb-2 font-heading text-3xl font-bold md:text-4xl">
+            {category.name}
+          </h1>
+          {category.description && (
+            <p class="max-w-2xl text-muted-foreground">
+              {category.description}
+            </p>
+          )}
+          <p class="mt-2 text-sm text-muted-foreground">
+            {products.pagination.total} {products.pagination.total === 1 ? 'producto' : 'productos'}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Subcategories -->
+  {subcategories.length > 0 && (
+    <section class="border-b py-6">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-wrap gap-2">
+          <span class="text-sm font-medium text-muted-foreground">Subcategorías:</span>
+          {subcategories.map((sub) => (
+            <a
+              href={`/categoria/${sub.slug}`}
+              class="rounded-full border bg-background px-4 py-1 text-sm transition-colors hover:border-primary hover:text-primary"
+            >
+              {sub.name}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Products -->
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <ProductGrid
+        products={products.data}
+        columns={4}
+        emptyMessage={`No hay productos en ${category.name} por el momento`}
+      />
+
+      <!-- Pagination -->
+      {products.pagination.totalPages > 1 && (
+        <nav class="mt-12 flex justify-center">
+          <div class="flex items-center gap-2">
+            {products.pagination.page > 1 && (
+              <a
+                href={`/categoria/${slug}?page=${products.pagination.page - 1}`}
+                class="inline-flex h-10 items-center justify-center rounded-lg border px-4 text-sm font-medium transition-colors hover:bg-accent"
+              >
+                Anterior
+              </a>
+            )}
+            <span class="px-4 text-sm text-muted-foreground">
+              Página {products.pagination.page} de {products.pagination.totalPages}
+            </span>
+            {products.pagination.page < products.pagination.totalPages && (
+              <a
+                href={`/categoria/${slug}?page=${products.pagination.page + 1}`}
+                class="inline-flex h-10 items-center justify-center rounded-lg border px-4 text-sm font-medium transition-colors hover:bg-accent"
+              >
+                Siguiente
+              </a>
+            )}
+          </div>
+        </nav>
+      )}
+    </div>
+  </section>
+</BaseLayout>

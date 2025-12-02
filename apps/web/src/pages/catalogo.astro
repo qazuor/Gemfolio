@@ -1,0 +1,232 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProductGrid from '@/components/astro/product/ProductGrid.astro';
+import { getProducts, getCategories, type ProductFilters } from '@/lib/api';
+
+// Get query parameters
+const url = new URL(Astro.request.url);
+const page = Number(url.searchParams.get('page')) || 1;
+const categoryId = url.searchParams.get('categoria') || undefined;
+const sortBy = (url.searchParams.get('orden') as ProductFilters['sortBy']) || 'createdAt';
+const sortDirection = (url.searchParams.get('dir') as ProductFilters['sortDirection']) || 'desc';
+const minPrice = url.searchParams.get('min') ? Number(url.searchParams.get('min')) : undefined;
+const maxPrice = url.searchParams.get('max') ? Number(url.searchParams.get('max')) : undefined;
+
+// Fetch data
+const [productsResponse, categories] = await Promise.all([
+  getProducts({
+    page,
+    limit: 12,
+    categoryId,
+    sortBy,
+    sortDirection,
+    minPrice,
+    maxPrice,
+    status: 'active',
+  }),
+  getCategories(),
+]);
+
+const { data: products, pagination } = productsResponse;
+
+// Build filter URL helper
+function buildFilterUrl(params: Record<string, string | undefined>) {
+  const newUrl = new URL(url);
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) {
+      newUrl.searchParams.set(key, value);
+    } else {
+      newUrl.searchParams.delete(key);
+    }
+  });
+  // Reset page when filters change
+  if (!params.page) {
+    newUrl.searchParams.delete('page');
+  }
+  return newUrl.pathname + newUrl.search;
+}
+
+const sortOptions = [
+  { value: 'createdAt-desc', label: 'Más recientes' },
+  { value: 'createdAt-asc', label: 'Más antiguos' },
+  { value: 'price-asc', label: 'Menor precio' },
+  { value: 'price-desc', label: 'Mayor precio' },
+  { value: 'name-asc', label: 'A-Z' },
+  { value: 'name-desc', label: 'Z-A' },
+];
+
+const currentSort = `${sortBy}-${sortDirection}`;
+---
+
+<BaseLayout
+  title="Catálogo"
+  description="Explora nuestra colección completa de joyería artesanal"
+>
+  <!-- Breadcrumb -->
+  <nav class="border-b">
+    <div class="container mx-auto px-4 py-3">
+      <ol class="flex items-center gap-2 text-sm text-muted-foreground">
+        <li>
+          <a href="/" class="hover:text-foreground">Inicio</a>
+        </li>
+        <li>/</li>
+        <li class="text-foreground">Catálogo</li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <section class="border-b bg-muted/30 py-12">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="mb-2 font-heading text-3xl font-bold md:text-4xl">
+        Catálogo
+      </h1>
+      <p class="text-muted-foreground">
+        Explora nuestra colección completa de joyería artesanal
+      </p>
+    </div>
+  </section>
+
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex flex-col gap-8 lg:flex-row">
+      <!-- Sidebar Filters -->
+      <aside class="w-full shrink-0 lg:w-64">
+        <div class="sticky top-24 space-y-6">
+          <!-- Categories -->
+          <div class="rounded-lg border bg-background p-4">
+            <h3 class="mb-3 font-medium">Categorías</h3>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href={buildFilterUrl({ categoria: undefined })}
+                  class={`block rounded px-2 py-1 text-sm transition-colors ${!categoryId ? 'bg-primary/10 text-primary' : 'hover:bg-accent'}`}
+                >
+                  Todas las categorías
+                </a>
+              </li>
+              {categories.map((cat) => (
+                <li>
+                  <a
+                    href={buildFilterUrl({ categoria: cat.id })}
+                    class={`block rounded px-2 py-1 text-sm transition-colors ${categoryId === cat.id ? 'bg-primary/10 text-primary' : 'hover:bg-accent'}`}
+                  >
+                    {cat.name}
+                    {cat.productCount !== undefined && (
+                      <span class="ml-1 text-muted-foreground">({cat.productCount})</span>
+                    )}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <!-- Price Range -->
+          <div class="rounded-lg border bg-background p-4">
+            <h3 class="mb-3 font-medium">Rango de precio</h3>
+            <form method="get" class="space-y-3">
+              <!-- Preserve other filters -->
+              {categoryId && <input type="hidden" name="categoria" value={categoryId} />}
+              <input type="hidden" name="orden" value={sortBy} />
+              <input type="hidden" name="dir" value={sortDirection} />
+
+              <div class="flex gap-2">
+                <input
+                  type="number"
+                  name="min"
+                  placeholder="Min"
+                  value={minPrice || ''}
+                  class="h-9 w-full rounded-lg border bg-background px-3 text-sm"
+                />
+                <input
+                  type="number"
+                  name="max"
+                  placeholder="Max"
+                  value={maxPrice || ''}
+                  class="h-9 w-full rounded-lg border bg-background px-3 text-sm"
+                />
+              </div>
+              <button
+                type="submit"
+                class="h-9 w-full rounded-lg bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              >
+                Aplicar
+              </button>
+            </form>
+          </div>
+
+          <!-- Clear Filters -->
+          {(categoryId || minPrice || maxPrice) && (
+            <a
+              href="/catalogo"
+              class="block rounded-lg border bg-background p-4 text-center text-sm text-muted-foreground transition-colors hover:bg-accent"
+            >
+              Limpiar filtros
+            </a>
+          )}
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1">
+        <!-- Toolbar -->
+        <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p class="text-sm text-muted-foreground">
+            Mostrando {products.length} de {pagination.total} productos
+          </p>
+
+          <!-- Sort -->
+          <div class="flex items-center gap-2">
+            <label for="sort" class="text-sm text-muted-foreground">Ordenar por:</label>
+            <select
+              id="sort"
+              class="h-9 rounded-lg border bg-background px-3 text-sm"
+              onchange="window.location.href = this.value"
+            >
+              {sortOptions.map((option) => {
+                const [by, dir] = option.value.split('-');
+                const optionUrl = buildFilterUrl({ orden: by, dir, page: undefined });
+                return (
+                  <option value={optionUrl} selected={currentSort === option.value}>
+                    {option.label}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+        </div>
+
+        <!-- Products -->
+        <ProductGrid products={products} columns={3} />
+
+        <!-- Pagination -->
+        {pagination.totalPages > 1 && (
+          <nav class="mt-12 flex justify-center">
+            <div class="flex items-center gap-2">
+              {pagination.page > 1 && (
+                <a
+                  href={buildFilterUrl({ page: String(pagination.page - 1) })}
+                  class="inline-flex h-10 items-center justify-center rounded-lg border px-4 text-sm font-medium transition-colors hover:bg-accent"
+                >
+                  Anterior
+                </a>
+              )}
+
+              <span class="px-4 text-sm text-muted-foreground">
+                Página {pagination.page} de {pagination.totalPages}
+              </span>
+
+              {pagination.page < pagination.totalPages && (
+                <a
+                  href={buildFilterUrl({ page: String(pagination.page + 1) })}
+                  class="inline-flex h-10 items-center justify-center rounded-lg border px-4 text-sm font-medium transition-colors hover:bg-accent"
+                >
+                  Siguiente
+                </a>
+              )}
+            </div>
+          </nav>
+        )}
+      </main>
+    </div>
+  </div>
+</BaseLayout>

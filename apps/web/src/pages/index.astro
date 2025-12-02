@@ -1,5 +1,24 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProductGrid from '@/components/astro/product/ProductGrid.astro';
+import { getFeaturedProducts, getNewProducts, getCategories } from '@/lib/api';
+
+const [featuredProducts, newProducts, categories] = await Promise.all([
+  getFeaturedProducts(8),
+  getNewProducts(4),
+  getCategories(),
+]);
+
+// Map categories with icons
+const categoryIcons: Record<string, string> = {
+  anillos: '💍',
+  collares: '📿',
+  pulseras: '⌚',
+  aretes: '✨',
+  pendientes: '✨',
+  dijes: '🔮',
+  default: '💎',
+};
 ---
 
 <BaseLayout title="Inicio">
@@ -37,34 +56,74 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
       <h2 class="mb-8 text-center font-heading text-3xl font-bold">Categorías</h2>
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {
-          [
-            { name: 'Anillos', href: '/categoria/anillos', icon: '💍' },
-            { name: 'Collares', href: '/categoria/collares', icon: '📿' },
-            { name: 'Pulseras', href: '/categoria/pulseras', icon: '⌚' },
-            { name: 'Aretes', href: '/categoria/aretes', icon: '✨' },
-          ].map((category) => (
+          categories.slice(0, 8).map((category) => (
             <a
-              href={category.href}
+              href={`/categoria/${category.slug}`}
               class="group flex flex-col items-center rounded-lg border bg-background p-8 transition-all hover:border-primary hover:shadow-lg"
             >
-              <span class="mb-4 text-5xl">{category.icon}</span>
+              {category.image ? (
+                <img
+                  src={category.image}
+                  alt={category.name}
+                  class="mb-4 h-16 w-16 rounded-full object-cover"
+                />
+              ) : (
+                <span class="mb-4 text-5xl">
+                  {categoryIcons[category.slug] || categoryIcons.default}
+                </span>
+              )}
               <span class="font-medium group-hover:text-primary">{category.name}</span>
+              {category.productCount !== undefined && (
+                <span class="mt-1 text-sm text-muted-foreground">
+                  {category.productCount} productos
+                </span>
+              )}
             </a>
           ))
         }
       </div>
+      {categories.length > 8 && (
+        <div class="mt-8 text-center">
+          <a
+            href="/catalogo"
+            class="text-sm text-primary hover:underline"
+          >
+            Ver todas las categorías →
+          </a>
+        </div>
+      )}
     </div>
   </section>
 
-  <!-- Featured Section Placeholder -->
-  <section class="py-16">
-    <div class="container mx-auto px-4">
-      <h2 class="mb-8 text-center font-heading text-3xl font-bold">Productos Destacados</h2>
-      <p class="text-center text-muted-foreground">
-        Próximamente: Los productos destacados se cargarán desde la API.
-      </p>
-    </div>
-  </section>
+  <!-- Featured Products -->
+  {featuredProducts.length > 0 && (
+    <section class="py-16">
+      <div class="container mx-auto px-4">
+        <div class="mb-8 flex items-center justify-between">
+          <h2 class="font-heading text-3xl font-bold">Productos Destacados</h2>
+          <a href="/catalogo?tag=destacado" class="text-sm text-primary hover:underline">
+            Ver todos →
+          </a>
+        </div>
+        <ProductGrid products={featuredProducts} columns={4} />
+      </div>
+    </section>
+  )}
+
+  <!-- New Products -->
+  {newProducts.length > 0 && (
+    <section class="border-t bg-muted/30 py-16">
+      <div class="container mx-auto px-4">
+        <div class="mb-8 flex items-center justify-between">
+          <h2 class="font-heading text-3xl font-bold">Novedades</h2>
+          <a href="/catalogo?tag=nuevo" class="text-sm text-primary hover:underline">
+            Ver todas →
+          </a>
+        </div>
+        <ProductGrid products={newProducts} columns={4} />
+      </div>
+    </section>
+  )}
 
   <!-- CTA Section -->
   <section class="border-t bg-primary py-16 text-primary-foreground">
