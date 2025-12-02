@@ -1,11 +1,18 @@
-import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from 'sonner';
 
+import type { getQueryClient } from '@/lib/query-client';
 import appCss from '@/styles/globals.css?url';
 
-export const Route = createRootRoute({
+interface RootContext {
+  queryClient: ReturnType<typeof getQueryClient>;
+}
+
+export const Route = createRootRouteWithContext<RootContext>()({
   head: () => ({
     meta: [
       { charSet: 'utf-8' },
@@ -28,8 +35,21 @@ export const Route = createRootRoute({
       },
     ],
   }),
-  shellComponent: RootDocument,
+  component: RootComponent,
 });
+
+function RootComponent() {
+  const { queryClient } = Route.useRouteContext();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RootDocument>
+        <Outlet />
+      </RootDocument>
+      <ReactQueryDevtools buttonPosition="bottom-left" />
+    </QueryClientProvider>
+  );
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -45,7 +65,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           disableTransitionOnChange
         >
           {children}
-          <Outlet />
           <Toaster richColors position="top-right" />
         </ThemeProvider>
         <TanStackRouterDevtools position="bottom-right" />
