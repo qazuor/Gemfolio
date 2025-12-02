@@ -18,12 +18,14 @@ import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as DashboardProductosIndexRouteImport } from './routes/_dashboard/productos/index'
+import { Route as DashboardPedidosIndexRouteImport } from './routes/_dashboard/pedidos/index'
 import { Route as DashboardCategoriasIndexRouteImport } from './routes/_dashboard/categorias/index'
 import { Route as DashboardBundlesIndexRouteImport } from './routes/_dashboard/bundles/index'
 import { Route as ApiUploadthingSplatRouteImport } from './routes/api.uploadthing.$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 import { Route as DashboardProductosNuevoRouteImport } from './routes/_dashboard/productos/nuevo'
 import { Route as DashboardProductosIdRouteImport } from './routes/_dashboard/productos/$id'
+import { Route as DashboardPedidosIdRouteImport } from './routes/_dashboard/pedidos/$id'
 import { Route as DashboardBundlesNuevoRouteImport } from './routes/_dashboard/bundles/nuevo'
 import { Route as DashboardBundlesIdRouteImport } from './routes/_dashboard/bundles/$id'
 
@@ -70,6 +72,11 @@ const DashboardProductosIndexRoute = DashboardProductosIndexRouteImport.update({
   path: '/productos/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardPedidosIndexRoute = DashboardPedidosIndexRouteImport.update({
+  id: '/pedidos/',
+  path: '/pedidos/',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardCategoriasIndexRoute =
   DashboardCategoriasIndexRouteImport.update({
     id: '/categorias/',
@@ -101,6 +108,11 @@ const DashboardProductosIdRoute = DashboardProductosIdRouteImport.update({
   path: '/productos/$id',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardPedidosIdRoute = DashboardPedidosIdRouteImport.update({
+  id: '/pedidos/$id',
+  path: '/pedidos/$id',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardBundlesNuevoRoute = DashboardBundlesNuevoRouteImport.update({
   id: '/bundles/nuevo',
   path: '/bundles/nuevo',
@@ -121,12 +133,14 @@ export interface FileRoutesByFullPath {
   '/': typeof DashboardIndexRoute
   '/bundles/$id': typeof DashboardBundlesIdRoute
   '/bundles/nuevo': typeof DashboardBundlesNuevoRoute
+  '/pedidos/$id': typeof DashboardPedidosIdRoute
   '/productos/$id': typeof DashboardProductosIdRoute
   '/productos/nuevo': typeof DashboardProductosNuevoRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/uploadthing/$': typeof ApiUploadthingSplatRoute
   '/bundles': typeof DashboardBundlesIndexRoute
   '/categorias': typeof DashboardCategoriasIndexRoute
+  '/pedidos': typeof DashboardPedidosIndexRoute
   '/productos': typeof DashboardProductosIndexRoute
 }
 export interface FileRoutesByTo {
@@ -138,12 +152,14 @@ export interface FileRoutesByTo {
   '/': typeof DashboardIndexRoute
   '/bundles/$id': typeof DashboardBundlesIdRoute
   '/bundles/nuevo': typeof DashboardBundlesNuevoRoute
+  '/pedidos/$id': typeof DashboardPedidosIdRoute
   '/productos/$id': typeof DashboardProductosIdRoute
   '/productos/nuevo': typeof DashboardProductosNuevoRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/uploadthing/$': typeof ApiUploadthingSplatRoute
   '/bundles': typeof DashboardBundlesIndexRoute
   '/categorias': typeof DashboardCategoriasIndexRoute
+  '/pedidos': typeof DashboardPedidosIndexRoute
   '/productos': typeof DashboardProductosIndexRoute
 }
 export interface FileRoutesById {
@@ -158,12 +174,14 @@ export interface FileRoutesById {
   '/_dashboard/': typeof DashboardIndexRoute
   '/_dashboard/bundles/$id': typeof DashboardBundlesIdRoute
   '/_dashboard/bundles/nuevo': typeof DashboardBundlesNuevoRoute
+  '/_dashboard/pedidos/$id': typeof DashboardPedidosIdRoute
   '/_dashboard/productos/$id': typeof DashboardProductosIdRoute
   '/_dashboard/productos/nuevo': typeof DashboardProductosNuevoRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/uploadthing/$': typeof ApiUploadthingSplatRoute
   '/_dashboard/bundles/': typeof DashboardBundlesIndexRoute
   '/_dashboard/categorias/': typeof DashboardCategoriasIndexRoute
+  '/_dashboard/pedidos/': typeof DashboardPedidosIndexRoute
   '/_dashboard/productos/': typeof DashboardProductosIndexRoute
 }
 export interface FileRouteTypes {
@@ -177,12 +195,14 @@ export interface FileRouteTypes {
     | '/'
     | '/bundles/$id'
     | '/bundles/nuevo'
+    | '/pedidos/$id'
     | '/productos/$id'
     | '/productos/nuevo'
     | '/api/auth/$'
     | '/api/uploadthing/$'
     | '/bundles'
     | '/categorias'
+    | '/pedidos'
     | '/productos'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -194,12 +214,14 @@ export interface FileRouteTypes {
     | '/'
     | '/bundles/$id'
     | '/bundles/nuevo'
+    | '/pedidos/$id'
     | '/productos/$id'
     | '/productos/nuevo'
     | '/api/auth/$'
     | '/api/uploadthing/$'
     | '/bundles'
     | '/categorias'
+    | '/pedidos'
     | '/productos'
   id:
     | '__root__'
@@ -213,12 +235,14 @@ export interface FileRouteTypes {
     | '/_dashboard/'
     | '/_dashboard/bundles/$id'
     | '/_dashboard/bundles/nuevo'
+    | '/_dashboard/pedidos/$id'
     | '/_dashboard/productos/$id'
     | '/_dashboard/productos/nuevo'
     | '/api/auth/$'
     | '/api/uploadthing/$'
     | '/_dashboard/bundles/'
     | '/_dashboard/categorias/'
+    | '/_dashboard/pedidos/'
     | '/_dashboard/productos/'
   fileRoutesById: FileRoutesById
 }
@@ -295,6 +319,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardProductosIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/_dashboard/pedidos/': {
+      id: '/_dashboard/pedidos/'
+      path: '/pedidos'
+      fullPath: '/pedidos'
+      preLoaderRoute: typeof DashboardPedidosIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/_dashboard/categorias/': {
       id: '/_dashboard/categorias/'
       path: '/categorias'
@@ -337,6 +368,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardProductosIdRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/_dashboard/pedidos/$id': {
+      id: '/_dashboard/pedidos/$id'
+      path: '/pedidos/$id'
+      fullPath: '/pedidos/$id'
+      preLoaderRoute: typeof DashboardPedidosIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/_dashboard/bundles/nuevo': {
       id: '/_dashboard/bundles/nuevo'
       path: '/bundles/nuevo'
@@ -374,10 +412,12 @@ interface DashboardRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardBundlesIdRoute: typeof DashboardBundlesIdRoute
   DashboardBundlesNuevoRoute: typeof DashboardBundlesNuevoRoute
+  DashboardPedidosIdRoute: typeof DashboardPedidosIdRoute
   DashboardProductosIdRoute: typeof DashboardProductosIdRoute
   DashboardProductosNuevoRoute: typeof DashboardProductosNuevoRoute
   DashboardBundlesIndexRoute: typeof DashboardBundlesIndexRoute
   DashboardCategoriasIndexRoute: typeof DashboardCategoriasIndexRoute
+  DashboardPedidosIndexRoute: typeof DashboardPedidosIndexRoute
   DashboardProductosIndexRoute: typeof DashboardProductosIndexRoute
 }
 
@@ -385,10 +425,12 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardBundlesIdRoute: DashboardBundlesIdRoute,
   DashboardBundlesNuevoRoute: DashboardBundlesNuevoRoute,
+  DashboardPedidosIdRoute: DashboardPedidosIdRoute,
   DashboardProductosIdRoute: DashboardProductosIdRoute,
   DashboardProductosNuevoRoute: DashboardProductosNuevoRoute,
   DashboardBundlesIndexRoute: DashboardBundlesIndexRoute,
   DashboardCategoriasIndexRoute: DashboardCategoriasIndexRoute,
+  DashboardPedidosIndexRoute: DashboardPedidosIndexRoute,
   DashboardProductosIndexRoute: DashboardProductosIndexRoute,
 }
 
@@ -406,3 +448,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
