@@ -11,6 +11,7 @@
     "clean": "rm -rf .output node_modules"
   },
   "dependencies": {
+    "@gemfolio/api": "workspace:*",
     "@gemfolio/auth": "workspace:*",
     "@gemfolio/db": "workspace:*",
     "@gemfolio/ui": "workspace:*",
