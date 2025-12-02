@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@gemfolio/db": "workspace:*",
+    "@gemfolio/storage": "workspace:*",
     "@gemfolio/validators": "workspace:*",
     "@gemfolio/auth": "workspace:*",
     "@hono/zod-validator": "^0.4.3",

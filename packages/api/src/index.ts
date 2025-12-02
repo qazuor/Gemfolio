@@ -11,6 +11,7 @@ import { adminOrdersRoutes } from './routes/admin/orders';
 import { adminPagesRoutes } from './routes/admin/pages';
 import { adminProductsRoutes } from './routes/admin/products';
 import { adminSettingsRoutes } from './routes/admin/settings';
+import { adminUploadRoutes } from './routes/admin/upload';
 import { adminUsersRoutes } from './routes/admin/users';
 import { bundlesRoutes } from './routes/bundles';
 import { cartRoutes } from './routes/cart';
@@ -65,7 +66,8 @@ const adminApi = new Hono()
   .route('/users', adminUsersRoutes)
   .route('/pages', adminPagesRoutes)
   .route('/settings', adminSettingsRoutes)
-  .route('/dashboard', adminDashboardRoutes);
+  .route('/dashboard', adminDashboardRoutes)
+  .route('/upload', adminUploadRoutes);
 
 // Mount all routes under /api
 const api = new Hono().route('/', publicApi).route('/admin', adminApi);
