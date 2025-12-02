@@ -1,17 +1,21 @@
+import { Button } from '@gemfolio/ui';
 import { Bell, Menu, Moon, Search, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 import { UserNav } from '@/components/auth';
+import { useUIStore } from '@/stores/ui';
 
 export function Header() {
   const { theme, setTheme } = useTheme();
+  const { toggleMobileSidebar } = useUIStore();
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-background px-6">
       <div className="flex items-center gap-4">
-        <button type="button" className="rounded-lg p-2 hover:bg-accent lg:hidden">
+        <Button variant="ghost" size="icon" className="lg:hidden" onClick={toggleMobileSidebar}>
           <Menu className="h-5 w-5" />
-        </button>
+          <span className="sr-only">Abrir menú</span>
+        </Button>
 
         <div className="hidden items-center gap-2 rounded-lg border bg-muted/50 px-3 py-2 md:flex">
           <Search className="h-4 w-4 text-muted-foreground" />
