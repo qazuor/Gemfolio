@@ -169,6 +169,7 @@ const structuredData = {
               productId={product.id}
               productName={product.name}
               price={Number(product.price)}
+              image={primaryImage?.url}
               maxQuantity={product.trackInventory ? product.stock : 99}
               disabled={isOutOfStock}
               client:load

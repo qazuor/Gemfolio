@@ -1,13 +1,15 @@
 import { useStore } from '@nanostores/react';
 import { ShoppingBag } from 'lucide-react';
 import { $cartItemCount } from '@/stores/cart';
+import { openCartDrawer } from '@/stores/ui';
 
 export default function CartIcon() {
   const itemCount = useStore($cartItemCount);
 
   return (
-    <a
-      href="/carrito"
+    <button
+      type="button"
+      onClick={openCartDrawer}
       className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-input bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
       aria-label="Ver carrito"
     >
@@ -17,6 +19,6 @@ export default function CartIcon() {
           {itemCount > 99 ? '99+' : itemCount}
         </span>
       )}
-    </a>
+    </button>
   );
 }

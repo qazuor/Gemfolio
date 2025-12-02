@@ -1,10 +1,16 @@
 import { Check, Minus, Plus, ShoppingCart } from 'lucide-react';
 import { useState } from 'react';
+import { addToCart } from '@/stores/cart';
+import { openCartDrawer } from '@/stores/ui';
 
 interface AddToCartProps {
   productId: string;
   productName: string;
   price: number;
+  image?: string;
+  variantId?: string;
+  variantName?: string;
+  bundleId?: string;
   maxQuantity?: number;
   disabled?: boolean;
 }
@@ -13,6 +19,10 @@ export default function AddToCart({
   productId,
   productName,
   price,
+  image,
+  variantId,
+  variantName,
+  bundleId,
   maxQuantity = 99,
   disabled = false,
 }: AddToCartProps) {
@@ -32,41 +42,32 @@ export default function AddToCart({
     }
   };
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = () => {
     if (disabled || isAdding) return;
 
     setIsAdding(true);
 
-    // TODO: Integrate with cart store/API
-    // For now, simulate a delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    // Add to cart store
+    addToCart({
+      productId,
+      name: productName,
+      price,
+      quantity,
+      image,
+      variantId,
+      variantName,
+      bundleId,
+      maxQuantity,
+    });
 
-    // Store in localStorage for now
-    const cartKey = 'gemfolio_cart';
-    const existingCart = JSON.parse(localStorage.getItem(cartKey) || '[]');
-
-    const existingItemIndex = existingCart.findIndex(
-      (item: { productId: string }) => item.productId === productId
-    );
-
-    if (existingItemIndex >= 0) {
-      existingCart[existingItemIndex].quantity += quantity;
-    } else {
-      existingCart.push({
-        productId,
-        productName,
-        price,
-        quantity,
-      });
-    }
-
-    localStorage.setItem(cartKey, JSON.stringify(existingCart));
-
-    // Update cart count in header (dispatch custom event)
+    // Dispatch event for components that need to know
     window.dispatchEvent(new CustomEvent('cart-updated'));
 
     setIsAdding(false);
     setIsAdded(true);
+
+    // Open cart drawer after adding
+    openCartDrawer();
 
     // Reset added state after 2 seconds
     setTimeout(() => {

@@ -127,6 +127,8 @@ const totalQuantity = bundle.items?.reduce((sum, item) => sum + item.quantity, 0
               productId={bundle.id}
               productName={bundle.name}
               price={bundlePrice}
+              image={bundle.image ?? undefined}
+              bundleId={bundle.id}
               maxQuantity={10}
               client:load
             />

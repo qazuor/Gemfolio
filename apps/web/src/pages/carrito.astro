@@ -1,0 +1,28 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CartPage from '@/components/react/cart/CartPage';
+---
+
+<BaseLayout title="Carrito" description="Tu carrito de compras" noIndex>
+  <!-- Breadcrumb -->
+  <nav class="border-b">
+    <div class="container mx-auto px-4 py-3">
+      <ol class="flex items-center gap-2 text-sm text-muted-foreground">
+        <li>
+          <a href="/" class="hover:text-foreground">Inicio</a>
+        </li>
+        <li>/</li>
+        <li class="text-foreground">Carrito</li>
+      </ol>
+    </div>
+  </nav>
+
+  <section class="py-8 md:py-12">
+    <div class="container mx-auto px-4">
+      <h1 class="mb-8 font-heading text-2xl font-bold md:text-3xl">
+        Tu carrito
+      </h1>
+      <CartPage client:load />
+    </div>
+  </section>
+</BaseLayout>
