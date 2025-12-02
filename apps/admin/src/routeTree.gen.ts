@@ -19,6 +19,7 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as DashboardProductosIndexRouteImport } from './routes/_dashboard/productos/index'
 import { Route as DashboardPedidosIndexRouteImport } from './routes/_dashboard/pedidos/index'
+import { Route as DashboardPaginasIndexRouteImport } from './routes/_dashboard/paginas/index'
 import { Route as DashboardInventarioIndexRouteImport } from './routes/_dashboard/inventario/index'
 import { Route as DashboardCuponesIndexRouteImport } from './routes/_dashboard/cupones/index'
 import { Route as DashboardClientesIndexRouteImport } from './routes/_dashboard/clientes/index'
@@ -29,6 +30,8 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 import { Route as DashboardProductosNuevoRouteImport } from './routes/_dashboard/productos/nuevo'
 import { Route as DashboardProductosIdRouteImport } from './routes/_dashboard/productos/$id'
 import { Route as DashboardPedidosIdRouteImport } from './routes/_dashboard/pedidos/$id'
+import { Route as DashboardPaginasNuevoRouteImport } from './routes/_dashboard/paginas/nuevo'
+import { Route as DashboardPaginasIdRouteImport } from './routes/_dashboard/paginas/$id'
 import { Route as DashboardCuponesNuevoRouteImport } from './routes/_dashboard/cupones/nuevo'
 import { Route as DashboardCuponesIdRouteImport } from './routes/_dashboard/cupones/$id'
 import { Route as DashboardClientesIdRouteImport } from './routes/_dashboard/clientes/$id'
@@ -83,6 +86,11 @@ const DashboardPedidosIndexRoute = DashboardPedidosIndexRouteImport.update({
   path: '/pedidos/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardPaginasIndexRoute = DashboardPaginasIndexRouteImport.update({
+  id: '/paginas/',
+  path: '/paginas/',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardInventarioIndexRoute =
   DashboardInventarioIndexRouteImport.update({
     id: '/inventario/',
@@ -135,6 +143,16 @@ const DashboardPedidosIdRoute = DashboardPedidosIdRouteImport.update({
   path: '/pedidos/$id',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardPaginasNuevoRoute = DashboardPaginasNuevoRouteImport.update({
+  id: '/paginas/nuevo',
+  path: '/paginas/nuevo',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardPaginasIdRoute = DashboardPaginasIdRouteImport.update({
+  id: '/paginas/$id',
+  path: '/paginas/$id',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardCuponesNuevoRoute = DashboardCuponesNuevoRouteImport.update({
   id: '/cupones/nuevo',
   path: '/cupones/nuevo',
@@ -173,6 +191,8 @@ export interface FileRoutesByFullPath {
   '/clientes/$id': typeof DashboardClientesIdRoute
   '/cupones/$id': typeof DashboardCuponesIdRoute
   '/cupones/nuevo': typeof DashboardCuponesNuevoRoute
+  '/paginas/$id': typeof DashboardPaginasIdRoute
+  '/paginas/nuevo': typeof DashboardPaginasNuevoRoute
   '/pedidos/$id': typeof DashboardPedidosIdRoute
   '/productos/$id': typeof DashboardProductosIdRoute
   '/productos/nuevo': typeof DashboardProductosNuevoRoute
@@ -183,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/clientes': typeof DashboardClientesIndexRoute
   '/cupones': typeof DashboardCuponesIndexRoute
   '/inventario': typeof DashboardInventarioIndexRoute
+  '/paginas': typeof DashboardPaginasIndexRoute
   '/pedidos': typeof DashboardPedidosIndexRoute
   '/productos': typeof DashboardProductosIndexRoute
 }
@@ -198,6 +219,8 @@ export interface FileRoutesByTo {
   '/clientes/$id': typeof DashboardClientesIdRoute
   '/cupones/$id': typeof DashboardCuponesIdRoute
   '/cupones/nuevo': typeof DashboardCuponesNuevoRoute
+  '/paginas/$id': typeof DashboardPaginasIdRoute
+  '/paginas/nuevo': typeof DashboardPaginasNuevoRoute
   '/pedidos/$id': typeof DashboardPedidosIdRoute
   '/productos/$id': typeof DashboardProductosIdRoute
   '/productos/nuevo': typeof DashboardProductosNuevoRoute
@@ -208,6 +231,7 @@ export interface FileRoutesByTo {
   '/clientes': typeof DashboardClientesIndexRoute
   '/cupones': typeof DashboardCuponesIndexRoute
   '/inventario': typeof DashboardInventarioIndexRoute
+  '/paginas': typeof DashboardPaginasIndexRoute
   '/pedidos': typeof DashboardPedidosIndexRoute
   '/productos': typeof DashboardProductosIndexRoute
 }
@@ -226,6 +250,8 @@ export interface FileRoutesById {
   '/_dashboard/clientes/$id': typeof DashboardClientesIdRoute
   '/_dashboard/cupones/$id': typeof DashboardCuponesIdRoute
   '/_dashboard/cupones/nuevo': typeof DashboardCuponesNuevoRoute
+  '/_dashboard/paginas/$id': typeof DashboardPaginasIdRoute
+  '/_dashboard/paginas/nuevo': typeof DashboardPaginasNuevoRoute
   '/_dashboard/pedidos/$id': typeof DashboardPedidosIdRoute
   '/_dashboard/productos/$id': typeof DashboardProductosIdRoute
   '/_dashboard/productos/nuevo': typeof DashboardProductosNuevoRoute
@@ -236,6 +262,7 @@ export interface FileRoutesById {
   '/_dashboard/clientes/': typeof DashboardClientesIndexRoute
   '/_dashboard/cupones/': typeof DashboardCuponesIndexRoute
   '/_dashboard/inventario/': typeof DashboardInventarioIndexRoute
+  '/_dashboard/paginas/': typeof DashboardPaginasIndexRoute
   '/_dashboard/pedidos/': typeof DashboardPedidosIndexRoute
   '/_dashboard/productos/': typeof DashboardProductosIndexRoute
 }
@@ -253,6 +280,8 @@ export interface FileRouteTypes {
     | '/clientes/$id'
     | '/cupones/$id'
     | '/cupones/nuevo'
+    | '/paginas/$id'
+    | '/paginas/nuevo'
     | '/pedidos/$id'
     | '/productos/$id'
     | '/productos/nuevo'
@@ -263,6 +292,7 @@ export interface FileRouteTypes {
     | '/clientes'
     | '/cupones'
     | '/inventario'
+    | '/paginas'
     | '/pedidos'
     | '/productos'
   fileRoutesByTo: FileRoutesByTo
@@ -278,6 +308,8 @@ export interface FileRouteTypes {
     | '/clientes/$id'
     | '/cupones/$id'
     | '/cupones/nuevo'
+    | '/paginas/$id'
+    | '/paginas/nuevo'
     | '/pedidos/$id'
     | '/productos/$id'
     | '/productos/nuevo'
@@ -288,6 +320,7 @@ export interface FileRouteTypes {
     | '/clientes'
     | '/cupones'
     | '/inventario'
+    | '/paginas'
     | '/pedidos'
     | '/productos'
   id:
@@ -305,6 +338,8 @@ export interface FileRouteTypes {
     | '/_dashboard/clientes/$id'
     | '/_dashboard/cupones/$id'
     | '/_dashboard/cupones/nuevo'
+    | '/_dashboard/paginas/$id'
+    | '/_dashboard/paginas/nuevo'
     | '/_dashboard/pedidos/$id'
     | '/_dashboard/productos/$id'
     | '/_dashboard/productos/nuevo'
@@ -315,6 +350,7 @@ export interface FileRouteTypes {
     | '/_dashboard/clientes/'
     | '/_dashboard/cupones/'
     | '/_dashboard/inventario/'
+    | '/_dashboard/paginas/'
     | '/_dashboard/pedidos/'
     | '/_dashboard/productos/'
   fileRoutesById: FileRoutesById
@@ -399,6 +435,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPedidosIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/_dashboard/paginas/': {
+      id: '/_dashboard/paginas/'
+      path: '/paginas'
+      fullPath: '/paginas'
+      preLoaderRoute: typeof DashboardPaginasIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/_dashboard/inventario/': {
       id: '/_dashboard/inventario/'
       path: '/inventario'
@@ -469,6 +512,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPedidosIdRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/_dashboard/paginas/nuevo': {
+      id: '/_dashboard/paginas/nuevo'
+      path: '/paginas/nuevo'
+      fullPath: '/paginas/nuevo'
+      preLoaderRoute: typeof DashboardPaginasNuevoRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/paginas/$id': {
+      id: '/_dashboard/paginas/$id'
+      path: '/paginas/$id'
+      fullPath: '/paginas/$id'
+      preLoaderRoute: typeof DashboardPaginasIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/_dashboard/cupones/nuevo': {
       id: '/_dashboard/cupones/nuevo'
       path: '/cupones/nuevo'
@@ -530,6 +587,8 @@ interface DashboardRouteChildren {
   DashboardClientesIdRoute: typeof DashboardClientesIdRoute
   DashboardCuponesIdRoute: typeof DashboardCuponesIdRoute
   DashboardCuponesNuevoRoute: typeof DashboardCuponesNuevoRoute
+  DashboardPaginasIdRoute: typeof DashboardPaginasIdRoute
+  DashboardPaginasNuevoRoute: typeof DashboardPaginasNuevoRoute
   DashboardPedidosIdRoute: typeof DashboardPedidosIdRoute
   DashboardProductosIdRoute: typeof DashboardProductosIdRoute
   DashboardProductosNuevoRoute: typeof DashboardProductosNuevoRoute
@@ -538,6 +597,7 @@ interface DashboardRouteChildren {
   DashboardClientesIndexRoute: typeof DashboardClientesIndexRoute
   DashboardCuponesIndexRoute: typeof DashboardCuponesIndexRoute
   DashboardInventarioIndexRoute: typeof DashboardInventarioIndexRoute
+  DashboardPaginasIndexRoute: typeof DashboardPaginasIndexRoute
   DashboardPedidosIndexRoute: typeof DashboardPedidosIndexRoute
   DashboardProductosIndexRoute: typeof DashboardProductosIndexRoute
 }
@@ -549,6 +609,8 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardClientesIdRoute: DashboardClientesIdRoute,
   DashboardCuponesIdRoute: DashboardCuponesIdRoute,
   DashboardCuponesNuevoRoute: DashboardCuponesNuevoRoute,
+  DashboardPaginasIdRoute: DashboardPaginasIdRoute,
+  DashboardPaginasNuevoRoute: DashboardPaginasNuevoRoute,
   DashboardPedidosIdRoute: DashboardPedidosIdRoute,
   DashboardProductosIdRoute: DashboardProductosIdRoute,
   DashboardProductosNuevoRoute: DashboardProductosNuevoRoute,
@@ -557,6 +619,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardClientesIndexRoute: DashboardClientesIndexRoute,
   DashboardCuponesIndexRoute: DashboardCuponesIndexRoute,
   DashboardInventarioIndexRoute: DashboardInventarioIndexRoute,
+  DashboardPaginasIndexRoute: DashboardPaginasIndexRoute,
   DashboardPedidosIndexRoute: DashboardPedidosIndexRoute,
   DashboardProductosIndexRoute: DashboardProductosIndexRoute,
 }
@@ -575,12 +638,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
