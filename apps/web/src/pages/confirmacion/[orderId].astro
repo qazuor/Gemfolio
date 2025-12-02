@@ -1,0 +1,153 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { formatPrice } from '@/lib/utils';
+
+const { orderId } = Astro.params;
+
+// Fetch order details from API
+let order = null;
+let error = '';
+
+try {
+  const API_BASE = import.meta.env.PUBLIC_API_URL || 'http://localhost:3001/api';
+  const response = await fetch(`${API_BASE}/orders/${orderId}`);
+
+  if (response.ok) {
+    const result = await response.json();
+    order = result.data;
+  } else {
+    error = 'Pedido no encontrado';
+  }
+} catch (e) {
+  error = 'Error al cargar el pedido';
+  console.error(e);
+}
+---
+
+<BaseLayout title="Pedido Confirmado" description="Tu pedido ha sido confirmado" noIndex>
+  <section class="py-16 md:py-24">
+    <div class="container mx-auto max-w-2xl px-4">
+      {error ? (
+        <div class="rounded-lg border bg-muted/30 p-12 text-center">
+          <div class="mb-4 text-5xl">😕</div>
+          <h1 class="mb-2 font-heading text-2xl font-bold">Pedido no encontrado</h1>
+          <p class="mb-6 text-muted-foreground">{error}</p>
+          <a
+            href="/"
+            class="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Volver al inicio
+          </a>
+        </div>
+      ) : order ? (
+        <div class="text-center">
+          {/* Success Icon */}
+          <div class="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+            <svg class="h-10 w-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" role="img" aria-label="Confirmado">
+              <title>Confirmado</title>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+
+          {/* Title */}
+          <h1 class="mb-2 font-heading text-3xl font-bold text-green-600">
+            ¡Gracias por tu compra!
+          </h1>
+          <p class="mb-8 text-lg text-muted-foreground">
+            Tu pedido ha sido confirmado exitosamente
+          </p>
+
+          {/* Order Number */}
+          <div class="mb-8 rounded-lg border bg-muted/30 p-6">
+            <p class="mb-1 text-sm text-muted-foreground">Número de pedido</p>
+            <p class="font-mono text-2xl font-bold">{order.orderNumber}</p>
+          </div>
+
+          {/* Order Details */}
+          <div class="mb-8 rounded-lg border text-left">
+            <div class="border-b p-4">
+              <h2 class="font-heading font-bold">Detalles del pedido</h2>
+            </div>
+            <div class="p-4">
+              {/* Items */}
+              <div class="mb-4 space-y-3">
+                {order.items?.map((item: { id: string; name: string; quantity: number; price: string; variantName?: string }) => (
+                  <div class="flex justify-between gap-4">
+                    <div>
+                      <p class="font-medium">{item.name}</p>
+                      {item.variantName && (
+                        <p class="text-sm text-muted-foreground">{item.variantName}</p>
+                      )}
+                      <p class="text-sm text-muted-foreground">Cantidad: {item.quantity}</p>
+                    </div>
+                    <span class="font-medium">{formatPrice(Number(item.price) * item.quantity)}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Totals */}
+              <div class="space-y-2 border-t pt-4">
+                <div class="flex justify-between text-sm">
+                  <span class="text-muted-foreground">Subtotal</span>
+                  <span>{formatPrice(Number(order.subtotal))}</span>
+                </div>
+                {order.discount > 0 && (
+                  <div class="flex justify-between text-sm text-green-600">
+                    <span>Descuento</span>
+                    <span>-{formatPrice(Number(order.discount))}</span>
+                  </div>
+                )}
+                <div class="flex justify-between text-sm">
+                  <span class="text-muted-foreground">Envío</span>
+                  <span>{formatPrice(Number(order.shippingCost))}</span>
+                </div>
+                <div class="flex justify-between border-t pt-2 text-lg font-bold">
+                  <span>Total</span>
+                  <span class="text-primary">{formatPrice(Number(order.total))}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Shipping Address */}
+          {order.shippingAddress && (
+            <div class="mb-8 rounded-lg border text-left">
+              <div class="border-b p-4">
+                <h2 class="font-heading font-bold">Dirección de envío</h2>
+              </div>
+              <div class="p-4">
+                <p>{order.shippingAddress.street}</p>
+                <p>{order.shippingAddress.city}, {order.shippingAddress.state}</p>
+                <p>{order.shippingAddress.postalCode}</p>
+                <p>{order.shippingAddress.country}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Email Notice */}
+          <div class="mb-8 rounded-lg border border-blue-200 bg-blue-50 p-4 text-left dark:border-blue-900 dark:bg-blue-950/20">
+            <p class="text-sm text-blue-700 dark:text-blue-300">
+              <strong>📧 Te enviamos un email</strong> a <span class="font-medium">{order.customerEmail}</span> con los detalles de tu pedido y las instrucciones para el seguimiento.
+            </p>
+          </div>
+
+          {/* Actions */}
+          <div class="flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <a
+              href="/"
+              class="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Volver al inicio
+            </a>
+            <a
+              href="/catalogo"
+              class="inline-flex items-center justify-center rounded-lg border bg-background px-6 py-3 font-medium transition-colors hover:bg-accent"
+            >
+              Seguir comprando
+            </a>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  </section>
+</BaseLayout>

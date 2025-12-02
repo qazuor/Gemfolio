@@ -1,0 +1,17 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CheckoutForm from '@/components/react/checkout/CheckoutForm';
+---
+
+<BaseLayout title="Checkout" description="Finaliza tu compra" noIndex hideFooter>
+  <section class="py-8 md:py-12">
+    <div class="container mx-auto px-4">
+      <div class="mb-8 text-center">
+        <a href="/" class="inline-block">
+          <h1 class="font-heading text-2xl font-bold text-primary">Gemfolio</h1>
+        </a>
+      </div>
+      <CheckoutForm client:load />
+    </div>
+  </section>
+</BaseLayout>
