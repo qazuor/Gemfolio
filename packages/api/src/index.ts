@@ -2,8 +2,16 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 
+import { adminBundlesRoutes } from './routes/admin/bundles';
 import { adminCategoriesRoutes } from './routes/admin/categories';
+import { adminCouponsRoutes } from './routes/admin/coupons';
+import { adminDashboardRoutes } from './routes/admin/dashboard';
+import { adminInventoryRoutes } from './routes/admin/inventory';
+import { adminOrdersRoutes } from './routes/admin/orders';
+import { adminPagesRoutes } from './routes/admin/pages';
 import { adminProductsRoutes } from './routes/admin/products';
+import { adminSettingsRoutes } from './routes/admin/settings';
+import { adminUsersRoutes } from './routes/admin/users';
 import { bundlesRoutes } from './routes/bundles';
 import { cartRoutes } from './routes/cart';
 import { categoriesRoutes } from './routes/categories';
@@ -49,7 +57,15 @@ const publicApi = new Hono()
 // Mount admin routes
 const adminApi = new Hono()
   .route('/products', adminProductsRoutes)
-  .route('/categories', adminCategoriesRoutes);
+  .route('/categories', adminCategoriesRoutes)
+  .route('/bundles', adminBundlesRoutes)
+  .route('/orders', adminOrdersRoutes)
+  .route('/inventory', adminInventoryRoutes)
+  .route('/coupons', adminCouponsRoutes)
+  .route('/users', adminUsersRoutes)
+  .route('/pages', adminPagesRoutes)
+  .route('/settings', adminSettingsRoutes)
+  .route('/dashboard', adminDashboardRoutes);
 
 // Mount all routes under /api
 const api = new Hono().route('/', publicApi).route('/admin', adminApi);
