@@ -17,8 +17,15 @@ import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-pass
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as DashboardProductosIndexRouteImport } from './routes/_dashboard/productos/index'
+import { Route as DashboardCategoriasIndexRouteImport } from './routes/_dashboard/categorias/index'
+import { Route as DashboardBundlesIndexRouteImport } from './routes/_dashboard/bundles/index'
 import { Route as ApiUploadthingSplatRouteImport } from './routes/api.uploadthing.$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
+import { Route as DashboardProductosNuevoRouteImport } from './routes/_dashboard/productos/nuevo'
+import { Route as DashboardProductosIdRouteImport } from './routes/_dashboard/productos/$id'
+import { Route as DashboardBundlesNuevoRouteImport } from './routes/_dashboard/bundles/nuevo'
+import { Route as DashboardBundlesIdRouteImport } from './routes/_dashboard/bundles/$id'
 
 const DashboardRoute = DashboardRouteImport.update({
   id: '/_dashboard',
@@ -58,6 +65,22 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const DashboardProductosIndexRoute = DashboardProductosIndexRouteImport.update({
+  id: '/productos/',
+  path: '/productos/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardCategoriasIndexRoute =
+  DashboardCategoriasIndexRouteImport.update({
+    id: '/categorias/',
+    path: '/categorias/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardBundlesIndexRoute = DashboardBundlesIndexRouteImport.update({
+  id: '/bundles/',
+  path: '/bundles/',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const ApiUploadthingSplatRoute = ApiUploadthingSplatRouteImport.update({
   id: '/api/uploadthing/$',
   path: '/api/uploadthing/$',
@@ -68,6 +91,26 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardProductosNuevoRoute = DashboardProductosNuevoRouteImport.update({
+  id: '/productos/nuevo',
+  path: '/productos/nuevo',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardProductosIdRoute = DashboardProductosIdRouteImport.update({
+  id: '/productos/$id',
+  path: '/productos/$id',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardBundlesNuevoRoute = DashboardBundlesNuevoRouteImport.update({
+  id: '/bundles/nuevo',
+  path: '/bundles/nuevo',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardBundlesIdRoute = DashboardBundlesIdRouteImport.update({
+  id: '/bundles/$id',
+  path: '/bundles/$id',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/forgot-password': typeof AuthForgotPasswordRoute
@@ -76,8 +119,15 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof AuthResetPasswordRoute
   '/api/$': typeof ApiSplatRoute
   '/': typeof DashboardIndexRoute
+  '/bundles/$id': typeof DashboardBundlesIdRoute
+  '/bundles/nuevo': typeof DashboardBundlesNuevoRoute
+  '/productos/$id': typeof DashboardProductosIdRoute
+  '/productos/nuevo': typeof DashboardProductosNuevoRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/uploadthing/$': typeof ApiUploadthingSplatRoute
+  '/bundles': typeof DashboardBundlesIndexRoute
+  '/categorias': typeof DashboardCategoriasIndexRoute
+  '/productos': typeof DashboardProductosIndexRoute
 }
 export interface FileRoutesByTo {
   '/forgot-password': typeof AuthForgotPasswordRoute
@@ -86,8 +136,15 @@ export interface FileRoutesByTo {
   '/reset-password': typeof AuthResetPasswordRoute
   '/api/$': typeof ApiSplatRoute
   '/': typeof DashboardIndexRoute
+  '/bundles/$id': typeof DashboardBundlesIdRoute
+  '/bundles/nuevo': typeof DashboardBundlesNuevoRoute
+  '/productos/$id': typeof DashboardProductosIdRoute
+  '/productos/nuevo': typeof DashboardProductosNuevoRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/uploadthing/$': typeof ApiUploadthingSplatRoute
+  '/bundles': typeof DashboardBundlesIndexRoute
+  '/categorias': typeof DashboardCategoriasIndexRoute
+  '/productos': typeof DashboardProductosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -99,8 +156,15 @@ export interface FileRoutesById {
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/api/$': typeof ApiSplatRoute
   '/_dashboard/': typeof DashboardIndexRoute
+  '/_dashboard/bundles/$id': typeof DashboardBundlesIdRoute
+  '/_dashboard/bundles/nuevo': typeof DashboardBundlesNuevoRoute
+  '/_dashboard/productos/$id': typeof DashboardProductosIdRoute
+  '/_dashboard/productos/nuevo': typeof DashboardProductosNuevoRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/uploadthing/$': typeof ApiUploadthingSplatRoute
+  '/_dashboard/bundles/': typeof DashboardBundlesIndexRoute
+  '/_dashboard/categorias/': typeof DashboardCategoriasIndexRoute
+  '/_dashboard/productos/': typeof DashboardProductosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,8 +175,15 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/api/$'
     | '/'
+    | '/bundles/$id'
+    | '/bundles/nuevo'
+    | '/productos/$id'
+    | '/productos/nuevo'
     | '/api/auth/$'
     | '/api/uploadthing/$'
+    | '/bundles'
+    | '/categorias'
+    | '/productos'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -121,8 +192,15 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/api/$'
     | '/'
+    | '/bundles/$id'
+    | '/bundles/nuevo'
+    | '/productos/$id'
+    | '/productos/nuevo'
     | '/api/auth/$'
     | '/api/uploadthing/$'
+    | '/bundles'
+    | '/categorias'
+    | '/productos'
   id:
     | '__root__'
     | '/_auth'
@@ -133,8 +211,15 @@ export interface FileRouteTypes {
     | '/_auth/reset-password'
     | '/api/$'
     | '/_dashboard/'
+    | '/_dashboard/bundles/$id'
+    | '/_dashboard/bundles/nuevo'
+    | '/_dashboard/productos/$id'
+    | '/_dashboard/productos/nuevo'
     | '/api/auth/$'
     | '/api/uploadthing/$'
+    | '/_dashboard/bundles/'
+    | '/_dashboard/categorias/'
+    | '/_dashboard/productos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -203,6 +288,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_dashboard/productos/': {
+      id: '/_dashboard/productos/'
+      path: '/productos'
+      fullPath: '/productos'
+      preLoaderRoute: typeof DashboardProductosIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/categorias/': {
+      id: '/_dashboard/categorias/'
+      path: '/categorias'
+      fullPath: '/categorias'
+      preLoaderRoute: typeof DashboardCategoriasIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/bundles/': {
+      id: '/_dashboard/bundles/'
+      path: '/bundles'
+      fullPath: '/bundles'
+      preLoaderRoute: typeof DashboardBundlesIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/api/uploadthing/$': {
       id: '/api/uploadthing/$'
       path: '/api/uploadthing/$'
@@ -216,6 +322,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_dashboard/productos/nuevo': {
+      id: '/_dashboard/productos/nuevo'
+      path: '/productos/nuevo'
+      fullPath: '/productos/nuevo'
+      preLoaderRoute: typeof DashboardProductosNuevoRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/productos/$id': {
+      id: '/_dashboard/productos/$id'
+      path: '/productos/$id'
+      fullPath: '/productos/$id'
+      preLoaderRoute: typeof DashboardProductosIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/bundles/nuevo': {
+      id: '/_dashboard/bundles/nuevo'
+      path: '/bundles/nuevo'
+      fullPath: '/bundles/nuevo'
+      preLoaderRoute: typeof DashboardBundlesNuevoRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/bundles/$id': {
+      id: '/_dashboard/bundles/$id'
+      path: '/bundles/$id'
+      fullPath: '/bundles/$id'
+      preLoaderRoute: typeof DashboardBundlesIdRouteImport
+      parentRoute: typeof DashboardRoute
     }
   }
 }
@@ -238,10 +372,24 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface DashboardRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardBundlesIdRoute: typeof DashboardBundlesIdRoute
+  DashboardBundlesNuevoRoute: typeof DashboardBundlesNuevoRoute
+  DashboardProductosIdRoute: typeof DashboardProductosIdRoute
+  DashboardProductosNuevoRoute: typeof DashboardProductosNuevoRoute
+  DashboardBundlesIndexRoute: typeof DashboardBundlesIndexRoute
+  DashboardCategoriasIndexRoute: typeof DashboardCategoriasIndexRoute
+  DashboardProductosIndexRoute: typeof DashboardProductosIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardBundlesIdRoute: DashboardBundlesIdRoute,
+  DashboardBundlesNuevoRoute: DashboardBundlesNuevoRoute,
+  DashboardProductosIdRoute: DashboardProductosIdRoute,
+  DashboardProductosNuevoRoute: DashboardProductosNuevoRoute,
+  DashboardBundlesIndexRoute: DashboardBundlesIndexRoute,
+  DashboardCategoriasIndexRoute: DashboardCategoriasIndexRoute,
+  DashboardProductosIndexRoute: DashboardProductosIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
@@ -258,12 +406,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

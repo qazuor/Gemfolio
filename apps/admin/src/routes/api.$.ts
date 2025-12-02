@@ -34,13 +34,14 @@ async function handleApiRequest(request: Request) {
 }
 
 export const Route = createFileRoute('/api/$')({
+  // @ts-expect-error - TanStack Start server handlers
   server: {
     handlers: {
-      GET: ({ request }) => handleApiRequest(request),
-      POST: ({ request }) => handleApiRequest(request),
-      PATCH: ({ request }) => handleApiRequest(request),
-      PUT: ({ request }) => handleApiRequest(request),
-      DELETE: ({ request }) => handleApiRequest(request),
+      GET: ({ request }: { request: Request }) => handleApiRequest(request),
+      POST: ({ request }: { request: Request }) => handleApiRequest(request),
+      PATCH: ({ request }: { request: Request }) => handleApiRequest(request),
+      PUT: ({ request }: { request: Request }) => handleApiRequest(request),
+      DELETE: ({ request }: { request: Request }) => handleApiRequest(request),
     },
   },
 });

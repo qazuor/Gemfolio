@@ -6,10 +6,11 @@ import { createFileRoute } from '@tanstack/react-router';
  * Handles file uploads via Uploadthing
  */
 export const Route = createFileRoute('/api/uploadthing/$')({
+  // @ts-expect-error - TanStack Start server handlers
   server: {
     handlers: {
-      GET: ({ request }) => GET(request),
-      POST: ({ request }) => POST(request),
+      GET: ({ request }: { request: Request }) => GET(request),
+      POST: ({ request }: { request: Request }) => POST(request),
     },
   },
 });
