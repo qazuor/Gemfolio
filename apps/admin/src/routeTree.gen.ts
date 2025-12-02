@@ -19,6 +19,7 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as DashboardProductosIndexRouteImport } from './routes/_dashboard/productos/index'
 import { Route as DashboardPedidosIndexRouteImport } from './routes/_dashboard/pedidos/index'
+import { Route as DashboardInventarioIndexRouteImport } from './routes/_dashboard/inventario/index'
 import { Route as DashboardCategoriasIndexRouteImport } from './routes/_dashboard/categorias/index'
 import { Route as DashboardBundlesIndexRouteImport } from './routes/_dashboard/bundles/index'
 import { Route as ApiUploadthingSplatRouteImport } from './routes/api.uploadthing.$'
@@ -77,6 +78,12 @@ const DashboardPedidosIndexRoute = DashboardPedidosIndexRouteImport.update({
   path: '/pedidos/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardInventarioIndexRoute =
+  DashboardInventarioIndexRouteImport.update({
+    id: '/inventario/',
+    path: '/inventario/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 const DashboardCategoriasIndexRoute =
   DashboardCategoriasIndexRouteImport.update({
     id: '/categorias/',
@@ -140,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/api/uploadthing/$': typeof ApiUploadthingSplatRoute
   '/bundles': typeof DashboardBundlesIndexRoute
   '/categorias': typeof DashboardCategoriasIndexRoute
+  '/inventario': typeof DashboardInventarioIndexRoute
   '/pedidos': typeof DashboardPedidosIndexRoute
   '/productos': typeof DashboardProductosIndexRoute
 }
@@ -159,6 +167,7 @@ export interface FileRoutesByTo {
   '/api/uploadthing/$': typeof ApiUploadthingSplatRoute
   '/bundles': typeof DashboardBundlesIndexRoute
   '/categorias': typeof DashboardCategoriasIndexRoute
+  '/inventario': typeof DashboardInventarioIndexRoute
   '/pedidos': typeof DashboardPedidosIndexRoute
   '/productos': typeof DashboardProductosIndexRoute
 }
@@ -181,6 +190,7 @@ export interface FileRoutesById {
   '/api/uploadthing/$': typeof ApiUploadthingSplatRoute
   '/_dashboard/bundles/': typeof DashboardBundlesIndexRoute
   '/_dashboard/categorias/': typeof DashboardCategoriasIndexRoute
+  '/_dashboard/inventario/': typeof DashboardInventarioIndexRoute
   '/_dashboard/pedidos/': typeof DashboardPedidosIndexRoute
   '/_dashboard/productos/': typeof DashboardProductosIndexRoute
 }
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/api/uploadthing/$'
     | '/bundles'
     | '/categorias'
+    | '/inventario'
     | '/pedidos'
     | '/productos'
   fileRoutesByTo: FileRoutesByTo
@@ -221,6 +232,7 @@ export interface FileRouteTypes {
     | '/api/uploadthing/$'
     | '/bundles'
     | '/categorias'
+    | '/inventario'
     | '/pedidos'
     | '/productos'
   id:
@@ -242,6 +254,7 @@ export interface FileRouteTypes {
     | '/api/uploadthing/$'
     | '/_dashboard/bundles/'
     | '/_dashboard/categorias/'
+    | '/_dashboard/inventario/'
     | '/_dashboard/pedidos/'
     | '/_dashboard/productos/'
   fileRoutesById: FileRoutesById
@@ -324,6 +337,13 @@ declare module '@tanstack/react-router' {
       path: '/pedidos'
       fullPath: '/pedidos'
       preLoaderRoute: typeof DashboardPedidosIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/inventario/': {
+      id: '/_dashboard/inventario/'
+      path: '/inventario'
+      fullPath: '/inventario'
+      preLoaderRoute: typeof DashboardInventarioIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/categorias/': {
@@ -417,6 +437,7 @@ interface DashboardRouteChildren {
   DashboardProductosNuevoRoute: typeof DashboardProductosNuevoRoute
   DashboardBundlesIndexRoute: typeof DashboardBundlesIndexRoute
   DashboardCategoriasIndexRoute: typeof DashboardCategoriasIndexRoute
+  DashboardInventarioIndexRoute: typeof DashboardInventarioIndexRoute
   DashboardPedidosIndexRoute: typeof DashboardPedidosIndexRoute
   DashboardProductosIndexRoute: typeof DashboardProductosIndexRoute
 }
@@ -430,6 +451,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardProductosNuevoRoute: DashboardProductosNuevoRoute,
   DashboardBundlesIndexRoute: DashboardBundlesIndexRoute,
   DashboardCategoriasIndexRoute: DashboardCategoriasIndexRoute,
+  DashboardInventarioIndexRoute: DashboardInventarioIndexRoute,
   DashboardPedidosIndexRoute: DashboardPedidosIndexRoute,
   DashboardProductosIndexRoute: DashboardProductosIndexRoute,
 }
