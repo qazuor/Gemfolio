@@ -3,6 +3,12 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import ProductGrid from '@/components/astro/product/ProductGrid.astro';
 import BundleCard from '@/components/astro/bundle/BundleCard.astro';
 import { getFeaturedProducts, getNewProducts, getCategories, getBundles } from '@/lib/api';
+import {
+  generateOrganizationSchema,
+  generateWebSiteSchema,
+  defaultOrganization,
+  defaultWebSite,
+} from '@/lib/seo';
 
 const [featuredProducts, newProducts, categories, bundles] = await Promise.all([
   getFeaturedProducts(8),
@@ -24,6 +30,10 @@ const categoryIcons: Record<string, string> = {
 ---
 
 <BaseLayout title="Inicio">
+  <!-- Structured Data -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(generateOrganizationSchema(defaultOrganization))} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(generateWebSiteSchema(defaultWebSite))} />
+
   <!-- Hero Section -->
   <section class="container mx-auto px-4 py-16 md:py-24">
     <div class="flex min-h-[50vh] flex-col items-center justify-center text-center">

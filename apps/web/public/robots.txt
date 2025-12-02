@@ -1,0 +1,13 @@
+# Gemfolio Robots.txt
+
+User-agent: *
+Allow: /
+
+# Disallow private/transactional pages
+Disallow: /carrito
+Disallow: /checkout
+Disallow: /confirmacion/
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://gemfolio.com/sitemap-index.xml

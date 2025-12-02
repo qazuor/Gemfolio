@@ -1,0 +1,92 @@
+---
+import {
+  generateOrganizationSchema,
+  generateWebSiteSchema,
+  generateBreadcrumbSchema,
+  defaultOrganization,
+  defaultWebSite,
+  type BreadcrumbItem,
+} from '@/lib/seo';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  image?: string;
+  noIndex?: boolean;
+  type?: 'website' | 'article' | 'product';
+  breadcrumbs?: BreadcrumbItem[];
+  includeOrganization?: boolean;
+  includeWebSite?: boolean;
+  structuredData?: object | object[];
+}
+
+const {
+  title,
+  description = 'Descubre nuestra exclusiva colección de joyería artesanal. Anillos, collares, pulseras y más.',
+  canonical,
+  image = '/og-image.jpg',
+  noIndex = false,
+  type = 'website',
+  breadcrumbs,
+  includeOrganization = false,
+  includeWebSite = false,
+  structuredData,
+} = Astro.props;
+
+const siteUrl = Astro.site?.toString() || 'https://gemfolio.com';
+const canonicalURL = canonical || new URL(Astro.url.pathname, siteUrl).toString();
+const socialImageURL = new URL(image, siteUrl).toString();
+
+// Build structured data array
+const schemas: object[] = [];
+
+if (includeOrganization) {
+  schemas.push(generateOrganizationSchema(defaultOrganization));
+}
+
+if (includeWebSite) {
+  schemas.push(generateWebSiteSchema(defaultWebSite));
+}
+
+if (breadcrumbs && breadcrumbs.length > 0) {
+  schemas.push(generateBreadcrumbSchema(breadcrumbs));
+}
+
+if (structuredData) {
+  if (Array.isArray(structuredData)) {
+    schemas.push(...structuredData);
+  } else {
+    schemas.push(structuredData);
+  }
+}
+---
+
+<!-- Primary Meta Tags -->
+<title>{title} | Gemfolio</title>
+<meta name="title" content={`${title} | Gemfolio`} />
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+
+{noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={`${title} | Gemfolio`} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={socialImageURL} />
+<meta property="og:locale" content="es_AR" />
+<meta property="og:site_name" content="Gemfolio" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonicalURL} />
+<meta name="twitter:title" content={`${title} | Gemfolio`} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={socialImageURL} />
+
+<!-- Structured Data -->
+{schemas.map((schema) => (
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+))}

@@ -5,6 +5,7 @@ import ProductGallery from '@/components/react/product/ProductGallery';
 import AddToCart from '@/components/react/product/AddToCart';
 import { getProductBySlug, getRelatedProducts } from '@/lib/api';
 import { formatPrice } from '@/lib/utils';
+import { generateBreadcrumbSchema } from '@/lib/seo';
 
 const { slug } = Astro.params;
 const product = await getProductBySlug(slug!);
@@ -27,21 +28,47 @@ const isNew = product.tags?.some((tag) => tag.slug === 'nuevo');
 const isOnSale = product.tags?.some((tag) => tag.slug === 'oferta');
 const isOutOfStock = product.trackInventory && product.stock <= 0;
 
-// Structured data for SEO
-const structuredData = {
+const siteUrl = Astro.site?.toString() || 'https://gemfolio.com';
+
+// Breadcrumb structured data
+const breadcrumbItems = [
+  { name: 'Inicio', url: siteUrl },
+  { name: 'Catálogo', url: `${siteUrl}/catalogo` },
+];
+if (product.category) {
+  breadcrumbItems.push({
+    name: product.category.name,
+    url: `${siteUrl}/categoria/${product.category.slug}`,
+  });
+}
+breadcrumbItems.push({ name: product.name, url: `${siteUrl}/producto/${product.slug}` });
+const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems);
+
+// Product structured data
+const productSchema = {
   '@context': 'https://schema.org',
   '@type': 'Product',
   name: product.name,
   description: product.shortDescription || product.description,
-  image: primaryImage?.url,
+  image: product.images?.map(img => img.url) || [],
   sku: product.sku,
+  brand: {
+    '@type': 'Brand',
+    name: 'Gemfolio',
+  },
+  ...(product.category && { category: product.category.name }),
   offers: {
     '@type': 'Offer',
+    url: `${siteUrl}/producto/${product.slug}`,
     price: product.price,
     priceCurrency: 'ARS',
     availability: isOutOfStock
       ? 'https://schema.org/OutOfStock'
       : 'https://schema.org/InStock',
+    seller: {
+      '@type': 'Organization',
+      name: 'Gemfolio',
+    },
   },
 };
 ---
@@ -51,7 +78,8 @@ const structuredData = {
   description={product.seoDescription || product.shortDescription || product.description || ''}
 >
   <!-- Structured Data -->
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(productSchema)} />
 
   <!-- Breadcrumb -->
   <nav class="border-b">

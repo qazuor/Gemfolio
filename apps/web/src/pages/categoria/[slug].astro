@@ -2,6 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ProductGrid from '@/components/astro/product/ProductGrid.astro';
 import { getCategoryBySlug, getCategories } from '@/lib/api';
+import { generateBreadcrumbSchema, generateItemListSchema } from '@/lib/seo';
 
 export async function getStaticPaths() {
   const categories = await getCategories();
@@ -19,12 +20,35 @@ if (!result) {
 
 const { category, products } = result;
 const subcategories = category.children || [];
+
+const siteUrl = Astro.site?.toString() || 'https://gemfolio.com';
+
+// Generate structured data
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Inicio', url: siteUrl },
+  { name: 'Catálogo', url: `${siteUrl}/catalogo` },
+  { name: category.name, url: `${siteUrl}/categoria/${category.slug}` },
+]);
+
+const itemListSchema = generateItemListSchema({
+  name: `Productos en ${category.name}`,
+  items: products.data.slice(0, 10).map((product, index) => ({
+    name: product.name,
+    url: `${siteUrl}/producto/${product.slug}`,
+    image: product.images?.[0]?.url,
+    position: index + 1,
+  })),
+});
 ---
 
 <BaseLayout
   title={category.name}
   description={category.description || `Explora nuestra colección de ${category.name}`}
 >
+  <!-- Structured Data -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(itemListSchema)} />
+
   <!-- Breadcrumb -->
   <nav class="border-b">
     <div class="container mx-auto px-4 py-3">
