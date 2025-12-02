@@ -1,0 +1,60 @@
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { logger } from 'hono/logger';
+
+import { adminCategoriesRoutes } from './routes/admin/categories';
+import { adminProductsRoutes } from './routes/admin/products';
+import { categoriesRoutes } from './routes/categories';
+import { productsRoutes } from './routes/products';
+
+// Create the main Hono app
+const app = new Hono()
+  // Global middleware
+  .use('*', logger())
+  .use(
+    '*',
+    cors({
+      origin: (origin) => {
+        // Allow requests from configured origins
+        const allowedOrigins = [
+          'http://localhost:3001', // Admin
+          'http://localhost:4321', // Web
+        ];
+        if (allowedOrigins.includes(origin)) {
+          return origin;
+        }
+        return allowedOrigins[0];
+      },
+      credentials: true,
+    })
+  );
+
+// Mount public routes
+const publicApi = new Hono()
+  .route('/products', productsRoutes)
+  .route('/categories', categoriesRoutes);
+
+// Mount admin routes
+const adminApi = new Hono()
+  .route('/products', adminProductsRoutes)
+  .route('/categories', adminCategoriesRoutes);
+
+// Mount all routes under /api
+const api = new Hono().route('/', publicApi).route('/admin', adminApi);
+
+// Mount API under base app
+app.route('/api', api);
+
+// Health check
+app.get('/health', (c) => c.json({ status: 'ok', timestamp: new Date().toISOString() }));
+
+// Export the app and types
+export { app };
+export type AppType = typeof app;
+
+export type { ApiResponse } from './lib/response';
+// Re-export helpers and middleware for use in apps
+export { errors, paginated, success } from './lib/response';
+export { adminMiddleware, superAdminMiddleware } from './middleware/admin';
+export type { AuthUser } from './middleware/auth';
+export { authMiddleware, getUser } from './middleware/auth';
