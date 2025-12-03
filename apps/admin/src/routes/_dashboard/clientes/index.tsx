@@ -15,30 +15,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@gemfolio/ui';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import type { ColumnDef } from '@tanstack/react-table';
+import { zodValidator } from '@tanstack/zod-adapter';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Eye, MoreHorizontal, Search } from 'lucide-react';
-import { useState } from 'react';
 
 import { DataTable, EmptyState, PageHeader } from '@/components/shared';
 import { type Customer, getRoleColor, getRoleLabel, useCustomers } from '@/hooks/use-customers';
+import { type CustomersSearch, customersSearchSchema } from '@/lib/search-schemas';
 
 export const Route = createFileRoute('/_dashboard/clientes/')({
   component: CustomersPage,
+  validateSearch: zodValidator(customersSearchSchema),
 });
 
 function CustomersPage() {
-  const [search, setSearch] = useState('');
-  const [roleFilter, setRoleFilter] = useState<string>('all');
-  const [page] = useState(1);
+  const navigate = useNavigate({ from: Route.fullPath });
+  const { search, role, page } = Route.useSearch();
+
+  const updateSearch = (updates: Partial<CustomersSearch>) => {
+    navigate({
+      search: (prev: CustomersSearch) => ({ ...prev, ...updates }),
+      replace: true,
+    });
+  };
 
   const { data: customersData, isLoading } = useCustomers({
-    page,
+    page: page ?? 1,
     limit: 20,
     search: search || undefined,
-    role: roleFilter !== 'all' ? (roleFilter as 'customer' | 'admin' | 'super_admin') : undefined,
+    role: role || undefined,
   });
 
   const getInitials = (name: string | null, email: string) => {
@@ -137,12 +145,19 @@ function CustomersPage() {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Buscar por nombre o email..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={search ?? ''}
+            onChange={(e) => updateSearch({ search: e.target.value || undefined })}
             className="pl-9"
           />
         </div>
-        <Select value={roleFilter} onValueChange={setRoleFilter}>
+        <Select
+          value={role ?? ''}
+          onValueChange={(value) =>
+            updateSearch({
+              role: value === 'all' ? undefined : (value as 'customer' | 'admin' | 'super_admin'),
+            })
+          }
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Rol" />
           </SelectTrigger>

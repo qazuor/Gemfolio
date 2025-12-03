@@ -14,8 +14,9 @@ import {
   SelectValue,
   Switch,
 } from '@gemfolio/ui';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import type { ColumnDef } from '@tanstack/react-table';
+import { zodValidator } from '@tanstack/zod-adapter';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Copy, Edit, MoreHorizontal, Plus, Search, Trash2 } from 'lucide-react';
@@ -31,25 +32,31 @@ import {
   useDeleteCoupon,
   useToggleCouponStatus,
 } from '@/hooks/use-coupons';
+import { type CouponsSearch, couponsSearchSchema } from '@/lib/search-schemas';
 
 export const Route = createFileRoute('/_dashboard/cupones/')({
   component: CouponsPage,
+  validateSearch: zodValidator(couponsSearchSchema),
 });
 
 function CouponsPage() {
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [typeFilter, setTypeFilter] = useState<string>('all');
-  const [page] = useState(1);
+  const navigate = useNavigate({ from: Route.fullPath });
+  const { search, isActive, type, page } = Route.useSearch();
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
+  const updateSearch = (updates: Partial<CouponsSearch>) => {
+    navigate({
+      search: (prev: CouponsSearch) => ({ ...prev, ...updates }),
+      replace: true,
+    });
+  };
+
   const { data: couponsData, isLoading } = useCoupons({
-    page,
+    page: page ?? 1,
     limit: 20,
     search: search || undefined,
-    isActive: statusFilter === 'active' ? true : statusFilter === 'inactive' ? false : undefined,
-    type:
-      typeFilter !== 'all' ? (typeFilter as 'percentage' | 'fixed' | 'free_shipping') : undefined,
+    isActive: isActive,
+    type: type || undefined,
   });
 
   const deleteCoupon = useDeleteCoupon();
@@ -205,12 +212,19 @@ function CouponsPage() {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Buscar por código..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={search ?? ''}
+            onChange={(e) => updateSearch({ search: e.target.value || undefined })}
             className="pl-9"
           />
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <Select
+          value={isActive === true ? 'active' : isActive === false ? 'inactive' : ''}
+          onValueChange={(value) =>
+            updateSearch({
+              isActive: value === 'active' ? true : value === 'inactive' ? false : undefined,
+            })
+          }
+        >
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Estado" />
           </SelectTrigger>
@@ -220,7 +234,15 @@ function CouponsPage() {
             <SelectItem value="inactive">Inactivos</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={typeFilter} onValueChange={setTypeFilter}>
+        <Select
+          value={type ?? ''}
+          onValueChange={(value) =>
+            updateSearch({
+              type:
+                value === 'all' ? undefined : (value as 'percentage' | 'fixed' | 'free_shipping'),
+            })
+          }
+        >
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Tipo" />
           </SelectTrigger>

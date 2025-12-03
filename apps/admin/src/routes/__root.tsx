@@ -5,6 +5,9 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from 'sonner';
 
+import { RootErrorComponent } from '@/components/shared/error-boundary';
+import { RootNotFound } from '@/components/shared/not-found';
+import { RootPending } from '@/components/shared/pending';
 import type { getQueryClient } from '@/lib/query-client';
 import appCss from '@/styles/globals.css?url';
 
@@ -13,6 +16,9 @@ interface RootContext {
 }
 
 export const Route = createRootRouteWithContext<RootContext>()({
+  errorComponent: RootErrorComponent,
+  notFoundComponent: RootNotFound,
+  pendingComponent: RootPending,
   head: () => ({
     meta: [
       { charSet: 'utf-8' },

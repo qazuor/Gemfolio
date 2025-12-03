@@ -13,8 +13,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@gemfolio/ui';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import type { ColumnDef } from '@tanstack/react-table';
+import { zodValidator } from '@tanstack/zod-adapter';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Copy, Edit, MoreHorizontal, Plus, Search, Trash2 } from 'lucide-react';
@@ -23,9 +24,11 @@ import { useState } from 'react';
 import { ConfirmDialog, DataTable, EmptyState, PageHeader } from '@/components/shared';
 import { useCategories } from '@/hooks/use-categories';
 import { useDeleteProduct, useProducts } from '@/hooks/use-products';
+import { type ProductsSearch, productsSearchSchema } from '@/lib/search-schemas';
 
 export const Route = createFileRoute('/_dashboard/productos/')({
   component: ProductsPage,
+  validateSearch: zodValidator(productsSearchSchema),
 });
 
 interface Product {
@@ -41,17 +44,22 @@ interface Product {
 }
 
 function ProductsPage() {
-  const [search, setSearch] = useState('');
-  const [status, setStatus] = useState<string>('');
-  const [categoryId, setCategoryId] = useState<string>('');
-  const [page] = useState(1);
+  const navigate = useNavigate({ from: Route.fullPath });
+  const { search, status, categoryId, page } = Route.useSearch();
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
+  const updateSearch = (updates: Partial<ProductsSearch>) => {
+    navigate({
+      search: (prev: ProductsSearch) => ({ ...prev, ...updates }),
+      replace: true,
+    });
+  };
+
   const { data: productsData, isLoading } = useProducts({
-    page,
+    page: page ?? 1,
     limit: 10,
     search: search || undefined,
-    status: status as 'draft' | 'active' | 'archived' | undefined,
+    status: status || undefined,
     categoryId: categoryId || undefined,
   });
 
@@ -210,12 +218,19 @@ function ProductsPage() {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Buscar productos..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={search ?? ''}
+            onChange={(e) => updateSearch({ search: e.target.value || undefined })}
             className="pl-9"
           />
         </div>
-        <Select value={status} onValueChange={setStatus}>
+        <Select
+          value={status ?? ''}
+          onValueChange={(value) =>
+            updateSearch({
+              status: value === 'all' ? undefined : (value as 'draft' | 'active' | 'archived'),
+            })
+          }
+        >
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Estado" />
           </SelectTrigger>
@@ -226,7 +241,12 @@ function ProductsPage() {
             <SelectItem value="archived">Archivados</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={categoryId} onValueChange={setCategoryId}>
+        <Select
+          value={categoryId ?? ''}
+          onValueChange={(value) =>
+            updateSearch({ categoryId: value === 'all' ? undefined : value })
+          }
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Categoría" />
           </SelectTrigger>

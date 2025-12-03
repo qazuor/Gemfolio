@@ -13,12 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@gemfolio/ui';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import type { ColumnDef } from '@tanstack/react-table';
+import { zodValidator } from '@tanstack/zod-adapter';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Eye, MoreHorizontal, Search } from 'lucide-react';
-import { useState } from 'react';
 
 import { DataTable, EmptyState, PageHeader } from '@/components/shared';
 import {
@@ -29,26 +29,30 @@ import {
   type Order,
   useOrders,
 } from '@/hooks/use-orders';
+import { type OrdersSearch, ordersSearchSchema } from '@/lib/search-schemas';
 
 export const Route = createFileRoute('/_dashboard/pedidos/')({
   component: OrdersPage,
+  validateSearch: zodValidator(ordersSearchSchema),
 });
 
 function OrdersPage() {
-  const [search, setSearch] = useState('');
-  const [status, setStatus] = useState<string>('');
-  const [paymentStatus, setPaymentStatus] = useState<string>('');
-  const [page] = useState(1);
+  const navigate = useNavigate({ from: Route.fullPath });
+  const { search, status, paymentStatus, page } = Route.useSearch();
+
+  const updateSearch = (updates: Partial<OrdersSearch>) => {
+    navigate({
+      search: (prev: OrdersSearch) => ({ ...prev, ...updates }),
+      replace: true,
+    });
+  };
 
   const { data: ordersData, isLoading } = useOrders({
-    page,
+    page: page ?? 1,
     limit: 20,
     search: search || undefined,
-    status: status && status !== 'all' ? (status as Order['status']) : undefined,
-    paymentStatus:
-      paymentStatus && paymentStatus !== 'all'
-        ? (paymentStatus as Order['paymentStatus'])
-        : undefined,
+    status: status || undefined,
+    paymentStatus: paymentStatus || undefined,
   });
 
   const formatCurrency = (value: string) => {
@@ -167,12 +171,17 @@ function OrdersPage() {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Buscar por número, email o nombre..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={search ?? ''}
+            onChange={(e) => updateSearch({ search: e.target.value || undefined })}
             className="pl-9"
           />
         </div>
-        <Select value={status} onValueChange={setStatus}>
+        <Select
+          value={status ?? ''}
+          onValueChange={(value) =>
+            updateSearch({ status: value === 'all' ? undefined : (value as Order['status']) })
+          }
+        >
           <SelectTrigger className="w-[160px]">
             <SelectValue placeholder="Estado" />
           </SelectTrigger>
@@ -187,7 +196,14 @@ function OrdersPage() {
             <SelectItem value="refunded">Reembolsado</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={paymentStatus} onValueChange={setPaymentStatus}>
+        <Select
+          value={paymentStatus ?? ''}
+          onValueChange={(value) =>
+            updateSearch({
+              paymentStatus: value === 'all' ? undefined : (value as Order['paymentStatus']),
+            })
+          }
+        >
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Pago" />
           </SelectTrigger>

@@ -44,7 +44,11 @@ function InventoryPage() {
   const [adjustItem, setAdjustItem] = useState<StockItem | null>(null);
   const [historyItem, setHistoryItem] = useState<StockItem | null>(null);
 
-  const { data: inventoryData, isLoading } = useInventory({
+  const {
+    data: inventoryData,
+    isLoading,
+    isError,
+  } = useInventory({
     page,
     limit: 50,
     search: search || undefined,
@@ -53,10 +57,25 @@ function InventoryPage() {
 
   const { data: lowStockData } = useLowStock();
 
-  const lowStockCount = lowStockData?.data.count ?? 0;
-  const outOfStockCount = inventoryData?.data.filter((item) => item.currentStock <= 0).length ?? 0;
+  // Handle error state
+  if (isError) {
+    return (
+      <div>
+        <PageHeader title="Inventario" description="Gestiona el stock de productos" />
+        <div className="flex flex-col items-center justify-center py-12">
+          <AlertTriangle className="h-12 w-12 text-destructive" />
+          <h2 className="mt-4 text-lg font-semibold">Error al cargar inventario</h2>
+          <p className="text-muted-foreground">No se pudo cargar la informacion del inventario</p>
+        </div>
+      </div>
+    );
+  }
 
-  const filteredData = inventoryData?.data.filter((item) => {
+  const items = inventoryData?.data ?? [];
+  const lowStockCount = lowStockData?.data?.count ?? 0;
+  const outOfStockCount = items.filter((item) => item.currentStock <= 0).length;
+
+  const filteredData = items.filter((item) => {
     if (filter === 'out') return item.currentStock <= 0;
     if (filter === 'low') return item.isLowStock && item.currentStock > 0;
     return true;
@@ -152,7 +171,7 @@ function InventoryPage() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{inventoryData?.pagination.total ?? 0}</div>
+            <div className="text-2xl font-bold">{inventoryData?.pagination?.total ?? 0}</div>
           </CardContent>
         </Card>
 
@@ -191,7 +210,7 @@ function InventoryPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {(inventoryData?.pagination.total ?? 0) - outOfStockCount}
+              {(inventoryData?.pagination?.total ?? 0) - outOfStockCount}
             </div>
           </CardContent>
         </Card>
@@ -221,7 +240,7 @@ function InventoryPage() {
       </div>
 
       {/* Table */}
-      {filteredData?.length === 0 && !isLoading ? (
+      {filteredData.length === 0 && !isLoading ? (
         <EmptyState
           title="No hay productos"
           description={
@@ -231,7 +250,7 @@ function InventoryPage() {
           }
         />
       ) : (
-        <DataTable columns={columns} data={filteredData || []} isLoading={isLoading} />
+        <DataTable columns={columns} data={filteredData} isLoading={isLoading} />
       )}
 
       {/* Modals */}

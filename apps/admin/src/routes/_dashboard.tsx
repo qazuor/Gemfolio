@@ -2,6 +2,9 @@ import { authClient } from '@gemfolio/auth/client';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
 import { Breadcrumbs, Header, MobileSidebar, Sidebar } from '@/components/layout';
+import { ErrorComponent } from '@/components/shared/error-boundary';
+import { NotFound } from '@/components/shared/not-found';
+import { Pending } from '@/components/shared/pending';
 
 export const Route = createFileRoute('/_dashboard')({
   beforeLoad: async () => {
@@ -12,6 +15,9 @@ export const Route = createFileRoute('/_dashboard')({
     return { user: session.data.user };
   },
   component: DashboardLayout,
+  errorComponent: ErrorComponent,
+  notFoundComponent: NotFound,
+  pendingComponent: Pending,
 });
 
 function DashboardLayout() {

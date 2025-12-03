@@ -13,6 +13,7 @@ import { Route as DashboardRouteImport } from './routes/_dashboard'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as DashboardIndexRouteImport } from './routes/_dashboard/index'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
+import { Route as DashboardConfiguracionRouteImport } from './routes/_dashboard/configuracion'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
@@ -35,9 +36,28 @@ import { Route as DashboardPaginasNuevoRouteImport } from './routes/_dashboard/p
 import { Route as DashboardPaginasIdRouteImport } from './routes/_dashboard/paginas/$id'
 import { Route as DashboardCuponesNuevoRouteImport } from './routes/_dashboard/cupones/nuevo'
 import { Route as DashboardCuponesIdRouteImport } from './routes/_dashboard/cupones/$id'
+import { Route as DashboardConfiguracionSeoRouteImport } from './routes/_dashboard/configuracion/seo'
+import { Route as DashboardConfiguracionRedesRouteImport } from './routes/_dashboard/configuracion/redes'
+import { Route as DashboardConfiguracionNotificacionesRouteImport } from './routes/_dashboard/configuracion/notificaciones'
+import { Route as DashboardConfiguracionGeneralRouteImport } from './routes/_dashboard/configuracion/general'
+import { Route as DashboardConfiguracionEnvioRouteImport } from './routes/_dashboard/configuracion/envio'
+import { Route as DashboardConfiguracionBrandingRouteImport } from './routes/_dashboard/configuracion/branding'
 import { Route as DashboardClientesIdRouteImport } from './routes/_dashboard/clientes/$id'
 import { Route as DashboardBundlesNuevoRouteImport } from './routes/_dashboard/bundles/nuevo'
 import { Route as DashboardBundlesIdRouteImport } from './routes/_dashboard/bundles/$id'
+import { Route as DashboardProductosIdIndexRouteImport } from './routes/_dashboard/productos/$id/index'
+import { Route as DashboardPedidosIdIndexRouteImport } from './routes/_dashboard/pedidos/$id/index'
+import { Route as DashboardProductosIdVariantesRouteImport } from './routes/_dashboard/productos/$id/variantes'
+import { Route as DashboardProductosIdSeoRouteImport } from './routes/_dashboard/productos/$id/seo'
+import { Route as DashboardProductosIdPreciosRouteImport } from './routes/_dashboard/productos/$id/precios'
+import { Route as DashboardProductosIdInventarioRouteImport } from './routes/_dashboard/productos/$id/inventario'
+import { Route as DashboardProductosIdInfoRouteImport } from './routes/_dashboard/productos/$id/info'
+import { Route as DashboardProductosIdImagenesRouteImport } from './routes/_dashboard/productos/$id/imagenes'
+import { Route as DashboardPedidosIdResumenRouteImport } from './routes/_dashboard/pedidos/$id/resumen'
+import { Route as DashboardPedidosIdProductosRouteImport } from './routes/_dashboard/pedidos/$id/productos'
+import { Route as DashboardPedidosIdPagosRouteImport } from './routes/_dashboard/pedidos/$id/pagos'
+import { Route as DashboardPedidosIdHistorialRouteImport } from './routes/_dashboard/pedidos/$id/historial'
+import { Route as DashboardPedidosIdClienteRouteImport } from './routes/_dashboard/pedidos/$id/cliente'
 
 const DashboardRoute = DashboardRouteImport.update({
   id: '/_dashboard',
@@ -56,6 +76,11 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardConfiguracionRoute = DashboardConfiguracionRouteImport.update({
+  id: '/configuracion',
+  path: '/configuracion',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -105,9 +130,9 @@ const DashboardCuponesIndexRoute = DashboardCuponesIndexRouteImport.update({
 } as any)
 const DashboardConfiguracionIndexRoute =
   DashboardConfiguracionIndexRouteImport.update({
-    id: '/configuracion/',
-    path: '/configuracion/',
-    getParentRoute: () => DashboardRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => DashboardConfiguracionRoute,
   } as any)
 const DashboardClientesIndexRoute = DashboardClientesIndexRouteImport.update({
   id: '/clientes/',
@@ -170,6 +195,42 @@ const DashboardCuponesIdRoute = DashboardCuponesIdRouteImport.update({
   path: '/cupones/$id',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardConfiguracionSeoRoute =
+  DashboardConfiguracionSeoRouteImport.update({
+    id: '/seo',
+    path: '/seo',
+    getParentRoute: () => DashboardConfiguracionRoute,
+  } as any)
+const DashboardConfiguracionRedesRoute =
+  DashboardConfiguracionRedesRouteImport.update({
+    id: '/redes',
+    path: '/redes',
+    getParentRoute: () => DashboardConfiguracionRoute,
+  } as any)
+const DashboardConfiguracionNotificacionesRoute =
+  DashboardConfiguracionNotificacionesRouteImport.update({
+    id: '/notificaciones',
+    path: '/notificaciones',
+    getParentRoute: () => DashboardConfiguracionRoute,
+  } as any)
+const DashboardConfiguracionGeneralRoute =
+  DashboardConfiguracionGeneralRouteImport.update({
+    id: '/general',
+    path: '/general',
+    getParentRoute: () => DashboardConfiguracionRoute,
+  } as any)
+const DashboardConfiguracionEnvioRoute =
+  DashboardConfiguracionEnvioRouteImport.update({
+    id: '/envio',
+    path: '/envio',
+    getParentRoute: () => DashboardConfiguracionRoute,
+  } as any)
+const DashboardConfiguracionBrandingRoute =
+  DashboardConfiguracionBrandingRouteImport.update({
+    id: '/branding',
+    path: '/branding',
+    getParentRoute: () => DashboardConfiguracionRoute,
+  } as any)
 const DashboardClientesIdRoute = DashboardClientesIdRouteImport.update({
   id: '/clientes/$id',
   path: '/clientes/$id',
@@ -185,35 +246,130 @@ const DashboardBundlesIdRoute = DashboardBundlesIdRouteImport.update({
   path: '/bundles/$id',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardProductosIdIndexRoute =
+  DashboardProductosIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => DashboardProductosIdRoute,
+  } as any)
+const DashboardPedidosIdIndexRoute = DashboardPedidosIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardPedidosIdRoute,
+} as any)
+const DashboardProductosIdVariantesRoute =
+  DashboardProductosIdVariantesRouteImport.update({
+    id: '/variantes',
+    path: '/variantes',
+    getParentRoute: () => DashboardProductosIdRoute,
+  } as any)
+const DashboardProductosIdSeoRoute = DashboardProductosIdSeoRouteImport.update({
+  id: '/seo',
+  path: '/seo',
+  getParentRoute: () => DashboardProductosIdRoute,
+} as any)
+const DashboardProductosIdPreciosRoute =
+  DashboardProductosIdPreciosRouteImport.update({
+    id: '/precios',
+    path: '/precios',
+    getParentRoute: () => DashboardProductosIdRoute,
+  } as any)
+const DashboardProductosIdInventarioRoute =
+  DashboardProductosIdInventarioRouteImport.update({
+    id: '/inventario',
+    path: '/inventario',
+    getParentRoute: () => DashboardProductosIdRoute,
+  } as any)
+const DashboardProductosIdInfoRoute =
+  DashboardProductosIdInfoRouteImport.update({
+    id: '/info',
+    path: '/info',
+    getParentRoute: () => DashboardProductosIdRoute,
+  } as any)
+const DashboardProductosIdImagenesRoute =
+  DashboardProductosIdImagenesRouteImport.update({
+    id: '/imagenes',
+    path: '/imagenes',
+    getParentRoute: () => DashboardProductosIdRoute,
+  } as any)
+const DashboardPedidosIdResumenRoute =
+  DashboardPedidosIdResumenRouteImport.update({
+    id: '/resumen',
+    path: '/resumen',
+    getParentRoute: () => DashboardPedidosIdRoute,
+  } as any)
+const DashboardPedidosIdProductosRoute =
+  DashboardPedidosIdProductosRouteImport.update({
+    id: '/productos',
+    path: '/productos',
+    getParentRoute: () => DashboardPedidosIdRoute,
+  } as any)
+const DashboardPedidosIdPagosRoute = DashboardPedidosIdPagosRouteImport.update({
+  id: '/pagos',
+  path: '/pagos',
+  getParentRoute: () => DashboardPedidosIdRoute,
+} as any)
+const DashboardPedidosIdHistorialRoute =
+  DashboardPedidosIdHistorialRouteImport.update({
+    id: '/historial',
+    path: '/historial',
+    getParentRoute: () => DashboardPedidosIdRoute,
+  } as any)
+const DashboardPedidosIdClienteRoute =
+  DashboardPedidosIdClienteRouteImport.update({
+    id: '/cliente',
+    path: '/cliente',
+    getParentRoute: () => DashboardPedidosIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/configuracion': typeof DashboardConfiguracionRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/': typeof DashboardIndexRoute
   '/bundles/$id': typeof DashboardBundlesIdRoute
   '/bundles/nuevo': typeof DashboardBundlesNuevoRoute
   '/clientes/$id': typeof DashboardClientesIdRoute
+  '/configuracion/branding': typeof DashboardConfiguracionBrandingRoute
+  '/configuracion/envio': typeof DashboardConfiguracionEnvioRoute
+  '/configuracion/general': typeof DashboardConfiguracionGeneralRoute
+  '/configuracion/notificaciones': typeof DashboardConfiguracionNotificacionesRoute
+  '/configuracion/redes': typeof DashboardConfiguracionRedesRoute
+  '/configuracion/seo': typeof DashboardConfiguracionSeoRoute
   '/cupones/$id': typeof DashboardCuponesIdRoute
   '/cupones/nuevo': typeof DashboardCuponesNuevoRoute
   '/paginas/$id': typeof DashboardPaginasIdRoute
   '/paginas/nuevo': typeof DashboardPaginasNuevoRoute
-  '/pedidos/$id': typeof DashboardPedidosIdRoute
-  '/productos/$id': typeof DashboardProductosIdRoute
+  '/pedidos/$id': typeof DashboardPedidosIdRouteWithChildren
+  '/productos/$id': typeof DashboardProductosIdRouteWithChildren
   '/productos/nuevo': typeof DashboardProductosNuevoRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/uploadthing/$': typeof ApiUploadthingSplatRoute
   '/bundles': typeof DashboardBundlesIndexRoute
   '/categorias': typeof DashboardCategoriasIndexRoute
   '/clientes': typeof DashboardClientesIndexRoute
-  '/configuracion': typeof DashboardConfiguracionIndexRoute
+  '/configuracion/': typeof DashboardConfiguracionIndexRoute
   '/cupones': typeof DashboardCuponesIndexRoute
   '/inventario': typeof DashboardInventarioIndexRoute
   '/paginas': typeof DashboardPaginasIndexRoute
   '/pedidos': typeof DashboardPedidosIndexRoute
   '/productos': typeof DashboardProductosIndexRoute
+  '/pedidos/$id/cliente': typeof DashboardPedidosIdClienteRoute
+  '/pedidos/$id/historial': typeof DashboardPedidosIdHistorialRoute
+  '/pedidos/$id/pagos': typeof DashboardPedidosIdPagosRoute
+  '/pedidos/$id/productos': typeof DashboardPedidosIdProductosRoute
+  '/pedidos/$id/resumen': typeof DashboardPedidosIdResumenRoute
+  '/productos/$id/imagenes': typeof DashboardProductosIdImagenesRoute
+  '/productos/$id/info': typeof DashboardProductosIdInfoRoute
+  '/productos/$id/inventario': typeof DashboardProductosIdInventarioRoute
+  '/productos/$id/precios': typeof DashboardProductosIdPreciosRoute
+  '/productos/$id/seo': typeof DashboardProductosIdSeoRoute
+  '/productos/$id/variantes': typeof DashboardProductosIdVariantesRoute
+  '/pedidos/$id/': typeof DashboardPedidosIdIndexRoute
+  '/productos/$id/': typeof DashboardProductosIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/forgot-password': typeof AuthForgotPasswordRoute
@@ -225,12 +381,16 @@ export interface FileRoutesByTo {
   '/bundles/$id': typeof DashboardBundlesIdRoute
   '/bundles/nuevo': typeof DashboardBundlesNuevoRoute
   '/clientes/$id': typeof DashboardClientesIdRoute
+  '/configuracion/branding': typeof DashboardConfiguracionBrandingRoute
+  '/configuracion/envio': typeof DashboardConfiguracionEnvioRoute
+  '/configuracion/general': typeof DashboardConfiguracionGeneralRoute
+  '/configuracion/notificaciones': typeof DashboardConfiguracionNotificacionesRoute
+  '/configuracion/redes': typeof DashboardConfiguracionRedesRoute
+  '/configuracion/seo': typeof DashboardConfiguracionSeoRoute
   '/cupones/$id': typeof DashboardCuponesIdRoute
   '/cupones/nuevo': typeof DashboardCuponesNuevoRoute
   '/paginas/$id': typeof DashboardPaginasIdRoute
   '/paginas/nuevo': typeof DashboardPaginasNuevoRoute
-  '/pedidos/$id': typeof DashboardPedidosIdRoute
-  '/productos/$id': typeof DashboardProductosIdRoute
   '/productos/nuevo': typeof DashboardProductosNuevoRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/uploadthing/$': typeof ApiUploadthingSplatRoute
@@ -243,6 +403,19 @@ export interface FileRoutesByTo {
   '/paginas': typeof DashboardPaginasIndexRoute
   '/pedidos': typeof DashboardPedidosIndexRoute
   '/productos': typeof DashboardProductosIndexRoute
+  '/pedidos/$id/cliente': typeof DashboardPedidosIdClienteRoute
+  '/pedidos/$id/historial': typeof DashboardPedidosIdHistorialRoute
+  '/pedidos/$id/pagos': typeof DashboardPedidosIdPagosRoute
+  '/pedidos/$id/productos': typeof DashboardPedidosIdProductosRoute
+  '/pedidos/$id/resumen': typeof DashboardPedidosIdResumenRoute
+  '/productos/$id/imagenes': typeof DashboardProductosIdImagenesRoute
+  '/productos/$id/info': typeof DashboardProductosIdInfoRoute
+  '/productos/$id/inventario': typeof DashboardProductosIdInventarioRoute
+  '/productos/$id/precios': typeof DashboardProductosIdPreciosRoute
+  '/productos/$id/seo': typeof DashboardProductosIdSeoRoute
+  '/productos/$id/variantes': typeof DashboardProductosIdVariantesRoute
+  '/pedidos/$id': typeof DashboardPedidosIdIndexRoute
+  '/productos/$id': typeof DashboardProductosIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -252,17 +425,24 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
+  '/_dashboard/configuracion': typeof DashboardConfiguracionRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/_dashboard/': typeof DashboardIndexRoute
   '/_dashboard/bundles/$id': typeof DashboardBundlesIdRoute
   '/_dashboard/bundles/nuevo': typeof DashboardBundlesNuevoRoute
   '/_dashboard/clientes/$id': typeof DashboardClientesIdRoute
+  '/_dashboard/configuracion/branding': typeof DashboardConfiguracionBrandingRoute
+  '/_dashboard/configuracion/envio': typeof DashboardConfiguracionEnvioRoute
+  '/_dashboard/configuracion/general': typeof DashboardConfiguracionGeneralRoute
+  '/_dashboard/configuracion/notificaciones': typeof DashboardConfiguracionNotificacionesRoute
+  '/_dashboard/configuracion/redes': typeof DashboardConfiguracionRedesRoute
+  '/_dashboard/configuracion/seo': typeof DashboardConfiguracionSeoRoute
   '/_dashboard/cupones/$id': typeof DashboardCuponesIdRoute
   '/_dashboard/cupones/nuevo': typeof DashboardCuponesNuevoRoute
   '/_dashboard/paginas/$id': typeof DashboardPaginasIdRoute
   '/_dashboard/paginas/nuevo': typeof DashboardPaginasNuevoRoute
-  '/_dashboard/pedidos/$id': typeof DashboardPedidosIdRoute
-  '/_dashboard/productos/$id': typeof DashboardProductosIdRoute
+  '/_dashboard/pedidos/$id': typeof DashboardPedidosIdRouteWithChildren
+  '/_dashboard/productos/$id': typeof DashboardProductosIdRouteWithChildren
   '/_dashboard/productos/nuevo': typeof DashboardProductosNuevoRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/uploadthing/$': typeof ApiUploadthingSplatRoute
@@ -275,6 +455,19 @@ export interface FileRoutesById {
   '/_dashboard/paginas/': typeof DashboardPaginasIndexRoute
   '/_dashboard/pedidos/': typeof DashboardPedidosIndexRoute
   '/_dashboard/productos/': typeof DashboardProductosIndexRoute
+  '/_dashboard/pedidos/$id/cliente': typeof DashboardPedidosIdClienteRoute
+  '/_dashboard/pedidos/$id/historial': typeof DashboardPedidosIdHistorialRoute
+  '/_dashboard/pedidos/$id/pagos': typeof DashboardPedidosIdPagosRoute
+  '/_dashboard/pedidos/$id/productos': typeof DashboardPedidosIdProductosRoute
+  '/_dashboard/pedidos/$id/resumen': typeof DashboardPedidosIdResumenRoute
+  '/_dashboard/productos/$id/imagenes': typeof DashboardProductosIdImagenesRoute
+  '/_dashboard/productos/$id/info': typeof DashboardProductosIdInfoRoute
+  '/_dashboard/productos/$id/inventario': typeof DashboardProductosIdInventarioRoute
+  '/_dashboard/productos/$id/precios': typeof DashboardProductosIdPreciosRoute
+  '/_dashboard/productos/$id/seo': typeof DashboardProductosIdSeoRoute
+  '/_dashboard/productos/$id/variantes': typeof DashboardProductosIdVariantesRoute
+  '/_dashboard/pedidos/$id/': typeof DashboardPedidosIdIndexRoute
+  '/_dashboard/productos/$id/': typeof DashboardProductosIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -283,11 +476,18 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/reset-password'
+    | '/configuracion'
     | '/api/$'
     | '/'
     | '/bundles/$id'
     | '/bundles/nuevo'
     | '/clientes/$id'
+    | '/configuracion/branding'
+    | '/configuracion/envio'
+    | '/configuracion/general'
+    | '/configuracion/notificaciones'
+    | '/configuracion/redes'
+    | '/configuracion/seo'
     | '/cupones/$id'
     | '/cupones/nuevo'
     | '/paginas/$id'
@@ -300,12 +500,25 @@ export interface FileRouteTypes {
     | '/bundles'
     | '/categorias'
     | '/clientes'
-    | '/configuracion'
+    | '/configuracion/'
     | '/cupones'
     | '/inventario'
     | '/paginas'
     | '/pedidos'
     | '/productos'
+    | '/pedidos/$id/cliente'
+    | '/pedidos/$id/historial'
+    | '/pedidos/$id/pagos'
+    | '/pedidos/$id/productos'
+    | '/pedidos/$id/resumen'
+    | '/productos/$id/imagenes'
+    | '/productos/$id/info'
+    | '/productos/$id/inventario'
+    | '/productos/$id/precios'
+    | '/productos/$id/seo'
+    | '/productos/$id/variantes'
+    | '/pedidos/$id/'
+    | '/productos/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -317,12 +530,16 @@ export interface FileRouteTypes {
     | '/bundles/$id'
     | '/bundles/nuevo'
     | '/clientes/$id'
+    | '/configuracion/branding'
+    | '/configuracion/envio'
+    | '/configuracion/general'
+    | '/configuracion/notificaciones'
+    | '/configuracion/redes'
+    | '/configuracion/seo'
     | '/cupones/$id'
     | '/cupones/nuevo'
     | '/paginas/$id'
     | '/paginas/nuevo'
-    | '/pedidos/$id'
-    | '/productos/$id'
     | '/productos/nuevo'
     | '/api/auth/$'
     | '/api/uploadthing/$'
@@ -335,6 +552,19 @@ export interface FileRouteTypes {
     | '/paginas'
     | '/pedidos'
     | '/productos'
+    | '/pedidos/$id/cliente'
+    | '/pedidos/$id/historial'
+    | '/pedidos/$id/pagos'
+    | '/pedidos/$id/productos'
+    | '/pedidos/$id/resumen'
+    | '/productos/$id/imagenes'
+    | '/productos/$id/info'
+    | '/productos/$id/inventario'
+    | '/productos/$id/precios'
+    | '/productos/$id/seo'
+    | '/productos/$id/variantes'
+    | '/pedidos/$id'
+    | '/productos/$id'
   id:
     | '__root__'
     | '/_auth'
@@ -343,11 +573,18 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/register'
     | '/_auth/reset-password'
+    | '/_dashboard/configuracion'
     | '/api/$'
     | '/_dashboard/'
     | '/_dashboard/bundles/$id'
     | '/_dashboard/bundles/nuevo'
     | '/_dashboard/clientes/$id'
+    | '/_dashboard/configuracion/branding'
+    | '/_dashboard/configuracion/envio'
+    | '/_dashboard/configuracion/general'
+    | '/_dashboard/configuracion/notificaciones'
+    | '/_dashboard/configuracion/redes'
+    | '/_dashboard/configuracion/seo'
     | '/_dashboard/cupones/$id'
     | '/_dashboard/cupones/nuevo'
     | '/_dashboard/paginas/$id'
@@ -366,6 +603,19 @@ export interface FileRouteTypes {
     | '/_dashboard/paginas/'
     | '/_dashboard/pedidos/'
     | '/_dashboard/productos/'
+    | '/_dashboard/pedidos/$id/cliente'
+    | '/_dashboard/pedidos/$id/historial'
+    | '/_dashboard/pedidos/$id/pagos'
+    | '/_dashboard/pedidos/$id/productos'
+    | '/_dashboard/pedidos/$id/resumen'
+    | '/_dashboard/productos/$id/imagenes'
+    | '/_dashboard/productos/$id/info'
+    | '/_dashboard/productos/$id/inventario'
+    | '/_dashboard/productos/$id/precios'
+    | '/_dashboard/productos/$id/seo'
+    | '/_dashboard/productos/$id/variantes'
+    | '/_dashboard/pedidos/$id/'
+    | '/_dashboard/productos/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -405,6 +655,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/$'
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_dashboard/configuracion': {
+      id: '/_dashboard/configuracion'
+      path: '/configuracion'
+      fullPath: '/configuracion'
+      preLoaderRoute: typeof DashboardConfiguracionRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/_auth/reset-password': {
       id: '/_auth/reset-password'
@@ -471,10 +728,10 @@ declare module '@tanstack/react-router' {
     }
     '/_dashboard/configuracion/': {
       id: '/_dashboard/configuracion/'
-      path: '/configuracion'
-      fullPath: '/configuracion'
+      path: '/'
+      fullPath: '/configuracion/'
       preLoaderRoute: typeof DashboardConfiguracionIndexRouteImport
-      parentRoute: typeof DashboardRoute
+      parentRoute: typeof DashboardConfiguracionRoute
     }
     '/_dashboard/clientes/': {
       id: '/_dashboard/clientes/'
@@ -560,6 +817,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardCuponesIdRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/_dashboard/configuracion/seo': {
+      id: '/_dashboard/configuracion/seo'
+      path: '/seo'
+      fullPath: '/configuracion/seo'
+      preLoaderRoute: typeof DashboardConfiguracionSeoRouteImport
+      parentRoute: typeof DashboardConfiguracionRoute
+    }
+    '/_dashboard/configuracion/redes': {
+      id: '/_dashboard/configuracion/redes'
+      path: '/redes'
+      fullPath: '/configuracion/redes'
+      preLoaderRoute: typeof DashboardConfiguracionRedesRouteImport
+      parentRoute: typeof DashboardConfiguracionRoute
+    }
+    '/_dashboard/configuracion/notificaciones': {
+      id: '/_dashboard/configuracion/notificaciones'
+      path: '/notificaciones'
+      fullPath: '/configuracion/notificaciones'
+      preLoaderRoute: typeof DashboardConfiguracionNotificacionesRouteImport
+      parentRoute: typeof DashboardConfiguracionRoute
+    }
+    '/_dashboard/configuracion/general': {
+      id: '/_dashboard/configuracion/general'
+      path: '/general'
+      fullPath: '/configuracion/general'
+      preLoaderRoute: typeof DashboardConfiguracionGeneralRouteImport
+      parentRoute: typeof DashboardConfiguracionRoute
+    }
+    '/_dashboard/configuracion/envio': {
+      id: '/_dashboard/configuracion/envio'
+      path: '/envio'
+      fullPath: '/configuracion/envio'
+      preLoaderRoute: typeof DashboardConfiguracionEnvioRouteImport
+      parentRoute: typeof DashboardConfiguracionRoute
+    }
+    '/_dashboard/configuracion/branding': {
+      id: '/_dashboard/configuracion/branding'
+      path: '/branding'
+      fullPath: '/configuracion/branding'
+      preLoaderRoute: typeof DashboardConfiguracionBrandingRouteImport
+      parentRoute: typeof DashboardConfiguracionRoute
+    }
     '/_dashboard/clientes/$id': {
       id: '/_dashboard/clientes/$id'
       path: '/clientes/$id'
@@ -581,6 +880,97 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardBundlesIdRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/_dashboard/productos/$id/': {
+      id: '/_dashboard/productos/$id/'
+      path: '/'
+      fullPath: '/productos/$id/'
+      preLoaderRoute: typeof DashboardProductosIdIndexRouteImport
+      parentRoute: typeof DashboardProductosIdRoute
+    }
+    '/_dashboard/pedidos/$id/': {
+      id: '/_dashboard/pedidos/$id/'
+      path: '/'
+      fullPath: '/pedidos/$id/'
+      preLoaderRoute: typeof DashboardPedidosIdIndexRouteImport
+      parentRoute: typeof DashboardPedidosIdRoute
+    }
+    '/_dashboard/productos/$id/variantes': {
+      id: '/_dashboard/productos/$id/variantes'
+      path: '/variantes'
+      fullPath: '/productos/$id/variantes'
+      preLoaderRoute: typeof DashboardProductosIdVariantesRouteImport
+      parentRoute: typeof DashboardProductosIdRoute
+    }
+    '/_dashboard/productos/$id/seo': {
+      id: '/_dashboard/productos/$id/seo'
+      path: '/seo'
+      fullPath: '/productos/$id/seo'
+      preLoaderRoute: typeof DashboardProductosIdSeoRouteImport
+      parentRoute: typeof DashboardProductosIdRoute
+    }
+    '/_dashboard/productos/$id/precios': {
+      id: '/_dashboard/productos/$id/precios'
+      path: '/precios'
+      fullPath: '/productos/$id/precios'
+      preLoaderRoute: typeof DashboardProductosIdPreciosRouteImport
+      parentRoute: typeof DashboardProductosIdRoute
+    }
+    '/_dashboard/productos/$id/inventario': {
+      id: '/_dashboard/productos/$id/inventario'
+      path: '/inventario'
+      fullPath: '/productos/$id/inventario'
+      preLoaderRoute: typeof DashboardProductosIdInventarioRouteImport
+      parentRoute: typeof DashboardProductosIdRoute
+    }
+    '/_dashboard/productos/$id/info': {
+      id: '/_dashboard/productos/$id/info'
+      path: '/info'
+      fullPath: '/productos/$id/info'
+      preLoaderRoute: typeof DashboardProductosIdInfoRouteImport
+      parentRoute: typeof DashboardProductosIdRoute
+    }
+    '/_dashboard/productos/$id/imagenes': {
+      id: '/_dashboard/productos/$id/imagenes'
+      path: '/imagenes'
+      fullPath: '/productos/$id/imagenes'
+      preLoaderRoute: typeof DashboardProductosIdImagenesRouteImport
+      parentRoute: typeof DashboardProductosIdRoute
+    }
+    '/_dashboard/pedidos/$id/resumen': {
+      id: '/_dashboard/pedidos/$id/resumen'
+      path: '/resumen'
+      fullPath: '/pedidos/$id/resumen'
+      preLoaderRoute: typeof DashboardPedidosIdResumenRouteImport
+      parentRoute: typeof DashboardPedidosIdRoute
+    }
+    '/_dashboard/pedidos/$id/productos': {
+      id: '/_dashboard/pedidos/$id/productos'
+      path: '/productos'
+      fullPath: '/pedidos/$id/productos'
+      preLoaderRoute: typeof DashboardPedidosIdProductosRouteImport
+      parentRoute: typeof DashboardPedidosIdRoute
+    }
+    '/_dashboard/pedidos/$id/pagos': {
+      id: '/_dashboard/pedidos/$id/pagos'
+      path: '/pagos'
+      fullPath: '/pedidos/$id/pagos'
+      preLoaderRoute: typeof DashboardPedidosIdPagosRouteImport
+      parentRoute: typeof DashboardPedidosIdRoute
+    }
+    '/_dashboard/pedidos/$id/historial': {
+      id: '/_dashboard/pedidos/$id/historial'
+      path: '/historial'
+      fullPath: '/pedidos/$id/historial'
+      preLoaderRoute: typeof DashboardPedidosIdHistorialRouteImport
+      parentRoute: typeof DashboardPedidosIdRoute
+    }
+    '/_dashboard/pedidos/$id/cliente': {
+      id: '/_dashboard/pedidos/$id/cliente'
+      path: '/cliente'
+      fullPath: '/pedidos/$id/cliente'
+      preLoaderRoute: typeof DashboardPedidosIdClienteRouteImport
+      parentRoute: typeof DashboardPedidosIdRoute
+    }
   }
 }
 
@@ -600,7 +990,79 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface DashboardConfiguracionRouteChildren {
+  DashboardConfiguracionBrandingRoute: typeof DashboardConfiguracionBrandingRoute
+  DashboardConfiguracionEnvioRoute: typeof DashboardConfiguracionEnvioRoute
+  DashboardConfiguracionGeneralRoute: typeof DashboardConfiguracionGeneralRoute
+  DashboardConfiguracionNotificacionesRoute: typeof DashboardConfiguracionNotificacionesRoute
+  DashboardConfiguracionRedesRoute: typeof DashboardConfiguracionRedesRoute
+  DashboardConfiguracionSeoRoute: typeof DashboardConfiguracionSeoRoute
+  DashboardConfiguracionIndexRoute: typeof DashboardConfiguracionIndexRoute
+}
+
+const DashboardConfiguracionRouteChildren: DashboardConfiguracionRouteChildren =
+  {
+    DashboardConfiguracionBrandingRoute: DashboardConfiguracionBrandingRoute,
+    DashboardConfiguracionEnvioRoute: DashboardConfiguracionEnvioRoute,
+    DashboardConfiguracionGeneralRoute: DashboardConfiguracionGeneralRoute,
+    DashboardConfiguracionNotificacionesRoute:
+      DashboardConfiguracionNotificacionesRoute,
+    DashboardConfiguracionRedesRoute: DashboardConfiguracionRedesRoute,
+    DashboardConfiguracionSeoRoute: DashboardConfiguracionSeoRoute,
+    DashboardConfiguracionIndexRoute: DashboardConfiguracionIndexRoute,
+  }
+
+const DashboardConfiguracionRouteWithChildren =
+  DashboardConfiguracionRoute._addFileChildren(
+    DashboardConfiguracionRouteChildren,
+  )
+
+interface DashboardPedidosIdRouteChildren {
+  DashboardPedidosIdClienteRoute: typeof DashboardPedidosIdClienteRoute
+  DashboardPedidosIdHistorialRoute: typeof DashboardPedidosIdHistorialRoute
+  DashboardPedidosIdPagosRoute: typeof DashboardPedidosIdPagosRoute
+  DashboardPedidosIdProductosRoute: typeof DashboardPedidosIdProductosRoute
+  DashboardPedidosIdResumenRoute: typeof DashboardPedidosIdResumenRoute
+  DashboardPedidosIdIndexRoute: typeof DashboardPedidosIdIndexRoute
+}
+
+const DashboardPedidosIdRouteChildren: DashboardPedidosIdRouteChildren = {
+  DashboardPedidosIdClienteRoute: DashboardPedidosIdClienteRoute,
+  DashboardPedidosIdHistorialRoute: DashboardPedidosIdHistorialRoute,
+  DashboardPedidosIdPagosRoute: DashboardPedidosIdPagosRoute,
+  DashboardPedidosIdProductosRoute: DashboardPedidosIdProductosRoute,
+  DashboardPedidosIdResumenRoute: DashboardPedidosIdResumenRoute,
+  DashboardPedidosIdIndexRoute: DashboardPedidosIdIndexRoute,
+}
+
+const DashboardPedidosIdRouteWithChildren =
+  DashboardPedidosIdRoute._addFileChildren(DashboardPedidosIdRouteChildren)
+
+interface DashboardProductosIdRouteChildren {
+  DashboardProductosIdImagenesRoute: typeof DashboardProductosIdImagenesRoute
+  DashboardProductosIdInfoRoute: typeof DashboardProductosIdInfoRoute
+  DashboardProductosIdInventarioRoute: typeof DashboardProductosIdInventarioRoute
+  DashboardProductosIdPreciosRoute: typeof DashboardProductosIdPreciosRoute
+  DashboardProductosIdSeoRoute: typeof DashboardProductosIdSeoRoute
+  DashboardProductosIdVariantesRoute: typeof DashboardProductosIdVariantesRoute
+  DashboardProductosIdIndexRoute: typeof DashboardProductosIdIndexRoute
+}
+
+const DashboardProductosIdRouteChildren: DashboardProductosIdRouteChildren = {
+  DashboardProductosIdImagenesRoute: DashboardProductosIdImagenesRoute,
+  DashboardProductosIdInfoRoute: DashboardProductosIdInfoRoute,
+  DashboardProductosIdInventarioRoute: DashboardProductosIdInventarioRoute,
+  DashboardProductosIdPreciosRoute: DashboardProductosIdPreciosRoute,
+  DashboardProductosIdSeoRoute: DashboardProductosIdSeoRoute,
+  DashboardProductosIdVariantesRoute: DashboardProductosIdVariantesRoute,
+  DashboardProductosIdIndexRoute: DashboardProductosIdIndexRoute,
+}
+
+const DashboardProductosIdRouteWithChildren =
+  DashboardProductosIdRoute._addFileChildren(DashboardProductosIdRouteChildren)
+
 interface DashboardRouteChildren {
+  DashboardConfiguracionRoute: typeof DashboardConfiguracionRouteWithChildren
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardBundlesIdRoute: typeof DashboardBundlesIdRoute
   DashboardBundlesNuevoRoute: typeof DashboardBundlesNuevoRoute
@@ -609,13 +1071,12 @@ interface DashboardRouteChildren {
   DashboardCuponesNuevoRoute: typeof DashboardCuponesNuevoRoute
   DashboardPaginasIdRoute: typeof DashboardPaginasIdRoute
   DashboardPaginasNuevoRoute: typeof DashboardPaginasNuevoRoute
-  DashboardPedidosIdRoute: typeof DashboardPedidosIdRoute
-  DashboardProductosIdRoute: typeof DashboardProductosIdRoute
+  DashboardPedidosIdRoute: typeof DashboardPedidosIdRouteWithChildren
+  DashboardProductosIdRoute: typeof DashboardProductosIdRouteWithChildren
   DashboardProductosNuevoRoute: typeof DashboardProductosNuevoRoute
   DashboardBundlesIndexRoute: typeof DashboardBundlesIndexRoute
   DashboardCategoriasIndexRoute: typeof DashboardCategoriasIndexRoute
   DashboardClientesIndexRoute: typeof DashboardClientesIndexRoute
-  DashboardConfiguracionIndexRoute: typeof DashboardConfiguracionIndexRoute
   DashboardCuponesIndexRoute: typeof DashboardCuponesIndexRoute
   DashboardInventarioIndexRoute: typeof DashboardInventarioIndexRoute
   DashboardPaginasIndexRoute: typeof DashboardPaginasIndexRoute
@@ -624,6 +1085,7 @@ interface DashboardRouteChildren {
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardConfiguracionRoute: DashboardConfiguracionRouteWithChildren,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardBundlesIdRoute: DashboardBundlesIdRoute,
   DashboardBundlesNuevoRoute: DashboardBundlesNuevoRoute,
@@ -632,13 +1094,12 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardCuponesNuevoRoute: DashboardCuponesNuevoRoute,
   DashboardPaginasIdRoute: DashboardPaginasIdRoute,
   DashboardPaginasNuevoRoute: DashboardPaginasNuevoRoute,
-  DashboardPedidosIdRoute: DashboardPedidosIdRoute,
-  DashboardProductosIdRoute: DashboardProductosIdRoute,
+  DashboardPedidosIdRoute: DashboardPedidosIdRouteWithChildren,
+  DashboardProductosIdRoute: DashboardProductosIdRouteWithChildren,
   DashboardProductosNuevoRoute: DashboardProductosNuevoRoute,
   DashboardBundlesIndexRoute: DashboardBundlesIndexRoute,
   DashboardCategoriasIndexRoute: DashboardCategoriasIndexRoute,
   DashboardClientesIndexRoute: DashboardClientesIndexRoute,
-  DashboardConfiguracionIndexRoute: DashboardConfiguracionIndexRoute,
   DashboardCuponesIndexRoute: DashboardCuponesIndexRoute,
   DashboardInventarioIndexRoute: DashboardInventarioIndexRoute,
   DashboardPaginasIndexRoute: DashboardPaginasIndexRoute,
@@ -660,3 +1121,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
