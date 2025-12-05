@@ -34,7 +34,6 @@ async function handleApiRequest(request: Request) {
 }
 
 export const Route = createFileRoute('/api/$')({
-  // @ts-expect-error - TanStack Start server handlers
   server: {
     handlers: {
       GET: ({ request }: { request: Request }) => handleApiRequest(request),
