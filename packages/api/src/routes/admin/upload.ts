@@ -1,4 +1,5 @@
-import { deleteFileByUrl, isConfigured, isUploadthingUrl } from '@gemfolio/storage';
+import { isConfigured, isUploadthingUrl } from '@gemfolio/storage';
+import { deleteFileByUrl } from '@gemfolio/storage/server-utils';
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { z } from 'zod';

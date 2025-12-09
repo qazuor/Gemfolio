@@ -423,3 +423,281 @@ export async function getProductsByTag(
 
   return getProducts(db, { tagIds: [tag.id], status: 'active' }, pagination);
 }
+
+/**
+ * Get product images
+ */
+export async function getProductImages(db: Database, productId: string) {
+  return db
+    .select()
+    .from(productImages)
+    .where(eq(productImages.productId, productId))
+    .orderBy(asc(productImages.order));
+}
+
+/**
+ * Delete a product image
+ */
+export async function deleteProductImage(db: Database, imageId: string) {
+  const result = await db.delete(productImages).where(eq(productImages.id, imageId)).returning();
+  return result[0];
+}
+
+/**
+ * Update a product image
+ */
+export async function updateProductImage(
+  db: Database,
+  imageId: string,
+  data: { alt?: string; order?: number; isPrimary?: boolean }
+) {
+  const result = await db
+    .update(productImages)
+    .set(data)
+    .where(eq(productImages.id, imageId))
+    .returning();
+  return result[0];
+}
+
+/**
+ * Set primary image for a product (and unset others)
+ */
+export async function setProductPrimaryImage(db: Database, productId: string, imageId: string) {
+  // First, unset all primary images for this product
+  await db
+    .update(productImages)
+    .set({ isPrimary: false })
+    .where(eq(productImages.productId, productId));
+
+  // Then set the new primary image
+  const result = await db
+    .update(productImages)
+    .set({ isPrimary: true })
+    .where(eq(productImages.id, imageId))
+    .returning();
+
+  return result[0];
+}
+
+/**
+ * Reorder product images
+ */
+export async function reorderProductImages(db: Database, productId: string, imageIds: string[]) {
+  const updates = imageIds.map((id, index) =>
+    db
+      .update(productImages)
+      .set({ order: index })
+      .where(and(eq(productImages.id, id), eq(productImages.productId, productId)))
+  );
+
+  await Promise.all(updates);
+}
+
+// ============================================
+// PRODUCT VARIANTS
+// ============================================
+
+/**
+ * Get variants for a product
+ */
+export async function getProductVariants(db: Database, productId: string) {
+  return db
+    .select()
+    .from(productVariants)
+    .where(eq(productVariants.productId, productId))
+    .orderBy(desc(productVariants.isDefault), asc(productVariants.name));
+}
+
+/**
+ * Get a single variant by ID
+ */
+export async function getVariantById(db: Database, variantId: string) {
+  return db.query.productVariants.findFirst({
+    where: eq(productVariants.id, variantId),
+  });
+}
+
+/**
+ * Update a product variant
+ */
+export async function updateProductVariant(
+  db: Database,
+  variantId: string,
+  data: {
+    name?: string;
+    sku?: string;
+    price?: string;
+    comparePrice?: string | null;
+    stock?: number;
+    lowStockThreshold?: number;
+    attributes?: Record<string, string>;
+    image?: string | null;
+    isDefault?: boolean;
+  }
+) {
+  const result = await db
+    .update(productVariants)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(productVariants.id, variantId))
+    .returning();
+  return result[0];
+}
+
+/**
+ * Delete a product variant
+ */
+export async function deleteProductVariant(db: Database, variantId: string) {
+  const result = await db
+    .delete(productVariants)
+    .where(eq(productVariants.id, variantId))
+    .returning();
+  return result[0];
+}
+
+/**
+ * Set a variant as default (and unset others)
+ */
+export async function setDefaultVariant(db: Database, productId: string, variantId: string) {
+  // First, unset all default variants for this product
+  await db
+    .update(productVariants)
+    .set({ isDefault: false })
+    .where(eq(productVariants.productId, productId));
+
+  // Then set the new default variant
+  const result = await db
+    .update(productVariants)
+    .set({ isDefault: true })
+    .where(eq(productVariants.id, variantId))
+    .returning();
+
+  return result[0];
+}
+
+/**
+ * Enable variants for a product
+ */
+export async function enableProductVariants(db: Database, productId: string) {
+  const result = await db
+    .update(products)
+    .set({ hasVariants: true, updatedAt: new Date() })
+    .where(eq(products.id, productId))
+    .returning();
+  return result[0];
+}
+
+/**
+ * Disable variants for a product (also deletes all variants)
+ */
+export async function disableProductVariants(db: Database, productId: string) {
+  // Delete all variants
+  await db.delete(productVariants).where(eq(productVariants.productId, productId));
+
+  // Update product
+  const result = await db
+    .update(products)
+    .set({ hasVariants: false, updatedAt: new Date() })
+    .where(eq(products.id, productId))
+    .returning();
+  return result[0];
+}
+
+/**
+ * Duplicate a product with all its images, variants, and tags
+ */
+export async function duplicateProduct(db: Database, productId: string) {
+  // Get the original product with all relations
+  const original = await getProductById(db, productId);
+
+  if (!original) {
+    return null;
+  }
+
+  // Generate new slug
+  const baseSlug = original.slug.replace(/-copy(-\d+)?$/, '');
+  let newSlug = `${baseSlug}-copy`;
+  let counter = 1;
+
+  // Check if slug exists and generate unique one
+  while (true) {
+    const existing = await db.query.products.findFirst({
+      where: eq(products.slug, newSlug),
+    });
+    if (!existing) break;
+    counter++;
+    newSlug = `${baseSlug}-copy-${counter}`;
+  }
+
+  // Create the duplicate product
+  const [newProduct] = await db
+    .insert(products)
+    .values({
+      name: `${original.name} (Copia)`,
+      slug: newSlug,
+      categoryId: original.categoryId,
+      shortDescription: original.shortDescription,
+      description: original.description,
+      price: original.price,
+      comparePrice: original.comparePrice,
+      cost: original.cost,
+      sku: original.sku ? `${original.sku}-COPY` : null,
+      stock: original.stock,
+      lowStockThreshold: original.lowStockThreshold,
+      trackInventory: original.trackInventory,
+      hasVariants: original.hasVariants,
+      status: 'draft', // Always create as draft
+      isFeatured: false, // Don't copy featured status
+      seoTitle: original.seoTitle,
+      seoDescription: original.seoDescription,
+      seoImage: original.seoImage,
+    })
+    .returning();
+
+  if (!newProduct) {
+    return null;
+  }
+
+  // Duplicate images
+  if (original.images && original.images.length > 0) {
+    await db.insert(productImages).values(
+      original.images.map((img) => ({
+        productId: newProduct.id,
+        url: img.url,
+        alt: img.alt,
+        order: img.order,
+        isPrimary: img.isPrimary,
+      }))
+    );
+  }
+
+  // Duplicate variants
+  if (original.variants && original.variants.length > 0) {
+    await db.insert(productVariants).values(
+      original.variants.map((variant) => ({
+        productId: newProduct.id,
+        name: variant.name,
+        sku: `${variant.sku}-COPY`,
+        price: variant.price,
+        comparePrice: variant.comparePrice,
+        stock: variant.stock,
+        lowStockThreshold: variant.lowStockThreshold,
+        attributes: variant.attributes as Record<string, string>,
+        image: variant.image,
+        isDefault: variant.isDefault,
+      }))
+    );
+  }
+
+  // Duplicate tags
+  if (original.productTags && original.productTags.length > 0) {
+    await db.insert(productTags).values(
+      original.productTags.map((pt) => ({
+        productId: newProduct.id,
+        tagId: pt.tagId,
+      }))
+    );
+  }
+
+  // Return the complete new product
+  return getProductById(db, newProduct.id);
+}

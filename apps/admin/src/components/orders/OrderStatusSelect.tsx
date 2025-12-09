@@ -101,7 +101,7 @@ export function OrderStatusSelect({ orderId, currentStatus }: OrderStatusSelectP
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
+        <DialogContent className="w-[95vw] max-w-md sm:w-full">
           <DialogHeader>
             <DialogTitle>Cambiar estado del pedido</DialogTitle>
             <DialogDescription>
@@ -132,11 +132,20 @@ export function OrderStatusSelect({ orderId, currentStatus }: OrderStatusSelectP
             </div>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={handleCancel} disabled={updateStatus.isPending}>
+          <DialogFooter className="flex-col gap-2 sm:flex-row sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={handleCancel}
+              disabled={updateStatus.isPending}
+              className="w-full sm:w-auto"
+            >
               Cancelar
             </Button>
-            <Button onClick={handleConfirm} disabled={updateStatus.isPending}>
+            <Button
+              onClick={handleConfirm}
+              disabled={updateStatus.isPending}
+              className="w-full sm:w-auto"
+            >
               {updateStatus.isPending ? 'Actualizando...' : 'Confirmar cambio'}
             </Button>
           </DialogFooter>

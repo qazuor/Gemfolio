@@ -24,7 +24,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
+import { RichTextEditor } from '@/components/shared';
 import { generateSlug, type Page, type PageFormData } from '@/hooks/use-pages';
 
 const pageSchema = z.object({
@@ -143,14 +143,14 @@ export function PageForm({ page, onSubmit, isLoading }: PageFormProps) {
                     <FormItem>
                       <FormLabel>Contenido</FormLabel>
                       <FormControl>
-                        <Textarea
-                          {...field}
+                        <RichTextEditor
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="Escribe el contenido de la página..."
-                          className="min-h-[300px] resize-y"
                         />
                       </FormControl>
                       <FormDescription>
-                        Puedes usar Markdown para formatear el texto.
+                        Usa la barra de herramientas para formatear el texto.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

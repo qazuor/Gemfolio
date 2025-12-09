@@ -161,13 +161,13 @@ export function DataTable<TData, TValue>({
         </DropdownMenu>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} className="whitespace-nowrap">
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
@@ -206,31 +206,33 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-sm text-muted-foreground text-center sm:text-left">
           {table.getFilteredSelectedRowModel().rows.length} de{' '}
           {table.getFilteredRowModel().rows.length} fila(s) seleccionada(s).
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <Button
             variant="outline"
             size="sm"
+            className="h-9 px-3"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             <ChevronLeft className="h-4 w-4" />
-            Anterior
+            <span className="hidden sm:inline ml-1">Anterior</span>
           </Button>
-          <div className="text-sm">
-            Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
+          <div className="text-sm whitespace-nowrap">
+            {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
           </div>
           <Button
             variant="outline"
             size="sm"
+            className="h-9 px-3"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Siguiente
+            <span className="hidden sm:inline mr-1">Siguiente</span>
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

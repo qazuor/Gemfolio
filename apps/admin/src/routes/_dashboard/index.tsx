@@ -11,6 +11,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 
+import { SalesChart } from '@/components/dashboard';
 import { PageHeader } from '@/components/shared';
 import {
   formatCurrency,
@@ -35,7 +36,7 @@ function DashboardPage() {
       <PageHeader title="Dashboard" description="Resumen de tu tienda" />
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Pedidos hoy"
           value={stats?.today.orders ?? 0}
@@ -66,6 +67,9 @@ function DashboardPage() {
           isLoading={isLoadingStats}
         />
       </div>
+
+      {/* Sales Chart */}
+      <SalesChart />
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Recent Orders */}

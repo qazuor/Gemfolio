@@ -541,20 +541,21 @@ export function BundleForm({ bundle }: BundleFormProps) {
 
         {/* Product Selector Modal */}
         {showProductSelector && (
-          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-            <div className="bg-background rounded-lg shadow-lg w-full max-w-2xl max-h-[80vh] flex flex-col">
-              <div className="flex items-center justify-between p-4 border-b">
-                <h3 className="text-lg font-semibold">Seleccionar producto</h3>
+          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-2 sm:p-4">
+            <div className="bg-background rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] sm:max-h-[80vh] flex flex-col mx-2 sm:mx-0">
+              <div className="flex items-center justify-between p-3 sm:p-4 border-b">
+                <h3 className="text-base sm:text-lg font-semibold">Seleccionar producto</h3>
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
+                  className="h-9 w-9"
                   onClick={() => setShowProductSelector(false)}
                 >
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="flex-1 overflow-y-auto p-4">
+              <div className="flex-1 overflow-y-auto p-3 sm:p-4">
                 {productsData?.data.length === 0 ? (
                   <p className="text-center text-muted-foreground py-8">
                     No hay productos disponibles

@@ -22,18 +22,20 @@ export function EmptyState({
   children,
 }: EmptyStateProps) {
   return (
-    <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-        <Icon className="h-6 w-6 text-muted-foreground" />
+    <div className="flex min-h-[250px] sm:min-h-[350px] flex-col items-center justify-center rounded-lg border border-dashed p-4 sm:p-8 text-center">
+      <div className="mx-auto flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-muted">
+        <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground" />
       </div>
-      <h3 className="mt-4 text-lg font-semibold">{title}</h3>
-      {description && <p className="mt-2 max-w-sm text-sm text-muted-foreground">{description}</p>}
+      <h3 className="mt-3 sm:mt-4 text-base sm:text-lg font-semibold">{title}</h3>
+      {description && (
+        <p className="mt-2 max-w-sm text-sm text-muted-foreground px-2">{description}</p>
+      )}
       {action && (
-        <Button onClick={action.onClick} className="mt-6">
+        <Button onClick={action.onClick} className="mt-4 sm:mt-6">
           {action.label}
         </Button>
       )}
-      {children && <div className="mt-6">{children}</div>}
+      {children && <div className="mt-4 sm:mt-6">{children}</div>}
     </div>
   );
 }

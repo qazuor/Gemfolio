@@ -3,11 +3,14 @@ import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm';
 import type { Database } from '../client';
 import {
   type NewOrder,
+  type NewRefund,
   type Order,
   type OrderItemSnapshot,
   orderItems,
   orderStatusHistory,
   orders,
+  type Refund,
+  refunds,
 } from '../schema/orders';
 
 // ============================================
@@ -382,4 +385,145 @@ export async function searchOrders(db: Database, query: string, limit = 10) {
     .limit(limit);
 
   return result;
+}
+
+// ============================================
+// REFUNDS
+// ============================================
+
+export type RefundWithOrder = Refund & {
+  order?: Order;
+  processedByUser?: {
+    id: string;
+    name: string | null;
+    email: string;
+  } | null;
+};
+
+/**
+ * Get refunds for an order
+ */
+export async function getOrderRefunds(db: Database, orderId: string): Promise<RefundWithOrder[]> {
+  const result = await db.query.refunds.findMany({
+    where: eq(refunds.orderId, orderId),
+    with: {
+      processedByUser: {
+        columns: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+    orderBy: [desc(refunds.createdAt)],
+  });
+
+  return result;
+}
+
+/**
+ * Get refund by ID
+ */
+export async function getRefundById(db: Database, id: string): Promise<RefundWithOrder | null> {
+  const result = await db.query.refunds.findFirst({
+    where: eq(refunds.id, id),
+    with: {
+      order: true,
+      processedByUser: {
+        columns: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+
+  return result ?? null;
+}
+
+/**
+ * Create a refund request
+ */
+export async function createRefund(db: Database, data: NewRefund): Promise<Refund> {
+  const result = await db.insert(refunds).values(data).returning();
+
+  if (!result[0]) {
+    throw new Error('Failed to create refund');
+  }
+
+  return result[0];
+}
+
+/**
+ * Update refund status
+ */
+export async function updateRefundStatus(
+  db: Database,
+  refundId: string,
+  status: Refund['status'],
+  processedBy?: string,
+  rejectionReason?: string
+): Promise<Refund | undefined> {
+  const updateData: Partial<Refund> = {
+    status,
+    updatedAt: new Date(),
+  };
+
+  if (status === 'completed' || status === 'rejected') {
+    updateData.processedAt = new Date();
+    if (processedBy) {
+      updateData.processedBy = processedBy;
+    }
+  }
+
+  if (status === 'rejected' && rejectionReason) {
+    updateData.rejectionReason = rejectionReason;
+  }
+
+  const result = await db
+    .update(refunds)
+    .set(updateData)
+    .where(eq(refunds.id, refundId))
+    .returning();
+
+  // If refund is completed, update order status
+  if (result[0] && status === 'completed') {
+    const refund = result[0];
+    await updateOrderStatus(db, refund.orderId, 'refunded', 'Reembolso completado', processedBy);
+    await updatePaymentStatus(db, refund.orderId, 'refunded');
+  }
+
+  return result[0];
+}
+
+/**
+ * Add admin notes to refund
+ */
+export async function addRefundNotes(
+  db: Database,
+  refundId: string,
+  adminNotes: string
+): Promise<Refund | undefined> {
+  const result = await db
+    .update(refunds)
+    .set({ adminNotes, updatedAt: new Date() })
+    .where(eq(refunds.id, refundId))
+    .returning();
+
+  return result[0];
+}
+
+/**
+ * Get total refunded amount for an order
+ */
+export async function getOrderRefundedAmount(db: Database, orderId: string): Promise<string> {
+  const result = await db
+    .select({
+      total: sql<string>`COALESCE(SUM(amount::numeric), 0)`,
+    })
+    .from(refunds)
+    .where(and(eq(refunds.orderId, orderId), eq(refunds.status, 'completed')));
+
+  return result[0]?.total ?? '0';
 }

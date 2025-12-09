@@ -295,3 +295,181 @@ export function getPaymentStatusColor(
   };
   return colors[status];
 }
+
+// ============================================
+// REFUNDS TYPES AND HOOKS
+// ============================================
+
+type RefundStatus = 'pending' | 'approved' | 'processing' | 'completed' | 'rejected';
+type RefundReason =
+  | 'customer_request'
+  | 'defective_product'
+  | 'wrong_item'
+  | 'not_as_described'
+  | 'damaged_shipping'
+  | 'other';
+
+export interface Refund {
+  id: string;
+  orderId: string;
+  amount: string;
+  reason: RefundReason;
+  reasonDetails: string | null;
+  status: RefundStatus;
+  items: Array<{ orderItemId: string; quantity: number }> | null;
+  processedBy: string | null;
+  processedAt: string | null;
+  rejectionReason: string | null;
+  adminNotes: string | null;
+  createdAt: string;
+  updatedAt: string;
+  processedByUser?: {
+    id: string;
+    name: string | null;
+    email: string;
+  } | null;
+}
+
+interface RefundsResponse {
+  refunds: Refund[];
+  refundedAmount: string;
+  orderTotal: string;
+  remainingToRefund: string;
+}
+
+interface CreateRefundData {
+  amount: string;
+  reason: RefundReason;
+  reasonDetails?: string;
+  items?: Array<{ orderItemId: string; quantity: number }>;
+  adminNotes?: string;
+}
+
+// Fetch functions
+async function fetchOrderRefunds(orderId: string): Promise<RefundsResponse> {
+  const response = await fetch(`${API_BASE}/admin/orders/${orderId}/refunds`);
+  if (!response.ok) {
+    throw new Error('Error al cargar reembolsos');
+  }
+  const result = await response.json();
+  return result.data;
+}
+
+async function createRefund(orderId: string, data: CreateRefundData): Promise<Refund> {
+  const response = await fetch(`${API_BASE}/admin/orders/${orderId}/refunds`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Error al crear reembolso');
+  }
+  const result = await response.json();
+  return result.data;
+}
+
+async function updateRefundStatus(
+  orderId: string,
+  refundId: string,
+  data: { status: RefundStatus; rejectionReason?: string }
+): Promise<Refund> {
+  const response = await fetch(`${API_BASE}/admin/orders/${orderId}/refunds/${refundId}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Error al actualizar estado del reembolso');
+  }
+  const result = await response.json();
+  return result.data;
+}
+
+// Hooks
+export function useOrderRefunds(orderId: string) {
+  return useQuery({
+    queryKey: ['order-refunds', orderId],
+    queryFn: () => fetchOrderRefunds(orderId),
+    enabled: !!orderId,
+  });
+}
+
+export function useCreateRefund(orderId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateRefundData) => createRefund(orderId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['order-refunds', orderId] });
+      queryClient.invalidateQueries({ queryKey: ['order', orderId] });
+      toast.success('Reembolso creado correctamente');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+export function useUpdateRefundStatus(orderId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      refundId,
+      status,
+      rejectionReason,
+    }: {
+      refundId: string;
+      status: RefundStatus;
+      rejectionReason?: string;
+    }) => updateRefundStatus(orderId, refundId, { status, rejectionReason }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['order-refunds', orderId] });
+      queryClient.invalidateQueries({ queryKey: ['order', orderId] });
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      toast.success('Estado del reembolso actualizado');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+// Utility functions for refunds
+export function getRefundStatusLabel(status: RefundStatus): string {
+  const labels: Record<RefundStatus, string> = {
+    pending: 'Pendiente',
+    approved: 'Aprobado',
+    processing: 'Procesando',
+    completed: 'Completado',
+    rejected: 'Rechazado',
+  };
+  return labels[status];
+}
+
+export function getRefundStatusColor(
+  status: RefundStatus
+): 'default' | 'secondary' | 'destructive' | 'outline' {
+  const colors: Record<RefundStatus, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+    pending: 'secondary',
+    approved: 'default',
+    processing: 'default',
+    completed: 'default',
+    rejected: 'destructive',
+  };
+  return colors[status];
+}
+
+export function getRefundReasonLabel(reason: RefundReason): string {
+  const labels: Record<RefundReason, string> = {
+    customer_request: 'Solicitud del cliente',
+    defective_product: 'Producto defectuoso',
+    wrong_item: 'Artículo incorrecto',
+    not_as_described: 'No como se describió',
+    damaged_shipping: 'Dañado en envío',
+    other: 'Otro',
+  };
+  return labels[reason];
+}

@@ -89,3 +89,6 @@ export const UPLOAD_ENDPOINTS = [
 ] as const;
 
 export type UploadEndpoint = (typeof UPLOAD_ENDPOINTS)[number];
+
+// Export the router type for client usage
+export type UploadRouter = typeof uploadRouter;

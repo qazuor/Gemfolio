@@ -165,7 +165,7 @@ export function CategoryFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto sm:w-full">
         <DialogHeader>
           <DialogTitle>{category ? 'Editar categoría' : 'Nueva categoría'}</DialogTitle>
           <DialogDescription>
@@ -178,9 +178,13 @@ export function CategoryFormDialog({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <Tabs defaultValue="general" className="space-y-4">
-              <TabsList>
-                <TabsTrigger value="general">General</TabsTrigger>
-                <TabsTrigger value="seo">SEO</TabsTrigger>
+              <TabsList className="w-full sm:w-auto">
+                <TabsTrigger value="general" className="flex-1 sm:flex-none">
+                  General
+                </TabsTrigger>
+                <TabsTrigger value="seo" className="flex-1 sm:flex-none">
+                  SEO
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="general" className="space-y-4">
@@ -363,11 +367,16 @@ export function CategoryFormDialog({
               </TabsContent>
             </Tabs>
 
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <DialogFooter className="flex-col gap-2 sm:flex-row sm:gap-0">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                className="w-full sm:w-auto"
+              >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
                 {isSubmitting ? 'Guardando...' : category ? 'Guardar cambios' : 'Crear categoría'}
               </Button>
             </DialogFooter>

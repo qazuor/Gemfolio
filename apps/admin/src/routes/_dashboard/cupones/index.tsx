@@ -22,7 +22,7 @@ import { es } from 'date-fns/locale';
 import { Copy, Edit, MoreHorizontal, Plus, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-import { ConfirmDialog, DataTable, EmptyState, PageHeader } from '@/components/shared';
+import { ConfirmDialog, DataTable, EmptyState, PageHeader, Pagination } from '@/components/shared';
 import {
   type Coupon,
   formatCouponValue,
@@ -261,11 +261,23 @@ function CouponsPage() {
           description="Crea tu primer cupón de descuento"
           action={{
             label: 'Crear cupón',
-            onClick: () => {},
+            onClick: () => navigate({ to: '/cupones/nuevo' }),
           }}
         />
       ) : (
-        <DataTable columns={columns} data={couponsData?.data || []} isLoading={isLoading} />
+        <>
+          <DataTable columns={columns} data={couponsData?.data || []} isLoading={isLoading} />
+          {couponsData?.pagination && couponsData.pagination.totalPages > 1 && (
+            <Pagination
+              page={couponsData.pagination.page}
+              totalPages={couponsData.pagination.totalPages}
+              total={couponsData.pagination.total}
+              limit={couponsData.pagination.limit}
+              onPageChange={(newPage) => updateSearch({ page: newPage })}
+              showPageSizeSelector={false}
+            />
+          )}
+        </>
       )}
 
       <ConfirmDialog

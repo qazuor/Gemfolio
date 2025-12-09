@@ -20,7 +20,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Eye, MoreHorizontal, Search } from 'lucide-react';
 
-import { DataTable, EmptyState, PageHeader } from '@/components/shared';
+import { DataTable, EmptyState, PageHeader, Pagination } from '@/components/shared';
 import {
   getPaymentStatusColor,
   getPaymentStatusLabel,
@@ -223,7 +223,19 @@ function OrdersPage() {
           description="Los pedidos aparecerán aquí cuando los clientes realicen compras"
         />
       ) : (
-        <DataTable columns={columns} data={ordersData?.data || []} isLoading={isLoading} />
+        <>
+          <DataTable columns={columns} data={ordersData?.data || []} isLoading={isLoading} />
+          {ordersData?.pagination && ordersData.pagination.totalPages > 1 && (
+            <Pagination
+              page={ordersData.pagination.page}
+              totalPages={ordersData.pagination.totalPages}
+              total={ordersData.pagination.total}
+              limit={ordersData.pagination.limit}
+              onPageChange={(newPage) => updateSearch({ page: newPage })}
+              showPageSizeSelector={false}
+            />
+          )}
+        </>
       )}
     </div>
   );

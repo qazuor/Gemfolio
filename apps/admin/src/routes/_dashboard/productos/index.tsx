@@ -21,9 +21,9 @@ import { es } from 'date-fns/locale';
 import { Copy, Edit, MoreHorizontal, Plus, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-import { ConfirmDialog, DataTable, EmptyState, PageHeader } from '@/components/shared';
+import { ConfirmDialog, DataTable, EmptyState, PageHeader, Pagination } from '@/components/shared';
 import { useCategories } from '@/hooks/use-categories';
-import { useDeleteProduct, useProducts } from '@/hooks/use-products';
+import { useDeleteProduct, useDuplicateProduct, useProducts } from '@/hooks/use-products';
 import { type ProductsSearch, productsSearchSchema } from '@/lib/search-schemas';
 
 export const Route = createFileRoute('/_dashboard/productos/')({
@@ -65,6 +65,7 @@ function ProductsPage() {
 
   const { data: categories } = useCategories();
   const deleteProduct = useDeleteProduct();
+  const duplicateProduct = useDuplicateProduct();
 
   const handleDelete = () => {
     if (deleteId) {
@@ -72,6 +73,10 @@ function ProductsPage() {
         onSuccess: () => setDeleteId(null),
       });
     }
+  };
+
+  const handleDuplicate = (productId: string) => {
+    duplicateProduct.mutate(productId);
   };
 
   const columns: ColumnDef<Product>[] = [
@@ -179,7 +184,10 @@ function ProductsPage() {
                   Editar
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleDuplicate(product.id)}
+                disabled={duplicateProduct.isPending}
+              >
                 <Copy className="mr-2 h-4 w-4" />
                 Duplicar
               </DropdownMenuItem>
@@ -267,11 +275,23 @@ function ProductsPage() {
           description="Comienza agregando tu primer producto al catálogo"
           action={{
             label: 'Crear producto',
-            onClick: () => {},
+            onClick: () => navigate({ to: '/productos/nuevo' }),
           }}
         />
       ) : (
-        <DataTable columns={columns} data={productsData?.data || []} isLoading={isLoading} />
+        <>
+          <DataTable columns={columns} data={productsData?.data || []} isLoading={isLoading} />
+          {productsData?.pagination && productsData.pagination.totalPages > 1 && (
+            <Pagination
+              page={productsData.pagination.page}
+              totalPages={productsData.pagination.totalPages}
+              total={productsData.pagination.total}
+              limit={productsData.pagination.limit}
+              onPageChange={(newPage) => updateSearch({ page: newPage })}
+              showPageSizeSelector={false}
+            />
+          )}
+        </>
       )}
 
       <ConfirmDialog

@@ -39,21 +39,23 @@ export function ConfirmDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent className="w-[95vw] max-w-md sm:w-full">
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>{cancelLabel}</AlertDialogCancel>
+        <AlertDialogFooter className="flex-col gap-2 sm:flex-row sm:gap-0">
+          <AlertDialogCancel disabled={isLoading} className="w-full sm:w-auto">
+            {cancelLabel}
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isLoading}
-            className={
+            className={`w-full sm:w-auto ${
               variant === 'destructive'
                 ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
                 : ''
-            }
+            }`}
           >
             {isLoading ? 'Cargando...' : confirmLabel}
           </AlertDialogAction>

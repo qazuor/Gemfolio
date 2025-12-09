@@ -143,15 +143,8 @@ export const orderStatusHistory = pgTable(
   (table) => [index('order_status_history_order_id_idx').on(table.orderId)]
 );
 
-// Relations
-export const ordersRelations = relations(orders, ({ one, many }) => ({
-  user: one(users, {
-    fields: [orders.userId],
-    references: [users.id],
-  }),
-  items: many(orderItems),
-  statusHistory: many(orderStatusHistory),
-}));
+// Relations - Forward declaration for refunds (defined below)
+// Note: refunds relation is added after refunds table is defined
 
 export const orderItemsRelations = relations(orderItems, ({ one }) => ({
   order: one(orders, {
@@ -171,6 +164,84 @@ export const orderStatusHistoryRelations = relations(orderStatusHistory, ({ one 
   }),
 }));
 
+// Refund status enum
+export const refundStatusEnum = pgEnum('refund_status', [
+  'pending', // Reembolso solicitado
+  'approved', // Aprobado
+  'processing', // En proceso
+  'completed', // Completado
+  'rejected', // Rechazado
+]);
+
+// Refund reason enum
+export const refundReasonEnum = pgEnum('refund_reason', [
+  'customer_request', // Solicitud del cliente
+  'defective_product', // Producto defectuoso
+  'wrong_item', // Artículo incorrecto
+  'not_as_described', // No como se describió
+  'damaged_shipping', // Dañado en envío
+  'other', // Otro
+]);
+
+// Refunds table
+export const refunds = pgTable(
+  'refunds',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    orderId: text('order_id')
+      .notNull()
+      .references(() => orders.id, { onDelete: 'cascade' }),
+    // Refund details
+    amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
+    reason: refundReasonEnum('reason').notNull(),
+    reasonDetails: text('reason_details'),
+    status: refundStatusEnum('status').default('pending').notNull(),
+    // Items being refunded (optional - null means full refund)
+    items: jsonb('items').$type<Array<{ orderItemId: string; quantity: number }>>(),
+    // Processing info
+    processedBy: text('processed_by').references(() => users.id, { onDelete: 'set null' }),
+    processedAt: timestamp('processed_at', { withTimezone: true }),
+    rejectionReason: text('rejection_reason'),
+    // Notes
+    adminNotes: text('admin_notes'),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    index('refunds_order_id_idx').on(table.orderId),
+    index('refunds_status_idx').on(table.status),
+  ]
+);
+
+// Refund relations
+export const refundsRelations = relations(refunds, ({ one }) => ({
+  order: one(orders, {
+    fields: [refunds.orderId],
+    references: [orders.id],
+  }),
+  processedByUser: one(users, {
+    fields: [refunds.processedBy],
+    references: [users.id],
+  }),
+}));
+
+// Orders relations - includes all relations for orders table
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+  user: one(users, {
+    fields: [orders.userId],
+    references: [users.id],
+  }),
+  items: many(orderItems),
+  statusHistory: many(orderStatusHistory),
+  refunds: many(refunds),
+}));
+
 // Types
 export type Order = typeof orders.$inferSelect;
 export type NewOrder = typeof orders.$inferInsert;
@@ -178,3 +249,5 @@ export type OrderItem = typeof orderItems.$inferSelect;
 export type NewOrderItem = typeof orderItems.$inferInsert;
 export type OrderStatusHistory = typeof orderStatusHistory.$inferSelect;
 export type NewOrderStatusHistory = typeof orderStatusHistory.$inferInsert;
+export type Refund = typeof refunds.$inferSelect;
+export type NewRefund = typeof refunds.$inferInsert;

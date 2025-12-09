@@ -13,14 +13,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@gemfolio/ui';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import type { ColumnDef } from '@tanstack/react-table';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Edit, MoreHorizontal, Package, Plus, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-import { ConfirmDialog, DataTable, EmptyState, PageHeader } from '@/components/shared';
+import { ConfirmDialog, DataTable, EmptyState, PageHeader, Pagination } from '@/components/shared';
 import { useBundles, useDeleteBundle } from '@/hooks/use-bundles';
 
 export const Route = createFileRoute('/_dashboard/bundles/')({
@@ -53,9 +53,10 @@ interface Bundle {
 }
 
 function BundlesPage() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<string>('');
-  const [page] = useState(1);
+  const [page, setPage] = useState(1);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const { data: bundlesData, isLoading } = useBundles({
@@ -265,11 +266,23 @@ function BundlesPage() {
           description="Crea tu primer bundle para ofrecer paquetes de productos"
           action={{
             label: 'Crear bundle',
-            onClick: () => {},
+            onClick: () => navigate({ to: '/bundles/nuevo' }),
           }}
         />
       ) : (
-        <DataTable columns={columns} data={bundlesData?.data || []} isLoading={isLoading} />
+        <>
+          <DataTable columns={columns} data={bundlesData?.data || []} isLoading={isLoading} />
+          {bundlesData?.pagination && bundlesData.pagination.totalPages > 1 && (
+            <Pagination
+              page={bundlesData.pagination.page}
+              totalPages={bundlesData.pagination.totalPages}
+              total={bundlesData.pagination.total}
+              limit={bundlesData.pagination.limit}
+              onPageChange={(newPage) => setPage(newPage)}
+              showPageSizeSelector={false}
+            />
+          )}
+        </>
       )}
 
       <ConfirmDialog

@@ -26,6 +26,10 @@ export async function seedUsers(db: Database) {
     const [newUser] = await db.insert(users).values(adminUser).returning();
     console.log(`  ✓ Created admin user: ${adminUser.email}`);
 
+    if (!newUser) {
+      throw new Error('Failed to create admin user');
+    }
+
     // Hash password and create credential account
     const hashedPassword = await hashPassword(ADMIN_PASSWORD);
     await db.insert(accounts).values({

@@ -11,15 +11,25 @@
     "./server": {
       "types": "./src/server.ts",
       "default": "./src/server.ts"
+    },
+    "./server-utils": {
+      "types": "./src/server-utils.ts",
+      "default": "./src/server-utils.ts"
     }
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@uploadthing/react": "^7.1.5",
+    "@uploadthing/shared": "^7.1.5",
     "uploadthing": "^7.4.4"
   },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  },
   "devDependencies": {
+    "@types/react": "^19.0.1",
     "typescript": "^5.7.2"
   }
 }

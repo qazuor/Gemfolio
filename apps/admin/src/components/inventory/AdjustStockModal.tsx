@@ -80,7 +80,7 @@ export function AdjustStockModal({ item, open, onOpenChange }: AdjustStockModalP
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-[95vw] max-w-[425px] sm:w-full">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Ajustar stock</DialogTitle>
@@ -169,18 +169,20 @@ export function AdjustStockModal({ item, open, onOpenChange }: AdjustStockModalP
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="flex-col gap-2 sm:flex-row sm:gap-0">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={adjustStock.isPending}
+              className="w-full sm:w-auto"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={parsedQuantity === 0 || newStock < 0 || adjustStock.isPending}
+              className="w-full sm:w-auto"
             >
               {adjustStock.isPending ? 'Guardando...' : 'Guardar ajuste'}
             </Button>

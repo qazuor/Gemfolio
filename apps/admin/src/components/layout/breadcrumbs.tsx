@@ -64,23 +64,28 @@ export function Breadcrumbs() {
   }
 
   return (
-    <nav aria-label="Breadcrumb" className="mb-4">
-      <ol className="flex items-center gap-1 text-sm text-muted-foreground">
-        <li>
+    <nav aria-label="Breadcrumb" className="mb-3 sm:mb-4 overflow-x-auto">
+      <ol className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground whitespace-nowrap">
+        <li className="flex-shrink-0">
           <Link to="/" className="flex items-center gap-1 hover:text-foreground transition-colors">
-            <Home className="h-4 w-4" />
+            <Home className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             <span className="sr-only">Dashboard</span>
           </Link>
         </li>
         {breadcrumbs.map((item, index) => (
-          <li key={item.label} className="flex items-center gap-1">
-            <ChevronRight className="h-4 w-4" />
+          <li key={item.label} className="flex items-center gap-1 flex-shrink-0">
+            <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             {item.href && index < breadcrumbs.length - 1 ? (
-              <Link to={item.href} className="hover:text-foreground transition-colors">
+              <Link
+                to={item.href}
+                className="hover:text-foreground transition-colors max-w-[100px] sm:max-w-none truncate"
+              >
                 {item.label}
               </Link>
             ) : (
-              <span className="text-foreground font-medium">{item.label}</span>
+              <span className="text-foreground font-medium max-w-[120px] sm:max-w-none truncate">
+                {item.label}
+              </span>
             )}
           </li>
         ))}
