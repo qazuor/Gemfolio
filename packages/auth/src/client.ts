@@ -8,6 +8,10 @@ export const authClient = createAuthClient({
   // Base URL will be configured by the consuming app
   // Default to relative path for same-origin requests
   baseURL: typeof window !== 'undefined' ? window.location.origin : '',
+  // Ensure cookies are sent with requests for session persistence
+  fetchOptions: {
+    credentials: 'include',
+  },
 });
 
 // Re-export all client methods and hooks
@@ -36,6 +40,7 @@ export const forgetPassword = async (data: { email: string; redirectTo?: string 
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(data),
     });
 
@@ -60,6 +65,7 @@ export const resetPassword = async (data: { newPassword: string; token: string }
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(data),
     });
 

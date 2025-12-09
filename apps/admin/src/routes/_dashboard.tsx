@@ -1,18 +1,18 @@
-import { authClient } from '@gemfolio/auth/client';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
 import { Breadcrumbs, Header, MobileSidebar, Sidebar } from '@/components/layout';
 import { ErrorComponent } from '@/components/shared/error-boundary';
 import { NotFound } from '@/components/shared/not-found';
 import { Pending } from '@/components/shared/pending';
+import { getSessionServer } from '@/lib/auth.server';
 
 export const Route = createFileRoute('/_dashboard')({
   beforeLoad: async () => {
-    const session = await authClient.getSession();
-    if (!session.data) {
+    const session = await getSessionServer();
+    if (!session) {
       throw redirect({ to: '/login' });
     }
-    return { user: session.data.user };
+    return { user: session.user };
   },
   component: DashboardLayout,
   errorComponent: ErrorComponent,
