@@ -237,7 +237,7 @@ describe('Settings Validators', () => {
     });
 
     it('should reject googleAnalyticsId exceeding max length', () => {
-      const longId = 'G-' + 'X'.repeat(50);
+      const longId = `G-${'X'.repeat(50)}`;
       expect(() => seoSettingsSchema.parse({ googleAnalyticsId: longId })).toThrow();
     });
   });
