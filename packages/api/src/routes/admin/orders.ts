@@ -2,6 +2,7 @@ import { db } from '@gemfolio/db';
 import {
   addOrderAdminNotes,
   addRefundNotes,
+  adjustStock,
   createRefund,
   getOrderById,
   getOrderRefundedAmount,
@@ -14,6 +15,7 @@ import {
   updatePaymentStatus,
   updateRefundStatus,
 } from '@gemfolio/db/queries';
+import { sendOrderStatusUpdate } from '@gemfolio/email';
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -173,7 +175,45 @@ export const adminOrdersRoutes = new Hono()
         return errors.notFound(c, 'Pedido');
       }
 
+      const previousStatus = existing.status;
       const order = await updateOrderStatus(db, id, data.status, data.note, user?.id);
+
+      if (!order) {
+        return errors.serverError(c);
+      }
+
+      // Restore stock if order is cancelled
+      if (data.status === 'cancelled' && previousStatus !== 'cancelled') {
+        for (const item of existing.items) {
+          await adjustStock(db, {
+            productId: item.snapshot.productId,
+            variantId: item.snapshot.variantId,
+            type: 'in',
+            quantity: item.quantity,
+            reason: `Pedido cancelado - ${existing.orderNumber}`,
+            orderId: existing.id,
+          });
+        }
+      }
+
+      // Send email notification to customer for status changes
+      const emailStatuses = ['processing', 'shipped', 'delivered', 'cancelled'] as const;
+      if (emailStatuses.includes(data.status as (typeof emailStatuses)[number])) {
+        const webUrl = process.env.WEB_URL || 'http://localhost:4321';
+
+        // Send email asynchronously (don't block response)
+        sendOrderStatusUpdate({
+          to: existing.customerEmail,
+          customerName: existing.customerName,
+          orderNumber: existing.orderNumber,
+          status: data.status as 'processing' | 'shipped' | 'delivered' | 'cancelled',
+          orderUrl: `${webUrl}/mi-cuenta/pedidos/${existing.orderNumber}`,
+          message: data.note,
+          storeName: 'Gemfolio',
+        }).catch((err) => {
+          console.error('Error sending order status email:', err);
+        });
+      }
 
       return success(c, order);
     } catch (err) {
