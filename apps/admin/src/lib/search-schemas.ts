@@ -74,3 +74,26 @@ export const pagesSearchSchema = paginationSchema.extend({
 });
 
 export type PagesSearch = z.infer<typeof pagesSearchSchema>;
+
+// Reviews listing
+export const reviewsSearchSchema = paginationSchema.extend({
+  productId: z.string().optional(),
+  userId: z.string().optional(),
+  status: z.enum(['pending', 'approved', 'rejected']).optional(),
+  minRating: z.number().int().min(1).max(5).optional(),
+  maxRating: z.number().int().min(1).max(5).optional(),
+  isVerifiedPurchase: z.boolean().optional(),
+});
+
+export type ReviewsSearch = z.infer<typeof reviewsSearchSchema>;
+
+// Abandoned carts listing
+export const abandonedCartsSearchSchema = paginationSchema.extend({
+  status: z
+    .enum(['pending', 'email_sent', 'follow_up_sent', 'recovered', 'expired', 'unsubscribed'])
+    .optional(),
+  isRecovered: z.boolean().optional(),
+  hasEmail: z.boolean().optional(),
+});
+
+export type AbandonedCartsSearch = z.infer<typeof abandonedCartsSearchSchema>;

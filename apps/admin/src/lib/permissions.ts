@@ -3,6 +3,7 @@ import {
   Boxes,
   FileText,
   LayoutDashboard,
+  MessageSquare,
   Package,
   Settings,
   ShoppingCart,
@@ -46,6 +47,11 @@ export type Permission =
   | 'pages:create'
   | 'pages:edit'
   | 'pages:delete'
+  | 'reviews:view'
+  | 'reviews:moderate'
+  | 'reviews:delete'
+  | 'abandoned_carts:view'
+  | 'abandoned_carts:manage'
   | 'settings:view'
   | 'settings:edit'
   | 'profile:view'
@@ -77,6 +83,9 @@ export const rolePermissions: Record<UserRole, Permission[]> = {
     'pages:view',
     'pages:create',
     'pages:edit',
+    'reviews:view',
+    'reviews:moderate',
+    'abandoned_carts:view',
     'settings:view',
     'profile:view',
     'profile:edit',
@@ -112,6 +121,11 @@ export const rolePermissions: Record<UserRole, Permission[]> = {
     'pages:create',
     'pages:edit',
     'pages:delete',
+    'reviews:view',
+    'reviews:moderate',
+    'reviews:delete',
+    'abandoned_carts:view',
+    'abandoned_carts:manage',
     'settings:view',
     'settings:edit',
     'profile:view',
@@ -175,10 +189,15 @@ export const adminNavigation: NavigationItem[] = [
   {
     name: 'Ventas',
     icon: ShoppingCart,
-    permissions: ['orders:view', 'coupons:view'],
+    permissions: ['orders:view', 'coupons:view', 'abandoned_carts:view'],
     children: [
       { name: 'Pedidos', href: '/pedidos', permissions: ['orders:view'] },
       { name: 'Cupones', href: '/cupones', permissions: ['coupons:view'] },
+      {
+        name: 'Carritos abandonados',
+        href: '/carritos-abandonados',
+        permissions: ['abandoned_carts:view'],
+      },
     ],
   },
   {
@@ -192,6 +211,12 @@ export const adminNavigation: NavigationItem[] = [
     href: '/clientes',
     icon: Users,
     permissions: ['customers:view'],
+  },
+  {
+    name: 'Reseñas',
+    href: '/resenas',
+    icon: MessageSquare,
+    permissions: ['reviews:view'],
   },
   {
     name: 'Páginas',
@@ -277,8 +302,10 @@ export function isRouteAllowedForRole(pathname: string, role: UserRole): boolean
     '/bundles': ['bundles:view'],
     '/pedidos': ['orders:view'],
     '/cupones': ['coupons:view'],
+    '/carritos-abandonados': ['abandoned_carts:view'],
     '/inventario': ['inventory:view'],
     '/clientes': ['customers:view'],
+    '/resenas': ['reviews:view'],
     '/paginas': ['pages:view'],
     '/configuracion': ['settings:view'],
     '/perfil': ['profile:view'],
