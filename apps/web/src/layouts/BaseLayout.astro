@@ -5,6 +5,15 @@ import Header from '@/components/astro/layout/Header.astro';
 import Footer from '@/components/astro/layout/Footer.astro';
 import CartDrawer from '@/components/react/cart/CartDrawer';
 import InstallPrompt from '@/components/react/pwa/InstallPrompt';
+import {
+  getPublicSettings,
+  generateCssVariables,
+  getGoogleFontsUrl,
+  getFontFamilyCss,
+  defaultBrandingSettings,
+  defaultSeoSettings,
+  defaultGeneralSettings,
+} from '@/lib/api';
 
 interface Props {
   title: string;
@@ -15,17 +24,30 @@ interface Props {
   hideFooter?: boolean;
 }
 
+// Fetch settings from API
+const settings = await getPublicSettings();
+const branding = settings.branding || defaultBrandingSettings;
+const seo = settings.seo || defaultSeoSettings;
+const general = settings.general || defaultGeneralSettings;
+
+// Generate dynamic styles
+const cssVariables = generateCssVariables(branding);
+const fontsUrl = getGoogleFontsUrl(branding);
+const fontFamilies = getFontFamilyCss(branding);
+
 const {
   title,
-  description = 'Descubre nuestra exclusiva colección de joyería artesanal. Anillos, collares, pulseras y más.',
-  image = '/og-image.jpg',
+  description = seo.siteDescription || 'Descubre nuestra exclusiva colección de joyería artesanal.',
+  image = seo.ogImage || '/og-image.jpg',
   noIndex = false,
   hideHeader = false,
   hideFooter = false,
 } = Astro.props;
 
+const siteTitle = seo.siteTitle || general.businessName || 'Gemfolio';
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
+const faviconUrl = branding.favicon || '/favicon.svg';
 ---
 
 <!doctype html>
@@ -33,18 +55,18 @@ const socialImageURL = new URL(image, Astro.site);
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={faviconUrl} />
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content="#8B5CF6" />
+    <meta name="theme-color" content={branding.primaryColor} />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Gemfolio" />
+    <meta name="apple-mobile-web-app-title" content={general.businessName} />
 
     <!-- Primary Meta Tags -->
-    <title>{title} | Gemfolio</title>
-    <meta name="title" content={`${title} | Gemfolio`} />
+    <title>{title} | {siteTitle}</title>
+    <meta name="title" content={`${title} | ${siteTitle}`} />
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
 
@@ -53,7 +75,7 @@ const socialImageURL = new URL(image, Astro.site);
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
-    <meta property="og:title" content={`${title} | Gemfolio`} />
+    <meta property="og:title" content={`${title} | ${siteTitle}`} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={socialImageURL} />
     <meta property="og:locale" content="es_AR" />
@@ -61,17 +83,40 @@ const socialImageURL = new URL(image, Astro.site);
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={canonicalURL} />
-    <meta property="twitter:title" content={`${title} | Gemfolio`} />
+    <meta property="twitter:title" content={`${title} | ${siteTitle}`} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={socialImageURL} />
 
-    <!-- Fonts -->
+    <!-- Google Analytics -->
+    {seo.googleAnalyticsId && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${seo.googleAnalyticsId}`}></script>
+        <script is:inline define:vars={{ gaId: seo.googleAnalyticsId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', gaId);
+        </script>
+      </>
+    )}
+
+    <!-- Dynamic Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href={fontsUrl} rel="stylesheet" />
+
+    <!-- Dynamic Styles from Settings -->
+    <style set:html={`
+      :root {
+        ${cssVariables}
+        --font-heading: ${fontFamilies.heading};
+        --font-body: ${fontFamilies.body};
+      }
+      .font-heading { font-family: var(--font-heading); }
+      .font-body { font-family: var(--font-body); }
+      h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
+      body { font-family: var(--font-body); }
+    `}></style>
 
     <!-- View Transitions -->
     <ClientRouter />
@@ -92,7 +137,12 @@ const socialImageURL = new URL(image, Astro.site);
       }
     </script>
   </head>
-  <body class="flex min-h-screen flex-col bg-background font-body text-foreground antialiased">
+  <body
+    class="flex min-h-screen flex-col bg-background text-foreground antialiased"
+    data-header-style={branding.headerStyle}
+    data-button-style={branding.buttonStyle}
+    data-card-style={branding.cardStyle}
+  >
     {!hideHeader && <Header transition:persist />}
     <main class="flex-1" transition:animate="fade">
       <slot />
