@@ -23,9 +23,9 @@
     "@gemfolio/email": "workspace:*",
     "@gemfolio/storage": "workspace:*",
     "@gemfolio/validators": "workspace:*",
-    "@hono/zod-validator": "^0.4.3",
+    "@hono/zod-validator": "^0.7.5",
     "@sentry/node": "^8.48.0",
-    "hono": "^4.7.7",
+    "hono": "^4.10.8",
     "mercadopago": "^2.11.0",
     "zod": "^3.24.1"
   },
