@@ -11,7 +11,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 
-import { SalesChart } from '@/components/dashboard';
+import { SalesChart, WishlistStatsCard } from '@/components/dashboard';
 import { PageHeader } from '@/components/shared';
 import {
   formatCurrency,
@@ -71,9 +71,9 @@ function DashboardPage() {
       {/* Sales Chart */}
       <SalesChart />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-3">
         {/* Recent Orders */}
-        <Card>
+        <Card className="lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-lg">Pedidos Recientes</CardTitle>
             <Link
@@ -131,6 +131,11 @@ function DashboardPage() {
           </CardContent>
         </Card>
 
+        {/* Wishlist Stats */}
+        <WishlistStatsCard />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
         {/* Low Stock Alerts */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
