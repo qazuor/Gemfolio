@@ -33,6 +33,23 @@ const defaultSettings: Array<{ key: string; value: unknown; group: string }> = [
       favicon: '',
       primaryColor: '#B8860B', // Dark goldenrod
       secondaryColor: '#1A1A1A',
+      accentColor: '#D4AF37', // Gold accent
+      // Typography
+      headingFont: 'playfair',
+      bodyFont: 'inter',
+      // Layout
+      borderRadius: 'medium',
+      // Header
+      headerStyle: 'solid',
+      // Buttons
+      buttonStyle: 'solid',
+      // Product cards
+      cardStyle: 'elevated',
+      // Homepage
+      heroStyle: 'full',
+      showFeaturedCategories: true,
+      showTestimonials: true,
+      showNewsletter: true,
     } satisfies BrandingSettings,
   },
   {
