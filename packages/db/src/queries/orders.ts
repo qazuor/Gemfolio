@@ -498,6 +498,43 @@ export async function updateRefundStatus(
 }
 
 /**
+ * Update order payment status by order number (for webhook processing)
+ */
+export async function updateOrderPaymentStatus(
+  db: Database,
+  orderNumber: string,
+  paymentStatus: Order['paymentStatus'],
+  paymentMetadata?: {
+    mpPaymentId?: string;
+    mpStatus?: string;
+    mpStatusDetail?: string;
+    mpPaymentMethod?: string;
+    mpPaymentType?: string;
+    mpDateApproved?: string | null;
+  }
+): Promise<OrderWithItems | null> {
+  // Find order by number
+  const order = await getOrderByNumber(db, orderNumber);
+  if (!order) return null;
+
+  // Update payment status
+  const updateData: Partial<NewOrder> = {
+    paymentStatus,
+    updatedAt: new Date(),
+  };
+
+  // Store payment metadata if provided
+  if (paymentMetadata) {
+    updateData.paymentMetadata = paymentMetadata;
+  }
+
+  await db.update(orders).set(updateData).where(eq(orders.id, order.id));
+
+  // Return updated order
+  return getOrderById(db, order.id);
+}
+
+/**
  * Add admin notes to refund
  */
 export async function addRefundNotes(

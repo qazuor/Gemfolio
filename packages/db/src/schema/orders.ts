@@ -78,6 +78,16 @@ export const orders = pgTable(
     // Notes
     customerNotes: text('customer_notes'),
     adminNotes: text('admin_notes'),
+    // Payment metadata (for Mercado Pago webhook data)
+    paymentMetadata: jsonb('payment_metadata').$type<{
+      mpPaymentId?: string;
+      mpStatus?: string;
+      mpStatusDetail?: string;
+      mpPaymentMethod?: string;
+      mpPaymentType?: string;
+      mpDateApproved?: string | null;
+      preferenceId?: string;
+    }>(),
     // Timestamps
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true })
