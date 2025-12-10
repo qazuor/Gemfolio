@@ -481,8 +481,8 @@ export function getGoogleFontsUrl(branding: BrandingSettings): string {
   };
 
   const fonts = new Set<string>();
-  fonts.add(fontMap[branding.headingFont] || fontMap['playfair']);
-  fonts.add(fontMap[branding.bodyFont] || fontMap['inter']);
+  fonts.add(fontMap[branding.headingFont] || fontMap.playfair);
+  fonts.add(fontMap[branding.bodyFont] || fontMap.inter);
 
   return `https://fonts.googleapis.com/css2?family=${Array.from(fonts).join('&family=')}&display=swap`;
 }
@@ -503,7 +503,7 @@ export function getFontFamilyCss(branding: BrandingSettings): { heading: string;
   };
 
   return {
-    heading: fontFamilyMap[branding.headingFont] || fontFamilyMap['playfair'],
-    body: fontFamilyMap[branding.bodyFont] || fontFamilyMap['inter'],
+    heading: fontFamilyMap[branding.headingFont] || fontFamilyMap.playfair,
+    body: fontFamilyMap[branding.bodyFont] || fontFamilyMap.inter,
   };
 }
