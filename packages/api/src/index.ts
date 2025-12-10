@@ -10,17 +10,21 @@ import { adminInventoryRoutes } from './routes/admin/inventory';
 import { adminOrdersRoutes } from './routes/admin/orders';
 import { adminPagesRoutes } from './routes/admin/pages';
 import { adminProductsRoutes } from './routes/admin/products';
+import { adminProfileRoutes } from './routes/admin/profile';
 import { adminSettingsRoutes } from './routes/admin/settings';
 import { adminUploadRoutes } from './routes/admin/upload';
 import { adminUsersRoutes } from './routes/admin/users';
 import { bundlesRoutes } from './routes/bundles';
 import { cartRoutes } from './routes/cart';
 import { categoriesRoutes } from './routes/categories';
+import { customerOrdersRoutes } from './routes/customer/orders';
+import { customerProfileRoutes } from './routes/customer/profile';
 import { ordersRoutes } from './routes/orders';
 import { pagesRoutes } from './routes/pages';
 import { productsRoutes } from './routes/products';
 import { searchRoutes } from './routes/search';
 import { settingsRoutes } from './routes/settings';
+import { mercadopagoWebhookRoutes } from './routes/webhooks/mercadopago';
 
 // Create the main Hono app
 const app = new Hono()
@@ -67,10 +71,23 @@ const adminApi = new Hono()
   .route('/pages', adminPagesRoutes)
   .route('/settings', adminSettingsRoutes)
   .route('/dashboard', adminDashboardRoutes)
-  .route('/upload', adminUploadRoutes);
+  .route('/upload', adminUploadRoutes)
+  .route('/profile', adminProfileRoutes);
+
+// Mount customer routes (authenticated users)
+const customerApi = new Hono()
+  .route('/profile', customerProfileRoutes)
+  .route('/orders', customerOrdersRoutes);
+
+// Mount webhook routes
+const webhooksApi = new Hono().route('/mercadopago', mercadopagoWebhookRoutes);
 
 // Mount all routes under /api
-const api = new Hono().route('/', publicApi).route('/admin', adminApi);
+const api = new Hono()
+  .route('/', publicApi)
+  .route('/admin', adminApi)
+  .route('/customer', customerApi)
+  .route('/webhooks', webhooksApi);
 
 // Mount API under base app
 app.route('/api', api);
