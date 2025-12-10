@@ -1,13 +1,13 @@
 import { Button } from '@gemfolio/ui';
 import { Bell, Menu, Moon, Search, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
 import { useState } from 'react';
 
 import { UserNav } from '@/components/auth';
+import { useTheme } from '@/hooks/use-theme';
 import { useUIStore } from '@/stores/ui';
 
 export function Header() {
-  const { theme, setTheme } = useTheme();
+  const { toggleTheme } = useTheme();
   const { toggleMobileSidebar } = useUIStore();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
 
@@ -52,7 +52,7 @@ export function Header() {
       <div className="flex items-center gap-1 sm:gap-2">
         <button
           type="button"
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          onClick={toggleTheme}
           className="rounded-lg p-2 hover:bg-accent h-9 w-9 flex items-center justify-center"
         >
           <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

@@ -1,68 +1,21 @@
 import { Link, useLocation } from '@tanstack/react-router';
-import {
-  Boxes,
-  ChevronDown,
-  FileText,
-  Gift,
-  LayoutDashboard,
-  Package,
-  Settings,
-  ShoppingCart,
-  Users,
-} from 'lucide-react';
+import { ChevronDown, Gift } from 'lucide-react';
 import { useState } from 'react';
 
+import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
-
-const navigation = [
-  {
-    name: 'Dashboard',
-    href: '/',
-    icon: LayoutDashboard,
-  },
-  {
-    name: 'Catálogo',
-    icon: Package,
-    children: [
-      { name: 'Productos', href: '/productos' },
-      { name: 'Categorías', href: '/categorias' },
-      { name: 'Bundles', href: '/bundles' },
-    ],
-  },
-  {
-    name: 'Ventas',
-    icon: ShoppingCart,
-    children: [
-      { name: 'Pedidos', href: '/pedidos' },
-      { name: 'Cupones', href: '/cupones' },
-    ],
-  },
-  {
-    name: 'Inventario',
-    href: '/inventario',
-    icon: Boxes,
-  },
-  {
-    name: 'Clientes',
-    href: '/clientes',
-    icon: Users,
-  },
-  {
-    name: 'Páginas',
-    href: '/paginas',
-    icon: FileText,
-  },
-  {
-    name: 'Configuración',
-    href: '/configuracion',
-    icon: Settings,
-  },
-];
 
 export function Sidebar() {
   const location = useLocation();
   const pathname = location.pathname;
-  const [expandedItems, setExpandedItems] = useState<string[]>(['Catálogo', 'Ventas']);
+  const { navigation, isAdmin } = usePermissions();
+
+  // Expandir automáticamente grupos que tienen hijos
+  const groupsWithChildren = navigation
+    .filter((item) => item.children && item.children.length > 0)
+    .map((item) => item.name);
+
+  const [expandedItems, setExpandedItems] = useState<string[]>(groupsWithChildren);
 
   const toggleExpand = (name: string) => {
     setExpandedItems((prev) =>
@@ -74,6 +27,11 @@ export function Sidebar() {
     if (href === '/') return pathname === '/';
     return pathname.startsWith(href);
   };
+
+  // Si no es admin, no mostrar el sidebar completo
+  if (!isAdmin) {
+    return null;
+  }
 
   return (
     <aside className="hidden w-64 flex-col border-r bg-sidebar-background lg:flex">
@@ -137,10 +95,10 @@ export function Sidebar() {
                 </div>
               ) : (
                 <Link
-                  to={item.href}
+                  to={item.href!}
                   className={cn(
                     'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                    isActive(item.href)
+                    isActive(item.href!)
                       ? 'bg-sidebar-primary text-sidebar-primary-foreground'
                       : 'text-sidebar-foreground hover:bg-sidebar-accent/50'
                   )}
