@@ -170,7 +170,7 @@ function DashboardPage() {
                     <div className="flex items-center gap-3">
                       <div
                         className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-                          item.stock === 0
+                          item.currentStock === 0
                             ? 'bg-destructive/10 text-destructive'
                             : 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400'
                         }`}
@@ -180,22 +180,22 @@ function DashboardPage() {
                       <div>
                         <p className="font-medium">{item.productName}</p>
                         <p className="text-sm text-muted-foreground">
-                          {item.name !== item.productName ? item.name : item.sku || 'Sin SKU'}
+                          {item.variantName ?? item.sku ?? 'Sin SKU'}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p
                         className={`font-medium ${
-                          item.stock === 0
+                          item.currentStock === 0
                             ? 'text-destructive'
                             : 'text-yellow-600 dark:text-yellow-400'
                         }`}
                       >
-                        {item.stock === 0 ? 'Sin stock' : `${item.stock} unidades`}
+                        {item.currentStock === 0 ? 'Sin stock' : `${item.currentStock} unidades`}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        Mínimo: {item.lowStockThreshold}
+                        Mínimo: {item.lowStockThreshold ?? 5}
                       </p>
                     </div>
                   </div>

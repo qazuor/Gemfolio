@@ -43,11 +43,14 @@ export interface RecentOrder {
 
 export interface LowStockItem {
   id: string;
-  sku: string | null;
-  name: string;
+  productId: string;
+  variantId: string | null;
   productName: string;
-  stock: number;
-  lowStockThreshold: number;
+  variantName: string | null;
+  sku: string | null;
+  currentStock: number;
+  lowStockThreshold: number | null;
+  isLowStock: boolean;
 }
 
 export interface SalesChartData {

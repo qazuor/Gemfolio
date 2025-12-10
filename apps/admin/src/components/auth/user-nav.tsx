@@ -1,20 +1,26 @@
 import { signOut, useSession } from '@gemfolio/auth/client';
+import { Badge } from '@gemfolio/ui';
 import { useNavigate } from '@tanstack/react-router';
-import { LogOut, Settings, User } from 'lucide-react';
+import { LogOut, Settings, Ticket, User } from 'lucide-react';
 import { useState } from 'react';
+
+import { usePermissions } from '@/hooks/use-permissions';
+import { getRoleColor, getRoleLabel, type UserProfile } from '@/hooks/use-profile';
 
 export function UserNav() {
   const navigate = useNavigate();
   const { data: session } = useSession();
+  const { isAdmin, can } = usePermissions();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const user = session?.user;
+  const userWithRole = user as (typeof user & { role?: string }) | undefined;
 
   const initials = user?.name
     ? user.name
         .split(' ')
-        .map((n) => n[0])
+        .map((n: string) => n[0])
         .join('')
         .toUpperCase()
         .slice(0, 2)
@@ -29,6 +35,25 @@ export function UserNav() {
       setIsLoading(false);
     }
   }
+
+  const handleNavigateToProfile = () => {
+    setIsOpen(false);
+    if (isAdmin) {
+      navigate({ to: '/perfil' });
+    } else {
+      navigate({ to: '/mi-cuenta' });
+    }
+  };
+
+  const handleNavigateToOrders = () => {
+    setIsOpen(false);
+    navigate({ to: '/mi-cuenta/pedidos' });
+  };
+
+  const handleNavigateToSettings = () => {
+    setIsOpen(false);
+    navigate({ to: '/configuracion/general' });
+  };
 
   return (
     <div className="relative">
@@ -58,32 +83,49 @@ export function UserNav() {
           />
           <div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-lg border bg-popover p-1 shadow-lg">
             <div className="border-b px-3 py-2">
-              <p className="text-sm font-medium">{user?.name || 'Usuario'}</p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium">{user?.name || 'Usuario'}</p>
+                {userWithRole?.role && (
+                  <Badge variant={getRoleColor(userWithRole.role as UserProfile['role'])}>
+                    {getRoleLabel(userWithRole.role as UserProfile['role'])}
+                  </Badge>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground">{user?.email}</p>
             </div>
             <div className="py-1">
               <button
                 type="button"
-                onClick={() => {
-                  setIsOpen(false);
-                  navigate({ to: '/' });
-                }}
+                onClick={handleNavigateToProfile}
                 className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
               >
                 <User className="h-4 w-4" />
                 Mi Perfil
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsOpen(false);
-                  navigate({ to: '/' });
-                }}
-                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
-              >
-                <Settings className="h-4 w-4" />
-                Configuración
-              </button>
+
+              {/* Mostrar "Mis Pedidos" solo para clientes */}
+              {!isAdmin && can('orders:view_own') && (
+                <button
+                  type="button"
+                  onClick={handleNavigateToOrders}
+                  className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
+                >
+                  <Ticket className="h-4 w-4" />
+                  Mis Pedidos
+                </button>
+              )}
+
+              {/* Mostrar "Configuración" solo para admins */}
+              {can('settings:view') && (
+                <button
+                  type="button"
+                  onClick={handleNavigateToSettings}
+                  className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
+                >
+                  <Settings className="h-4 w-4" />
+                  Configuración
+                </button>
+              )}
             </div>
             <div className="border-t py-1">
               <button

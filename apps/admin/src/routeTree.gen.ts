@@ -13,6 +13,7 @@ import { Route as DashboardRouteImport } from './routes/_dashboard'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as DashboardIndexRouteImport } from './routes/_dashboard/index'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
+import { Route as DashboardPerfilRouteImport } from './routes/_dashboard/perfil'
 import { Route as DashboardConfiguracionRouteImport } from './routes/_dashboard/configuracion'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
@@ -21,6 +22,7 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-pa
 import { Route as DashboardProductosIndexRouteImport } from './routes/_dashboard/productos/index'
 import { Route as DashboardPedidosIndexRouteImport } from './routes/_dashboard/pedidos/index'
 import { Route as DashboardPaginasIndexRouteImport } from './routes/_dashboard/paginas/index'
+import { Route as DashboardMiCuentaIndexRouteImport } from './routes/_dashboard/mi-cuenta/index'
 import { Route as DashboardInventarioIndexRouteImport } from './routes/_dashboard/inventario/index'
 import { Route as DashboardCuponesIndexRouteImport } from './routes/_dashboard/cupones/index'
 import { Route as DashboardConfiguracionIndexRouteImport } from './routes/_dashboard/configuracion/index'
@@ -34,6 +36,7 @@ import { Route as DashboardProductosIdRouteImport } from './routes/_dashboard/pr
 import { Route as DashboardPedidosIdRouteImport } from './routes/_dashboard/pedidos/$id'
 import { Route as DashboardPaginasNuevoRouteImport } from './routes/_dashboard/paginas/nuevo'
 import { Route as DashboardPaginasIdRouteImport } from './routes/_dashboard/paginas/$id'
+import { Route as DashboardMiCuentaPedidosRouteImport } from './routes/_dashboard/mi-cuenta/pedidos'
 import { Route as DashboardCuponesNuevoRouteImport } from './routes/_dashboard/cupones/nuevo'
 import { Route as DashboardCuponesIdRouteImport } from './routes/_dashboard/cupones/$id'
 import { Route as DashboardConfiguracionSeoRouteImport } from './routes/_dashboard/configuracion/seo'
@@ -58,6 +61,7 @@ import { Route as DashboardPedidosIdProductosRouteImport } from './routes/_dashb
 import { Route as DashboardPedidosIdPagosRouteImport } from './routes/_dashboard/pedidos/$id/pagos'
 import { Route as DashboardPedidosIdHistorialRouteImport } from './routes/_dashboard/pedidos/$id/historial'
 import { Route as DashboardPedidosIdClienteRouteImport } from './routes/_dashboard/pedidos/$id/cliente'
+import { Route as DashboardMiCuentaPedidosIdRouteImport } from './routes/_dashboard/mi-cuenta/pedidos.$id'
 
 const DashboardRoute = DashboardRouteImport.update({
   id: '/_dashboard',
@@ -76,6 +80,11 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardPerfilRoute = DashboardPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardConfiguracionRoute = DashboardConfiguracionRouteImport.update({
   id: '/configuracion',
@@ -115,6 +124,11 @@ const DashboardPedidosIndexRoute = DashboardPedidosIndexRouteImport.update({
 const DashboardPaginasIndexRoute = DashboardPaginasIndexRouteImport.update({
   id: '/paginas/',
   path: '/paginas/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardMiCuentaIndexRoute = DashboardMiCuentaIndexRouteImport.update({
+  id: '/mi-cuenta/',
+  path: '/mi-cuenta/',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardInventarioIndexRoute =
@@ -185,6 +199,12 @@ const DashboardPaginasIdRoute = DashboardPaginasIdRouteImport.update({
   path: '/paginas/$id',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardMiCuentaPedidosRoute =
+  DashboardMiCuentaPedidosRouteImport.update({
+    id: '/mi-cuenta/pedidos',
+    path: '/mi-cuenta/pedidos',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 const DashboardCuponesNuevoRoute = DashboardCuponesNuevoRouteImport.update({
   id: '/cupones/nuevo',
   path: '/cupones/nuevo',
@@ -321,6 +341,12 @@ const DashboardPedidosIdClienteRoute =
     path: '/cliente',
     getParentRoute: () => DashboardPedidosIdRoute,
   } as any)
+const DashboardMiCuentaPedidosIdRoute =
+  DashboardMiCuentaPedidosIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => DashboardMiCuentaPedidosRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/forgot-password': typeof AuthForgotPasswordRoute
@@ -328,6 +354,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof AuthRegisterRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/configuracion': typeof DashboardConfiguracionRouteWithChildren
+  '/perfil': typeof DashboardPerfilRoute
   '/api/$': typeof ApiSplatRoute
   '/': typeof DashboardIndexRoute
   '/bundles/$id': typeof DashboardBundlesIdRoute
@@ -341,6 +368,7 @@ export interface FileRoutesByFullPath {
   '/configuracion/seo': typeof DashboardConfiguracionSeoRoute
   '/cupones/$id': typeof DashboardCuponesIdRoute
   '/cupones/nuevo': typeof DashboardCuponesNuevoRoute
+  '/mi-cuenta/pedidos': typeof DashboardMiCuentaPedidosRouteWithChildren
   '/paginas/$id': typeof DashboardPaginasIdRoute
   '/paginas/nuevo': typeof DashboardPaginasNuevoRoute
   '/pedidos/$id': typeof DashboardPedidosIdRouteWithChildren
@@ -354,9 +382,11 @@ export interface FileRoutesByFullPath {
   '/configuracion/': typeof DashboardConfiguracionIndexRoute
   '/cupones': typeof DashboardCuponesIndexRoute
   '/inventario': typeof DashboardInventarioIndexRoute
+  '/mi-cuenta': typeof DashboardMiCuentaIndexRoute
   '/paginas': typeof DashboardPaginasIndexRoute
   '/pedidos': typeof DashboardPedidosIndexRoute
   '/productos': typeof DashboardProductosIndexRoute
+  '/mi-cuenta/pedidos/$id': typeof DashboardMiCuentaPedidosIdRoute
   '/pedidos/$id/cliente': typeof DashboardPedidosIdClienteRoute
   '/pedidos/$id/historial': typeof DashboardPedidosIdHistorialRoute
   '/pedidos/$id/pagos': typeof DashboardPedidosIdPagosRoute
@@ -376,6 +406,7 @@ export interface FileRoutesByTo {
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/perfil': typeof DashboardPerfilRoute
   '/api/$': typeof ApiSplatRoute
   '/': typeof DashboardIndexRoute
   '/bundles/$id': typeof DashboardBundlesIdRoute
@@ -389,6 +420,7 @@ export interface FileRoutesByTo {
   '/configuracion/seo': typeof DashboardConfiguracionSeoRoute
   '/cupones/$id': typeof DashboardCuponesIdRoute
   '/cupones/nuevo': typeof DashboardCuponesNuevoRoute
+  '/mi-cuenta/pedidos': typeof DashboardMiCuentaPedidosRouteWithChildren
   '/paginas/$id': typeof DashboardPaginasIdRoute
   '/paginas/nuevo': typeof DashboardPaginasNuevoRoute
   '/productos/nuevo': typeof DashboardProductosNuevoRoute
@@ -400,9 +432,11 @@ export interface FileRoutesByTo {
   '/configuracion': typeof DashboardConfiguracionIndexRoute
   '/cupones': typeof DashboardCuponesIndexRoute
   '/inventario': typeof DashboardInventarioIndexRoute
+  '/mi-cuenta': typeof DashboardMiCuentaIndexRoute
   '/paginas': typeof DashboardPaginasIndexRoute
   '/pedidos': typeof DashboardPedidosIndexRoute
   '/productos': typeof DashboardProductosIndexRoute
+  '/mi-cuenta/pedidos/$id': typeof DashboardMiCuentaPedidosIdRoute
   '/pedidos/$id/cliente': typeof DashboardPedidosIdClienteRoute
   '/pedidos/$id/historial': typeof DashboardPedidosIdHistorialRoute
   '/pedidos/$id/pagos': typeof DashboardPedidosIdPagosRoute
@@ -426,6 +460,7 @@ export interface FileRoutesById {
   '/_auth/register': typeof AuthRegisterRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_dashboard/configuracion': typeof DashboardConfiguracionRouteWithChildren
+  '/_dashboard/perfil': typeof DashboardPerfilRoute
   '/api/$': typeof ApiSplatRoute
   '/_dashboard/': typeof DashboardIndexRoute
   '/_dashboard/bundles/$id': typeof DashboardBundlesIdRoute
@@ -439,6 +474,7 @@ export interface FileRoutesById {
   '/_dashboard/configuracion/seo': typeof DashboardConfiguracionSeoRoute
   '/_dashboard/cupones/$id': typeof DashboardCuponesIdRoute
   '/_dashboard/cupones/nuevo': typeof DashboardCuponesNuevoRoute
+  '/_dashboard/mi-cuenta/pedidos': typeof DashboardMiCuentaPedidosRouteWithChildren
   '/_dashboard/paginas/$id': typeof DashboardPaginasIdRoute
   '/_dashboard/paginas/nuevo': typeof DashboardPaginasNuevoRoute
   '/_dashboard/pedidos/$id': typeof DashboardPedidosIdRouteWithChildren
@@ -452,9 +488,11 @@ export interface FileRoutesById {
   '/_dashboard/configuracion/': typeof DashboardConfiguracionIndexRoute
   '/_dashboard/cupones/': typeof DashboardCuponesIndexRoute
   '/_dashboard/inventario/': typeof DashboardInventarioIndexRoute
+  '/_dashboard/mi-cuenta/': typeof DashboardMiCuentaIndexRoute
   '/_dashboard/paginas/': typeof DashboardPaginasIndexRoute
   '/_dashboard/pedidos/': typeof DashboardPedidosIndexRoute
   '/_dashboard/productos/': typeof DashboardProductosIndexRoute
+  '/_dashboard/mi-cuenta/pedidos/$id': typeof DashboardMiCuentaPedidosIdRoute
   '/_dashboard/pedidos/$id/cliente': typeof DashboardPedidosIdClienteRoute
   '/_dashboard/pedidos/$id/historial': typeof DashboardPedidosIdHistorialRoute
   '/_dashboard/pedidos/$id/pagos': typeof DashboardPedidosIdPagosRoute
@@ -477,6 +515,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/configuracion'
+    | '/perfil'
     | '/api/$'
     | '/'
     | '/bundles/$id'
@@ -490,6 +529,7 @@ export interface FileRouteTypes {
     | '/configuracion/seo'
     | '/cupones/$id'
     | '/cupones/nuevo'
+    | '/mi-cuenta/pedidos'
     | '/paginas/$id'
     | '/paginas/nuevo'
     | '/pedidos/$id'
@@ -503,9 +543,11 @@ export interface FileRouteTypes {
     | '/configuracion/'
     | '/cupones'
     | '/inventario'
+    | '/mi-cuenta'
     | '/paginas'
     | '/pedidos'
     | '/productos'
+    | '/mi-cuenta/pedidos/$id'
     | '/pedidos/$id/cliente'
     | '/pedidos/$id/historial'
     | '/pedidos/$id/pagos'
@@ -525,6 +567,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/reset-password'
+    | '/perfil'
     | '/api/$'
     | '/'
     | '/bundles/$id'
@@ -538,6 +581,7 @@ export interface FileRouteTypes {
     | '/configuracion/seo'
     | '/cupones/$id'
     | '/cupones/nuevo'
+    | '/mi-cuenta/pedidos'
     | '/paginas/$id'
     | '/paginas/nuevo'
     | '/productos/nuevo'
@@ -549,9 +593,11 @@ export interface FileRouteTypes {
     | '/configuracion'
     | '/cupones'
     | '/inventario'
+    | '/mi-cuenta'
     | '/paginas'
     | '/pedidos'
     | '/productos'
+    | '/mi-cuenta/pedidos/$id'
     | '/pedidos/$id/cliente'
     | '/pedidos/$id/historial'
     | '/pedidos/$id/pagos'
@@ -574,6 +620,7 @@ export interface FileRouteTypes {
     | '/_auth/register'
     | '/_auth/reset-password'
     | '/_dashboard/configuracion'
+    | '/_dashboard/perfil'
     | '/api/$'
     | '/_dashboard/'
     | '/_dashboard/bundles/$id'
@@ -587,6 +634,7 @@ export interface FileRouteTypes {
     | '/_dashboard/configuracion/seo'
     | '/_dashboard/cupones/$id'
     | '/_dashboard/cupones/nuevo'
+    | '/_dashboard/mi-cuenta/pedidos'
     | '/_dashboard/paginas/$id'
     | '/_dashboard/paginas/nuevo'
     | '/_dashboard/pedidos/$id'
@@ -600,9 +648,11 @@ export interface FileRouteTypes {
     | '/_dashboard/configuracion/'
     | '/_dashboard/cupones/'
     | '/_dashboard/inventario/'
+    | '/_dashboard/mi-cuenta/'
     | '/_dashboard/paginas/'
     | '/_dashboard/pedidos/'
     | '/_dashboard/productos/'
+    | '/_dashboard/mi-cuenta/pedidos/$id'
     | '/_dashboard/pedidos/$id/cliente'
     | '/_dashboard/pedidos/$id/historial'
     | '/_dashboard/pedidos/$id/pagos'
@@ -655,6 +705,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/$'
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_dashboard/perfil': {
+      id: '/_dashboard/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof DashboardPerfilRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/_dashboard/configuracion': {
       id: '/_dashboard/configuracion'
@@ -710,6 +767,13 @@ declare module '@tanstack/react-router' {
       path: '/paginas'
       fullPath: '/paginas'
       preLoaderRoute: typeof DashboardPaginasIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/mi-cuenta/': {
+      id: '/_dashboard/mi-cuenta/'
+      path: '/mi-cuenta'
+      fullPath: '/mi-cuenta'
+      preLoaderRoute: typeof DashboardMiCuentaIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/inventario/': {
@@ -801,6 +865,13 @@ declare module '@tanstack/react-router' {
       path: '/paginas/$id'
       fullPath: '/paginas/$id'
       preLoaderRoute: typeof DashboardPaginasIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/mi-cuenta/pedidos': {
+      id: '/_dashboard/mi-cuenta/pedidos'
+      path: '/mi-cuenta/pedidos'
+      fullPath: '/mi-cuenta/pedidos'
+      preLoaderRoute: typeof DashboardMiCuentaPedidosRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/cupones/nuevo': {
@@ -971,6 +1042,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPedidosIdClienteRouteImport
       parentRoute: typeof DashboardPedidosIdRoute
     }
+    '/_dashboard/mi-cuenta/pedidos/$id': {
+      id: '/_dashboard/mi-cuenta/pedidos/$id'
+      path: '/$id'
+      fullPath: '/mi-cuenta/pedidos/$id'
+      preLoaderRoute: typeof DashboardMiCuentaPedidosIdRouteImport
+      parentRoute: typeof DashboardMiCuentaPedidosRoute
+    }
   }
 }
 
@@ -1015,6 +1093,20 @@ const DashboardConfiguracionRouteChildren: DashboardConfiguracionRouteChildren =
 const DashboardConfiguracionRouteWithChildren =
   DashboardConfiguracionRoute._addFileChildren(
     DashboardConfiguracionRouteChildren,
+  )
+
+interface DashboardMiCuentaPedidosRouteChildren {
+  DashboardMiCuentaPedidosIdRoute: typeof DashboardMiCuentaPedidosIdRoute
+}
+
+const DashboardMiCuentaPedidosRouteChildren: DashboardMiCuentaPedidosRouteChildren =
+  {
+    DashboardMiCuentaPedidosIdRoute: DashboardMiCuentaPedidosIdRoute,
+  }
+
+const DashboardMiCuentaPedidosRouteWithChildren =
+  DashboardMiCuentaPedidosRoute._addFileChildren(
+    DashboardMiCuentaPedidosRouteChildren,
   )
 
 interface DashboardPedidosIdRouteChildren {
@@ -1063,12 +1155,14 @@ const DashboardProductosIdRouteWithChildren =
 
 interface DashboardRouteChildren {
   DashboardConfiguracionRoute: typeof DashboardConfiguracionRouteWithChildren
+  DashboardPerfilRoute: typeof DashboardPerfilRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardBundlesIdRoute: typeof DashboardBundlesIdRoute
   DashboardBundlesNuevoRoute: typeof DashboardBundlesNuevoRoute
   DashboardClientesIdRoute: typeof DashboardClientesIdRoute
   DashboardCuponesIdRoute: typeof DashboardCuponesIdRoute
   DashboardCuponesNuevoRoute: typeof DashboardCuponesNuevoRoute
+  DashboardMiCuentaPedidosRoute: typeof DashboardMiCuentaPedidosRouteWithChildren
   DashboardPaginasIdRoute: typeof DashboardPaginasIdRoute
   DashboardPaginasNuevoRoute: typeof DashboardPaginasNuevoRoute
   DashboardPedidosIdRoute: typeof DashboardPedidosIdRouteWithChildren
@@ -1079,6 +1173,7 @@ interface DashboardRouteChildren {
   DashboardClientesIndexRoute: typeof DashboardClientesIndexRoute
   DashboardCuponesIndexRoute: typeof DashboardCuponesIndexRoute
   DashboardInventarioIndexRoute: typeof DashboardInventarioIndexRoute
+  DashboardMiCuentaIndexRoute: typeof DashboardMiCuentaIndexRoute
   DashboardPaginasIndexRoute: typeof DashboardPaginasIndexRoute
   DashboardPedidosIndexRoute: typeof DashboardPedidosIndexRoute
   DashboardProductosIndexRoute: typeof DashboardProductosIndexRoute
@@ -1086,12 +1181,14 @@ interface DashboardRouteChildren {
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardConfiguracionRoute: DashboardConfiguracionRouteWithChildren,
+  DashboardPerfilRoute: DashboardPerfilRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardBundlesIdRoute: DashboardBundlesIdRoute,
   DashboardBundlesNuevoRoute: DashboardBundlesNuevoRoute,
   DashboardClientesIdRoute: DashboardClientesIdRoute,
   DashboardCuponesIdRoute: DashboardCuponesIdRoute,
   DashboardCuponesNuevoRoute: DashboardCuponesNuevoRoute,
+  DashboardMiCuentaPedidosRoute: DashboardMiCuentaPedidosRouteWithChildren,
   DashboardPaginasIdRoute: DashboardPaginasIdRoute,
   DashboardPaginasNuevoRoute: DashboardPaginasNuevoRoute,
   DashboardPedidosIdRoute: DashboardPedidosIdRouteWithChildren,
@@ -1102,6 +1199,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardClientesIndexRoute: DashboardClientesIndexRoute,
   DashboardCuponesIndexRoute: DashboardCuponesIndexRoute,
   DashboardInventarioIndexRoute: DashboardInventarioIndexRoute,
+  DashboardMiCuentaIndexRoute: DashboardMiCuentaIndexRoute,
   DashboardPaginasIndexRoute: DashboardPaginasIndexRoute,
   DashboardPedidosIndexRoute: DashboardPedidosIndexRoute,
   DashboardProductosIndexRoute: DashboardProductosIndexRoute,
