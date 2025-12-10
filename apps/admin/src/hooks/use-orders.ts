@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 const API_BASE = '/api';
 
 // Types
-type OrderStatus =
+export type OrderStatus =
   | 'pending'
   | 'confirmed'
   | 'processing'
@@ -13,7 +13,7 @@ type OrderStatus =
   | 'cancelled'
   | 'refunded';
 
-type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
+export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
 
 interface AddressType {
   fullName: string;
