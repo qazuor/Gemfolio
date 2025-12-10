@@ -27,6 +27,23 @@ export interface BrandingSettings {
   favicon: string;
   primaryColor: string;
   secondaryColor: string;
+  accentColor: string;
+  // Typography
+  headingFont: 'playfair' | 'cormorant' | 'libre-baskerville' | 'lora' | 'merriweather' | 'inter';
+  bodyFont: 'inter' | 'open-sans' | 'roboto' | 'lato' | 'source-sans';
+  // Layout
+  borderRadius: 'none' | 'small' | 'medium' | 'large' | 'full';
+  // Header
+  headerStyle: 'transparent' | 'solid' | 'gradient';
+  // Buttons
+  buttonStyle: 'solid' | 'outline' | 'soft';
+  // Product cards
+  cardStyle: 'minimal' | 'bordered' | 'elevated' | 'glass';
+  // Homepage
+  heroStyle: 'full' | 'split' | 'minimal';
+  showFeaturedCategories: boolean;
+  showTestimonials: boolean;
+  showNewsletter: boolean;
 }
 
 export interface ShippingSettings {
@@ -143,9 +160,71 @@ export const defaultBrandingSettings: BrandingSettings = {
   logo: '',
   logoDark: '',
   favicon: '',
-  primaryColor: '#000000',
-  secondaryColor: '#ffffff',
+  primaryColor: '#B8860B',
+  secondaryColor: '#1A1A1A',
+  accentColor: '#D4AF37',
+  headingFont: 'playfair',
+  bodyFont: 'inter',
+  borderRadius: 'medium',
+  headerStyle: 'solid',
+  buttonStyle: 'solid',
+  cardStyle: 'elevated',
+  heroStyle: 'full',
+  showFeaturedCategories: true,
+  showTestimonials: true,
+  showNewsletter: true,
 };
+
+// Style options for dropdowns
+export const headingFontOptions = [
+  { value: 'playfair', label: 'Playfair Display (Elegante)' },
+  { value: 'cormorant', label: 'Cormorant (Clásica)' },
+  { value: 'libre-baskerville', label: 'Libre Baskerville (Tradicional)' },
+  { value: 'lora', label: 'Lora (Moderna)' },
+  { value: 'merriweather', label: 'Merriweather (Legible)' },
+  { value: 'inter', label: 'Inter (Minimalista)' },
+];
+
+export const bodyFontOptions = [
+  { value: 'inter', label: 'Inter (Moderna)' },
+  { value: 'open-sans', label: 'Open Sans (Legible)' },
+  { value: 'roboto', label: 'Roboto (Neutral)' },
+  { value: 'lato', label: 'Lato (Amigable)' },
+  { value: 'source-sans', label: 'Source Sans (Clara)' },
+];
+
+export const borderRadiusOptions = [
+  { value: 'none', label: 'Sin bordes (0px)' },
+  { value: 'small', label: 'Pequeño (4px)' },
+  { value: 'medium', label: 'Medio (8px)' },
+  { value: 'large', label: 'Grande (16px)' },
+  { value: 'full', label: 'Completo (redondeado)' },
+];
+
+export const headerStyleOptions = [
+  { value: 'solid', label: 'Sólido' },
+  { value: 'transparent', label: 'Transparente' },
+  { value: 'gradient', label: 'Degradado' },
+];
+
+export const buttonStyleOptions = [
+  { value: 'solid', label: 'Sólido (relleno)' },
+  { value: 'outline', label: 'Outline (borde)' },
+  { value: 'soft', label: 'Suave (tenue)' },
+];
+
+export const cardStyleOptions = [
+  { value: 'minimal', label: 'Minimalista' },
+  { value: 'bordered', label: 'Con borde' },
+  { value: 'elevated', label: 'Elevado (sombra)' },
+  { value: 'glass', label: 'Glassmorphism' },
+];
+
+export const heroStyleOptions = [
+  { value: 'full', label: 'Pantalla completa' },
+  { value: 'split', label: 'Dividido (imagen + texto)' },
+  { value: 'minimal', label: 'Minimalista' },
+];
 
 export const defaultShippingSettings: ShippingSettings = {
   flatRate: 0,
