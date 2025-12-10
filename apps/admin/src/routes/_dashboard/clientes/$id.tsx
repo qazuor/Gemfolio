@@ -35,6 +35,8 @@ import {
   getPaymentStatusLabel,
   getStatusColor,
   getStatusLabel,
+  type OrderStatus,
+  type PaymentStatus,
 } from '@/hooks/use-orders';
 
 export const Route = createFileRoute('/_dashboard/clientes/$id')({
@@ -159,11 +161,13 @@ function CustomerDetailPage() {
                         </p>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Badge variant={getStatusColor(order.status as any)}>
-                          {getStatusLabel(order.status as any)}
+                        <Badge variant={getStatusColor(order.status as OrderStatus)}>
+                          {getStatusLabel(order.status as OrderStatus)}
                         </Badge>
-                        <Badge variant={getPaymentStatusColor(order.paymentStatus as any)}>
-                          {getPaymentStatusLabel(order.paymentStatus as any)}
+                        <Badge
+                          variant={getPaymentStatusColor(order.paymentStatus as PaymentStatus)}
+                        >
+                          {getPaymentStatusLabel(order.paymentStatus as PaymentStatus)}
                         </Badge>
                         <span className="font-medium">{formatCurrency(order.total)}</span>
                       </div>
