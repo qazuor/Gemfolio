@@ -18,6 +18,14 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
   projects: [
+    // Setup project for admin authentication
+    {
+      name: 'admin-setup',
+      testMatch: '**/admin/*.setup.ts',
+      use: {
+        baseURL: 'http://localhost:3001',
+      },
+    },
     {
       name: 'web-chromium',
       use: {
@@ -41,6 +49,16 @@ export default defineConfig({
         baseURL: 'http://localhost:3001',
       },
       testMatch: '**/admin/**/*.spec.ts',
+      dependencies: ['admin-setup'],
+    },
+    {
+      name: 'admin-mobile',
+      use: {
+        ...devices['iPhone 14'],
+        baseURL: 'http://localhost:3001',
+      },
+      testMatch: '**/admin/**/*.spec.ts',
+      dependencies: ['admin-setup'],
     },
   ],
   webServer: [
