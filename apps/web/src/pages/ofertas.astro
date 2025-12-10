@@ -1,0 +1,64 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProductGrid from '@/components/astro/product/ProductGrid.astro';
+import { getOfferProducts } from '@/lib/api';
+
+const products = await getOfferProducts(24);
+---
+
+<BaseLayout
+  title="Ofertas"
+  description="Descubre nuestras mejores ofertas en joyería artesanal"
+>
+  <!-- Breadcrumb -->
+  <nav class="border-b">
+    <div class="container mx-auto px-4 py-3">
+      <ol class="flex items-center gap-2 text-sm text-muted-foreground">
+        <li>
+          <a href="/" class="hover:text-foreground">Inicio</a>
+        </li>
+        <li>/</li>
+        <li class="text-foreground">Ofertas</li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <section class="border-b bg-gradient-to-r from-red-500/10 to-orange-500/10 py-12">
+    <div class="container mx-auto px-4 text-center">
+      <span class="mb-4 inline-block rounded-full bg-red-500 px-4 py-1 text-sm font-medium text-white">
+        Ofertas Especiales
+      </span>
+      <h1 class="mb-2 font-heading text-3xl font-bold md:text-4xl">
+        Ofertas y Descuentos
+      </h1>
+      <p class="text-muted-foreground">
+        Aprovecha nuestras promociones exclusivas en joyería artesanal
+      </p>
+    </div>
+  </section>
+
+  <div class="container mx-auto px-4 py-12">
+    {products.length > 0 ? (
+      <>
+        <p class="mb-8 text-center text-muted-foreground">
+          {products.length} producto{products.length !== 1 ? 's' : ''} en oferta
+        </p>
+        <ProductGrid products={products} columns={4} />
+      </>
+    ) : (
+      <div class="py-16 text-center">
+        <p class="mb-4 text-xl font-medium">No hay ofertas disponibles en este momento</p>
+        <p class="mb-8 text-muted-foreground">
+          Vuelve pronto para descubrir nuevas promociones
+        </p>
+        <a
+          href="/catalogo"
+          class="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          Ver Catálogo
+        </a>
+      </div>
+    )}
+  </div>
+</BaseLayout>
