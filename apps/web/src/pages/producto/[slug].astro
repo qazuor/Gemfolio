@@ -234,8 +234,7 @@ const productSchema = {
     <section class="border-t py-12">
       <div class="container mx-auto px-4">
         <h2 class="mb-6 font-heading text-2xl font-bold">Descripción</h2>
-        <div class="prose prose-neutral max-w-none dark:prose-invert">
-          {product.description}
+        <div class="prose prose-neutral max-w-none dark:prose-invert" set:html={product.description}>
         </div>
       </div>
     </section>

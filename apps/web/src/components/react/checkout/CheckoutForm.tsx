@@ -1,6 +1,6 @@
 import { useStore } from '@nanostores/react';
 import { ArrowLeft, CheckCircle, Loader2, ShoppingBag } from 'lucide-react';
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import {
   $cart,
   $cartDiscount,
@@ -56,10 +56,15 @@ export default function CheckoutForm() {
   const discount = useStore($cartDiscount);
   const total = useStore($cartTotal);
 
+  const [mounted, setMounted] = useState(false);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Shipping cost (could be calculated dynamically)
   const shippingCost = 2500;
@@ -179,6 +184,15 @@ export default function CheckoutForm() {
       setIsSubmitting(false);
     }
   };
+
+  // Loading state to prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   // Empty cart check
   if (cart.items.length === 0) {
