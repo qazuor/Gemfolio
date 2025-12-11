@@ -47,12 +47,20 @@ const createNext = (): Next => {
 };
 
 describe('Rate Limiter Middleware', () => {
+  const originalCI = process.env.CI;
+
   beforeEach(() => {
     vi.useFakeTimers();
+    // Disable CI check so rate limiting actually works in tests
+    delete process.env.CI;
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    // Restore CI environment variable
+    if (originalCI !== undefined) {
+      process.env.CI = originalCI;
+    }
   });
 
   it('should allow requests under the limit', async () => {
