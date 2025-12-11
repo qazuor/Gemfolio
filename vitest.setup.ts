@@ -44,3 +44,11 @@ global.IntersectionObserver = class IntersectionObserver {
     return [];
   }
 };
+
+// Mock scrollIntoView for components like cmdk
+Element.prototype.scrollIntoView = () => {};
+
+// Mock hasPointerCapture for Radix UI components
+Element.prototype.hasPointerCapture = () => false;
+Element.prototype.setPointerCapture = () => {};
+Element.prototype.releasePointerCapture = () => {};
