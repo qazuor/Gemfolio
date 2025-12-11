@@ -143,8 +143,10 @@ test.describe('Color Contrast', () => {
   });
 
   test('should maintain readability in dark mode', async ({ page }) => {
-    await page.evaluate(() => localStorage.setItem('gemfolio-theme', 'dark'));
+    // Navigate first, then set localStorage, then reload
     await page.goto('/');
+    await page.evaluate(() => localStorage.setItem('gemfolio-theme', 'dark'));
+    await page.reload();
 
     const body = page.locator('body');
     await expect(body).toBeVisible();
@@ -205,7 +207,8 @@ test.describe('Form Accessibility', () => {
     if (await searchButton.isVisible()) {
       await searchButton.click();
 
-      const searchInput = page.getByPlaceholder(/buscar|search/i);
+      // Use .first() since there might be multiple search inputs (mobile/desktop)
+      const searchInput = page.getByPlaceholder(/buscar|search/i).first();
       if (await searchInput.isVisible()) {
         // Input should have label or aria-label
         const hasLabel =

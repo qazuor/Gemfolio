@@ -44,16 +44,28 @@ setup('authenticate as admin', async ({ page }) => {
   // Submit form
   await submitButton.click();
 
-  // Wait for loading state or navigation
-  await Promise.race([
-    page.waitForURL('/', { timeout: 30000 }),
-    expect(page.getByText(/iniciando sesión/i))
-      .toBeVisible()
-      .then(() => page.waitForURL('/', { timeout: 30000 })),
-  ]);
+  // Wait for loading state to appear (indicates form submission started)
+  const loadingText = page.getByText(/iniciando sesión/i);
+  await loadingText.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {
+    // Loading text might disappear too quickly
+  });
 
-  // Verify we're on the dashboard
-  await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({
+  // Wait for navigation to dashboard
+  await page.waitForURL('/', { timeout: 30000 });
+
+  // Check for login errors
+  const errorMessage = page.locator('.bg-destructive\\/10, [role="alert"]');
+  const hasError = await errorMessage.isVisible().catch(() => false);
+  if (hasError) {
+    const errorText = await errorMessage.textContent();
+    throw new Error(`Login failed: ${errorText}`);
+  }
+
+  // Wait for the dashboard to fully load (heading might take a moment)
+  await page.waitForLoadState('networkidle');
+
+  // Verify we're on the dashboard with case-insensitive match
+  await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible({
     timeout: 15000,
   });
 

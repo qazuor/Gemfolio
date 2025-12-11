@@ -20,7 +20,8 @@ test.describe('Web Catalog', () => {
 
   test('should have search functionality', async ({ page }) => {
     await page.goto('/catalogo');
-    const searchInput = page.getByPlaceholder(/buscar|search/i);
+    // Use .first() since there might be multiple search inputs (mobile/desktop)
+    const searchInput = page.getByPlaceholder(/buscar|search/i).first();
     if (await searchInput.isVisible()) {
       await searchInput.fill('anillo');
       await expect(searchInput).toHaveValue('anillo');
