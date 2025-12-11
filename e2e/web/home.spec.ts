@@ -8,19 +8,21 @@ test.describe('Web Home Page', () => {
 
   test('should display the logo', async ({ page }) => {
     await page.goto('/');
-    const logo = page.getByRole('link', { name: /gemfolio/i });
+    // Logo appears in both header and footer, use .first() to get header logo
+    const logo = page.getByRole('link', { name: /gemfolio/i }).first();
     await expect(logo).toBeVisible();
   });
 
   test('should have navigation menu', async ({ page }) => {
     await page.goto('/');
     const nav = page.getByRole('navigation');
-    await expect(nav).toBeVisible();
+    await expect(nav.first()).toBeVisible();
   });
 
   test('should navigate to catalog', async ({ page }) => {
     await page.goto('/');
-    const catalogLink = page.getByRole('link', { name: /catálogo|catalog/i });
+    // Multiple catalog links exist (nav + CTA), use .first() for nav link
+    const catalogLink = page.getByRole('link', { name: /catálogo|catalog/i }).first();
     if (await catalogLink.isVisible()) {
       await catalogLink.click();
       await expect(page).toHaveURL(/catalogo|catalog/i);
