@@ -138,8 +138,8 @@ jobs:
           echo "PostgreSQL is ready!"
 
       - name: Setup database
-        run: pnpm db:push
-        timeout-minutes: 2
+        run: pnpm --filter @gemfolio/db db:push
+        timeout-minutes: 3
 
       - name: Install Playwright browsers
         run: pnpm e2e:install
