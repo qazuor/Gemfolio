@@ -64,16 +64,21 @@ export default defineConfig({
   webServer: [
     {
       // Web uses Vercel adapter which doesn't support preview, so always use dev
-      command: 'pnpm dev:web',
+      // In CI, run astro directly to avoid turbo buffering issues
+      command: process.env.CI ? 'pnpm --filter @gemfolio/web dev' : 'pnpm dev:web',
       url: 'http://localhost:4321',
       reuseExistingServer: !process.env.CI,
-      timeout: 120000,
+      timeout: 180000,
+      stdout: 'pipe',
+      stderr: 'pipe',
     },
     {
-      command: process.env.CI ? 'pnpm preview:admin' : 'pnpm dev:admin',
+      command: process.env.CI ? 'pnpm --filter @gemfolio/admin preview' : 'pnpm dev:admin',
       url: 'http://localhost:3001',
       reuseExistingServer: !process.env.CI,
-      timeout: 120000,
+      timeout: 180000,
+      stdout: 'pipe',
+      stderr: 'pipe',
     },
   ],
 });
