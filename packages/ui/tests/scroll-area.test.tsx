@@ -151,4 +151,66 @@ describe('ScrollArea', () => {
       expect(ScrollBar.displayName).toBe('ScrollAreaScrollbar');
     });
   });
+
+  describe('ScrollBar orientations', () => {
+    it('should render scroll area with vertical content', () => {
+      render(
+        <ScrollArea data-testid="scroll-area" className="h-[100px]">
+          <div style={{ height: '1000px' }}>Tall content</div>
+        </ScrollArea>
+      );
+
+      expect(screen.getByText('Tall content')).toBeInTheDocument();
+      expect(screen.getByTestId('scroll-area')).toHaveClass('overflow-hidden');
+    });
+
+    it('should render scroll area with horizontal content', () => {
+      render(
+        <ScrollArea data-testid="scroll-area" className="w-[100px]">
+          <div style={{ width: '1000px', whiteSpace: 'nowrap' }}>
+            Wide content that needs horizontal scrolling
+          </div>
+        </ScrollArea>
+      );
+
+      expect(screen.getByText('Wide content that needs horizontal scrolling')).toBeInTheDocument();
+    });
+
+    it('should render scroll area with both large content', () => {
+      render(
+        <ScrollArea data-testid="scroll-area" className="h-[100px] w-[100px]">
+          <div style={{ width: '1000px', height: '1000px' }}>Large content</div>
+        </ScrollArea>
+      );
+
+      expect(screen.getByText('Large content')).toBeInTheDocument();
+    });
+
+    it('should export ScrollBar for explicit use', () => {
+      // ScrollBar is exported for cases where explicit scrollbar control is needed
+      expect(typeof ScrollBar).toBe('object');
+      expect(ScrollBar.displayName).toBe('ScrollAreaScrollbar');
+    });
+
+    it('should support horizontal scrollbar inside ScrollArea', () => {
+      const { container } = render(
+        <ScrollArea>
+          <div>Content</div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      );
+      // The ScrollArea renders and doesn't throw
+      expect(container.firstChild).toBeInTheDocument();
+    });
+
+    it('should support vertical scrollbar inside ScrollArea', () => {
+      const { container } = render(
+        <ScrollArea>
+          <div>Content</div>
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
+      );
+      expect(container.firstChild).toBeInTheDocument();
+    });
+  });
 });

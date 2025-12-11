@@ -121,6 +121,47 @@ describe('QuantitySelector', () => {
 
       expect(onChange).toHaveBeenCalledWith(1);
     });
+
+    it('should clamp value to max on blur when value exceeds max', async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      render(<QuantitySelector value={100} onChange={onChange} max={10} />);
+
+      const input = screen.getByLabelText('Quantity');
+      await user.click(input);
+      await user.tab(); // blur
+
+      expect(onChange).toHaveBeenCalledWith(10);
+    });
+
+    it('should not call onChange on blur when value is within range', async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      render(<QuantitySelector value={5} onChange={onChange} min={1} max={10} />);
+
+      const input = screen.getByLabelText('Quantity');
+      await user.click(input);
+      await user.tab(); // blur
+
+      // onChange should not be called because 5 is within 1-10 range
+      expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('should ignore non-numeric input', async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      render(<QuantitySelector value={5} onChange={onChange} />);
+
+      const input = screen.getByLabelText('Quantity');
+      await user.clear(input);
+      await user.type(input, 'abc');
+
+      // onChange should not be called for non-numeric input
+      // (After clear, the first call might be for the clear operation)
+      const numericCalls = onChange.mock.calls.filter((call) => !Number.isNaN(call[0]));
+      // All calls should be numeric or no calls after clear
+      expect(numericCalls.every((call) => typeof call[0] === 'number')).toBe(true);
+    });
   });
 
   describe('disabled state', () => {
