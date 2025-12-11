@@ -18,6 +18,12 @@ const defaultConfig: RateLimitConfig = {
   skipFailedRequests: false,
 };
 
+// Skip rate limiting in CI environments (for E2E tests)
+// Note: We only check CI, not NODE_ENV=test, so unit tests still test rate limiting
+const isCIEnvironment = () => {
+  return process.env.CI === 'true';
+};
+
 // In-memory store (for single instance)
 // For production with multiple instances, use Redis
 const stores = new Map<string, RateLimitStore>();
@@ -53,6 +59,11 @@ export function rateLimiter(name: string, config: Partial<RateLimitConfig> = {})
   const store = getStore(name);
 
   return async (c: Context, next: Next) => {
+    // Skip rate limiting in CI environments (for E2E tests)
+    if (isCIEnvironment()) {
+      return next();
+    }
+
     // Check if we should skip this request
     if (options.skip?.(c)) {
       return next();
