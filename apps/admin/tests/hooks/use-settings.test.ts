@@ -1,5 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, waitFor } from '@testing-library/react';
+import React from 'react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  type AllSettings,
   bodyFontOptions,
   borderRadiusOptions,
   buttonStyleOptions,
@@ -11,11 +15,204 @@ import {
   defaultSeoSettings,
   defaultShippingSettings,
   defaultSocialSettings,
+  type GeneralSettings,
   headerStyleOptions,
   headingFontOptions,
   heroStyleOptions,
   timezoneOptions,
+  useAllSettings,
+  useSettings,
+  useUpdateSettings,
 } from '../../src/hooks/use-settings';
+
+// Mock fetch
+const mockFetch = vi.fn();
+global.fetch = mockFetch;
+
+// Mock sonner
+vi.mock('sonner', () => ({
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+  },
+}));
+
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    return React.createElement(QueryClientProvider, { client: queryClient }, children);
+  };
+}
+
+describe('use-settings hooks', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe('useAllSettings', () => {
+    it('should fetch all settings successfully', async () => {
+      const mockSettings: AllSettings = {
+        general: defaultGeneralSettings,
+        branding: defaultBrandingSettings,
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: mockSettings }),
+      });
+
+      const { result } = renderHook(() => useAllSettings(), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      expect(result.current.data).toEqual(mockSettings);
+      expect(mockFetch).toHaveBeenCalledWith('/api/admin/settings');
+    });
+
+    it('should handle fetch error', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+      });
+
+      const { result } = renderHook(() => useAllSettings(), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => expect(result.current.isError).toBe(true));
+
+      expect(result.current.error).toBeDefined();
+    });
+  });
+
+  describe('useSettings', () => {
+    it('should fetch settings by group', async () => {
+      const mockGeneralSettings: GeneralSettings = {
+        businessName: 'Test Business',
+        email: 'test@test.com',
+        phone: '123456789',
+        address: '123 Test St',
+        currency: 'ARS',
+        timezone: 'America/Argentina/Buenos_Aires',
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: mockGeneralSettings }),
+      });
+
+      const { result } = renderHook(() => useSettings<GeneralSettings>('general'), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      expect(result.current.data).toEqual(mockGeneralSettings);
+      expect(mockFetch).toHaveBeenCalledWith('/api/admin/settings/general');
+    });
+
+    it('should fetch branding settings', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: defaultBrandingSettings }),
+      });
+
+      const { result } = renderHook(() => useSettings('branding'), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/admin/settings/branding');
+    });
+
+    it('should handle settings fetch error', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+      });
+
+      const { result } = renderHook(() => useSettings('shipping'), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => expect(result.current.isError).toBe(true));
+    });
+  });
+
+  describe('useUpdateSettings', () => {
+    it('should update settings successfully', async () => {
+      const updatedSettings: Partial<GeneralSettings> = {
+        businessName: 'Updated Business',
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: { ...defaultGeneralSettings, ...updatedSettings } }),
+      });
+
+      const { result } = renderHook(() => useUpdateSettings<GeneralSettings>('general'), {
+        wrapper: createWrapper(),
+      });
+
+      result.current.mutate(updatedSettings);
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/admin/settings/general', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ settings: updatedSettings }),
+      });
+    });
+
+    it('should handle update error with custom message', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        json: async () => ({ error: 'Custom error message' }),
+      });
+
+      const { result } = renderHook(() => useUpdateSettings('general'), {
+        wrapper: createWrapper(),
+      });
+
+      result.current.mutate({ businessName: 'Test' });
+
+      await waitFor(() => expect(result.current.isError).toBe(true));
+
+      expect(result.current.error?.message).toBe('Custom error message');
+    });
+
+    it('should handle update error with default message', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        json: async () => ({}),
+      });
+
+      const { result } = renderHook(() => useUpdateSettings('branding'), {
+        wrapper: createWrapper(),
+      });
+
+      result.current.mutate({ logo: 'new-logo.png' });
+
+      await waitFor(() => expect(result.current.isError).toBe(true));
+
+      expect(result.current.error?.message).toBe('Error al actualizar configuraciones');
+    });
+  });
+});
 
 describe('Settings Defaults and Options', () => {
   describe('defaultBrandingSettings', () => {
