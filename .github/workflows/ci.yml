@@ -129,8 +129,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..30}; do
+            pg_isready -h localhost -p 5432 -U gemfolio && break
+            echo "Waiting for PostgreSQL... ($i/30)"
+            sleep 1
+          done
+
       - name: Setup database
         run: pnpm db:push
+        timeout-minutes: 2
 
       - name: Install Playwright browsers
         run: pnpm e2e:install
