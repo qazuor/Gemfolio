@@ -63,7 +63,8 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: process.env.CI ? 'pnpm preview:web' : 'pnpm dev:web',
+      // Web uses Vercel adapter which doesn't support preview, so always use dev
+      command: 'pnpm dev:web',
       url: 'http://localhost:4321',
       reuseExistingServer: !process.env.CI,
       timeout: 120000,
