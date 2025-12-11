@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configure git to use HTTPS
         run: git config --global 'url.https://github.com/.insteadOf' 'git@github.com:'
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configure git to use HTTPS
         run: git config --global 'url.https://github.com/.insteadOf' 'git@github.com:'
@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configure git to use HTTPS
         run: git config --global 'url.https://github.com/.insteadOf' 'git@github.com:'
@@ -124,7 +124,7 @@ jobs:
       BETTER_AUTH_URL: http://localhost:3001
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configure git to use HTTPS
         run: git config --global 'url.https://github.com/.insteadOf' 'git@github.com:'
@@ -175,7 +175,7 @@ jobs:
     needs: [lint, typecheck, test]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configure git to use HTTPS
         run: git config --global 'url.https://github.com/.insteadOf' 'git@github.com:'
