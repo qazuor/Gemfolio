@@ -156,9 +156,6 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm e2e:install
 
-      - name: Build applications
-        run: pnpm build
-
       - name: Run Playwright tests
         run: pnpm e2e
         env:

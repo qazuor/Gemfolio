@@ -63,8 +63,9 @@ export default defineConfig({
   ],
   webServer: [
     // Admin must start first because web makes API calls to it during SSR
+    // TanStack Start build doesn't generate .output/ for preview, so use dev
     {
-      command: process.env.CI ? 'pnpm --filter @gemfolio/admin preview' : 'pnpm dev:admin',
+      command: process.env.CI ? 'pnpm --filter @gemfolio/admin dev' : 'pnpm dev:admin',
       url: 'http://localhost:3001',
       reuseExistingServer: !process.env.CI,
       timeout: 180000,
@@ -73,7 +74,6 @@ export default defineConfig({
     },
     {
       // Web uses Vercel adapter which doesn't support preview, so always use dev
-      // In CI, run astro directly to avoid turbo buffering issues
       command: process.env.CI ? 'pnpm --filter @gemfolio/web dev' : 'pnpm dev:web',
       url: 'http://localhost:4321',
       reuseExistingServer: !process.env.CI,
