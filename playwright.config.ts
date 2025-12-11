@@ -63,16 +63,16 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'pnpm dev:web',
+      command: process.env.CI ? 'pnpm preview:web' : 'pnpm dev:web',
       url: 'http://localhost:4321',
       reuseExistingServer: !process.env.CI,
-      timeout: 180000,
+      timeout: 120000,
     },
     {
-      command: 'pnpm dev:admin',
+      command: process.env.CI ? 'pnpm preview:admin' : 'pnpm dev:admin',
       url: 'http://localhost:3001',
       reuseExistingServer: !process.env.CI,
-      timeout: 180000,
+      timeout: 120000,
     },
   ],
 });

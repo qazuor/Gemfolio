@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && tsc --noEmit",
-    "start": "node .output/server/index.mjs",
-    "preview": "vite preview",
+    "start": "PORT=3001 node .output/server/index.mjs",
+    "preview": "PORT=3001 node .output/server/index.mjs",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf .output node_modules"
   },

@@ -18,6 +18,8 @@
     "dev": "turbo run dev",
     "dev:web": "turbo run dev --filter=@gemfolio/web",
     "dev:admin": "turbo run dev --filter=@gemfolio/admin",
+    "preview:web": "turbo run preview --filter=@gemfolio/web",
+    "preview:admin": "turbo run preview --filter=@gemfolio/admin",
     "lint": "biome lint .",
     "lint:fix": "biome lint --fix .",
     "format": "biome format --write .",

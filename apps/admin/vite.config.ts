@@ -12,6 +12,9 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3001,
     },
+    preview: {
+      port: 3001,
+    },
     plugins: [
       viteTsConfigPaths({
         projects: ['./tsconfig.json'],

@@ -95,6 +95,24 @@ jobs:
     name: E2E Tests
     runs-on: ubuntu-latest
     needs: [lint, typecheck]
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: gemfolio
+          POSTGRES_PASSWORD: gemfolio_test
+          POSTGRES_DB: gemfolio_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://gemfolio:gemfolio_test@localhost:5432/gemfolio_test
+      BETTER_AUTH_SECRET: test-secret-key-for-ci-minimum-32-chars
+      BETTER_AUTH_URL: http://localhost:3001
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -110,6 +128,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Setup database
+        run: pnpm db:push
 
       - name: Install Playwright browsers
         run: pnpm e2e:install
