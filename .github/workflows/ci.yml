@@ -131,11 +131,11 @@ jobs:
 
       - name: Wait for PostgreSQL
         run: |
-          for i in {1..30}; do
-            pg_isready -h localhost -p 5432 -U gemfolio && break
-            echo "Waiting for PostgreSQL... ($i/30)"
-            sleep 1
+          until PGPASSWORD=gemfolio_test psql -h localhost -p 5432 -U gemfolio -d gemfolio_test -c '\q' 2>/dev/null; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
           done
+          echo "PostgreSQL is ready!"
 
       - name: Setup database
         run: pnpm db:push
