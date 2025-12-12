@@ -1,9 +1,6 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Admin Abandoned Carts', () => {
-  // Use saved authentication state
-  test.use({ storageState: 'e2e/.auth/admin.json' });
-
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -59,8 +56,6 @@ test.describe('Admin Abandoned Carts', () => {
 });
 
 test.describe('Admin Abandoned Cart Detail', () => {
-  test.use({ storageState: 'e2e/.auth/admin.json' });
-
   test('should display abandoned cart detail page structure', async ({ page }) => {
     // Navigate to abandoned carts list
     await page.goto('/carritos-abandonados');
@@ -79,8 +74,6 @@ test.describe('Admin Abandoned Cart Detail', () => {
 });
 
 test.describe('Admin Abandoned Carts Recovery', () => {
-  test.use({ storageState: 'e2e/.auth/admin.json' });
-
   test('should have send email button in cart detail', async ({ page }) => {
     await page.goto('/carritos-abandonados');
     await page.waitForLoadState('networkidle');

@@ -1,7 +1,10 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Desktop Navigation', () => {
-  test('should display main navigation links', async ({ page }) => {
+  test('should display main navigation links', async ({ page, isMobile }) => {
+    // Skip on mobile as desktop nav is hidden
+    test.skip(isMobile === true, 'Desktop navigation test - skip on mobile');
+
     await page.goto('/');
 
     // Use .first() as there might be multiple nav elements (header, footer, etc.)
@@ -9,29 +12,34 @@ test.describe('Desktop Navigation', () => {
     await expect(nav).toBeVisible();
   });
 
-  test('should navigate to catalog', async ({ page }) => {
+  test('should navigate to catalog', async ({ page, isMobile }) => {
+    // Skip on mobile as desktop nav is hidden
+    test.skip(isMobile === true, 'Desktop navigation test - skip on mobile');
+
     await page.goto('/');
 
     // Multiple catalog links exist (nav + CTA), use .first() for nav link
     const catalogLink = page.getByRole('link', { name: /catálogo|catalog/i }).first();
-    if (await catalogLink.isVisible()) {
-      await catalogLink.click();
-      await expect(page).toHaveURL(/catalogo|catalog/);
-    }
+    await catalogLink.click();
+    await expect(page).toHaveURL(/catalogo|catalog/);
   });
 
-  test('should navigate to home from logo', async ({ page }) => {
+  test('should navigate to home from logo', async ({ page, isMobile }) => {
+    // Skip on mobile as desktop nav is hidden
+    test.skip(isMobile === true, 'Desktop navigation test - skip on mobile');
+
     await page.goto('/catalogo');
 
     const logo = page.getByRole('link', { name: /gemfolio|home|inicio/i }).first();
-    if (await logo.isVisible()) {
-      await logo.click();
-      // Match full URL ending with / or just the path
-      await expect(page).toHaveURL(/\/$/);
-    }
+    await logo.click();
+    // Match full URL ending with / or just the path
+    await expect(page).toHaveURL(/\/$/);
   });
 
-  test('should highlight active navigation item', async ({ page }) => {
+  test('should highlight active navigation item', async ({ page, isMobile }) => {
+    // Skip on mobile as desktop nav is hidden
+    test.skip(isMobile === true, 'Desktop navigation test - skip on mobile');
+
     await page.goto('/catalogo');
 
     // Active link might have special styling
@@ -43,11 +51,10 @@ test.describe('Desktop Navigation', () => {
 });
 
 test.describe('Mobile Navigation', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 });
-  });
+  test('should show hamburger menu on mobile', async ({ page, isMobile }) => {
+    // Only run on mobile viewport
+    test.skip(isMobile !== true, 'Mobile navigation test - skip on desktop');
 
-  test('should show hamburger menu on mobile', async ({ page }) => {
     await page.goto('/');
 
     // Look for hamburger menu button - specifically the "open" button
@@ -55,64 +62,66 @@ test.describe('Mobile Navigation', () => {
     await expect(menuButton).toBeVisible();
   });
 
-  test('should open mobile menu when clicking hamburger', async ({ page }) => {
+  test('should open mobile menu when clicking hamburger', async ({ page, isMobile }) => {
+    // Only run on mobile viewport
+    test.skip(isMobile !== true, 'Mobile navigation test - skip on desktop');
+
     await page.goto('/');
 
     // Specifically target the "open menu" button to avoid matching "close menu"
     const menuButton = page.getByRole('button', { name: /abrir menú|open menu/i }).first();
-    if (await menuButton.isVisible()) {
-      await menuButton.click();
+    await menuButton.click();
 
-      // Wait for menu animation
-      await page.waitForTimeout(300);
+    // Wait for menu animation
+    await page.waitForTimeout(300);
 
-      // Mobile menu should be visible - check for various possible selectors
-      const mobileMenu = page.locator(
-        '[role="dialog"], [data-testid="mobile-menu"], nav.fixed, .mobile-menu, [data-state="open"]'
-      );
-      const menuCount = await mobileMenu.count();
-      // Menu opening is optional - just verify no crash
-      expect(menuCount).toBeGreaterThanOrEqual(0);
-    }
+    // Mobile menu should be visible - check for various possible selectors
+    const mobileMenu = page.locator(
+      '[role="dialog"], [data-testid="mobile-menu"], nav.fixed, .mobile-menu, [data-state="open"]'
+    );
+    const menuCount = await mobileMenu.count();
+    // Menu opening is optional - just verify no crash
+    expect(menuCount).toBeGreaterThanOrEqual(0);
   });
 
-  test('should close mobile menu when clicking close button', async ({ page }) => {
+  test('should close mobile menu when clicking close button', async ({ page, isMobile }) => {
+    // Only run on mobile viewport
+    test.skip(isMobile !== true, 'Mobile navigation test - skip on desktop');
+
     await page.goto('/');
 
     // Specifically target the "open menu" button
     const menuButton = page.getByRole('button', { name: /abrir menú|open menu/i }).first();
-    if (await menuButton.isVisible()) {
-      await menuButton.click();
-      await page.waitForTimeout(300);
+    await menuButton.click();
+    await page.waitForTimeout(300);
 
-      // Target the "close menu" button specifically - use .first() as backdrop might also match
-      const closeButton = page.getByRole('button', { name: /cerrar menú|close menu/i }).first();
-      if (await closeButton.isVisible()) {
-        await closeButton.click();
-        await page.waitForTimeout(300);
-      }
-    }
+    // Target the "close menu" button specifically - use .first() as backdrop might also match
+    const closeButton = page.getByRole('button', { name: /cerrar menú|close menu/i }).first();
+    await closeButton.click();
+    await page.waitForTimeout(300);
   });
 
-  test('should navigate from mobile menu', async ({ page }) => {
+  test('should navigate from mobile menu', async ({ page, isMobile }) => {
+    // Only run on mobile viewport
+    test.skip(isMobile !== true, 'Mobile navigation test - skip on desktop');
+
     await page.goto('/');
 
     // Specifically target the "open menu" button
     const menuButton = page.getByRole('button', { name: /abrir menú|open menu/i }).first();
-    if (await menuButton.isVisible()) {
-      await menuButton.click();
-      await page.waitForTimeout(300);
+    await menuButton.click();
+    await page.waitForTimeout(300);
 
-      // Use .first() as multiple catalog links may be visible in mobile menu
-      const catalogLink = page.getByRole('link', { name: /catálogo|catalog/i }).first();
-      if (await catalogLink.isVisible()) {
-        await catalogLink.click();
-        await expect(page).toHaveURL(/catalogo|catalog/);
-      }
-    }
+    // Use .first() as multiple catalog links may be visible in mobile menu
+    const catalogLink = page.getByRole('link', { name: /catálogo|catalog/i }).first();
+    await catalogLink.click();
+    await expect(page).toHaveURL(/catalogo|catalog/);
   });
 
-  test('should show cart icon on mobile', async ({ page }) => {
+  test('should show cart icon on mobile', async ({ page, isMobile }) => {
+    // Only run on mobile viewport
+    test.skip(isMobile !== true, 'Mobile navigation test - skip on desktop');
+
     await page.goto('/');
 
     // Cart might be a button or a link, check for either

@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Admin Login', () => {
+  // Override storageState to test login page without authentication
+  test.use({ storageState: { cookies: [], origins: [] } });
+
   test.beforeEach(async ({ page }) => {
     await page.goto('/login');
   });

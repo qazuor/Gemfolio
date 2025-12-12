@@ -47,6 +47,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         baseURL: 'http://localhost:3001',
+        storageState: 'e2e/.auth/admin.json',
       },
       testMatch: '**/admin/**/*.spec.ts',
       dependencies: ['admin-setup'],
@@ -56,6 +57,7 @@ export default defineConfig({
       use: {
         ...devices['iPhone 14'],
         baseURL: 'http://localhost:3001',
+        storageState: 'e2e/.auth/admin.json',
       },
       testMatch: '**/admin/**/*.spec.ts',
       dependencies: ['admin-setup'],

@@ -10,8 +10,8 @@ test.describe('Product Detail Page', () => {
       await productLink.click();
       await page.waitForURL(/producto/);
 
-      // Product page should have key elements
-      await expect(page.locator('h1')).toBeVisible();
+      // Product page should have key elements - use .first() as there may be multiple h1s
+      await expect(page.locator('h1').first()).toBeVisible();
     }
   });
 

@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Admin Dashboard - Unauthenticated', () => {
+  // Override storageState to test unauthenticated behavior
+  test.use({ storageState: { cookies: [], origins: [] } });
+
   test('should redirect to login if not authenticated', async ({ page }) => {
     await page.goto('/');
     // Expect to be redirected to login or see login form (using button which is unique)
@@ -24,9 +27,6 @@ test.describe('Admin Dashboard - Unauthenticated', () => {
 });
 
 test.describe('Admin Dashboard - Authenticated', () => {
-  // Use saved authentication state
-  test.use({ storageState: 'e2e/.auth/admin.json' });
-
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
   });

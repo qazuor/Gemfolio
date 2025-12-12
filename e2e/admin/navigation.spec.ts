@@ -1,9 +1,6 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Admin Navigation', () => {
-  // Use saved authentication state
-  test.use({ storageState: 'e2e/.auth/admin.json' });
-
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -111,12 +108,10 @@ test.describe('Admin Navigation', () => {
 });
 
 test.describe('Admin Mobile Navigation', () => {
-  test.use({
-    storageState: 'e2e/.auth/admin.json',
-    viewport: { width: 375, height: 667 }, // Mobile viewport
-  });
+  test('should display mobile menu button', async ({ page, isMobile }) => {
+    // Only run on mobile viewport
+    test.skip(isMobile !== true, 'Mobile navigation test - skip on desktop');
 
-  test('should display mobile menu button', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
@@ -125,7 +120,10 @@ test.describe('Admin Mobile Navigation', () => {
     await expect(menuButton).toBeVisible();
   });
 
-  test('should open mobile sidebar on menu click', async ({ page }) => {
+  test('should open mobile sidebar on menu click', async ({ page, isMobile }) => {
+    // Only run on mobile viewport
+    test.skip(isMobile !== true, 'Mobile navigation test - skip on desktop');
+
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
@@ -138,7 +136,10 @@ test.describe('Admin Mobile Navigation', () => {
     await expect(page.getByRole('link', { name: 'Dashboard', exact: true })).toBeVisible();
   });
 
-  test('should close mobile sidebar when pressing escape', async ({ page }) => {
+  test('should close mobile sidebar when pressing escape', async ({ page, isMobile }) => {
+    // Only run on mobile viewport
+    test.skip(isMobile !== true, 'Mobile navigation test - skip on desktop');
+
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 

@@ -1,9 +1,6 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Admin Orders', () => {
-  // Use saved authentication state
-  test.use({ storageState: 'e2e/.auth/admin.json' });
-
   test.beforeEach(async ({ page }) => {
     await page.goto('/pedidos');
     await page.waitForLoadState('networkidle');

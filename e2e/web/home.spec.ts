@@ -19,14 +19,15 @@ test.describe('Web Home Page', () => {
     await expect(nav.first()).toBeVisible();
   });
 
-  test('should navigate to catalog', async ({ page }) => {
+  test('should navigate to catalog', async ({ page, isMobile }) => {
+    // Skip on mobile as the desktop catalog link is hidden
+    test.skip(isMobile === true, 'Desktop navigation test - skip on mobile');
+
     await page.goto('/');
     // Multiple catalog links exist (nav + CTA), use .first() for nav link
     const catalogLink = page.getByRole('link', { name: /catálogo|catalog/i }).first();
-    if (await catalogLink.isVisible()) {
-      await catalogLink.click();
-      await expect(page).toHaveURL(/catalogo|catalog/i);
-    }
+    await catalogLink.click();
+    await expect(page).toHaveURL(/catalogo|catalog/i);
   });
 });
 

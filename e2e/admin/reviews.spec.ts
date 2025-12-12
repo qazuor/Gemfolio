@@ -1,9 +1,6 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Admin Reviews', () => {
-  // Use saved authentication state
-  test.use({ storageState: 'e2e/.auth/admin.json' });
-
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -63,8 +60,6 @@ test.describe('Admin Reviews', () => {
 });
 
 test.describe('Admin Review Detail', () => {
-  test.use({ storageState: 'e2e/.auth/admin.json' });
-
   test('should display review detail page structure', async ({ page }) => {
     // Navigate to reviews list
     await page.goto('/resenas');
@@ -83,8 +78,6 @@ test.describe('Admin Review Detail', () => {
 });
 
 test.describe('Admin Reviews Stats', () => {
-  test.use({ storageState: 'e2e/.auth/admin.json' });
-
   test('should display reviews stats on reviews page', async ({ page }) => {
     await page.goto('/resenas');
     await page.waitForLoadState('networkidle');

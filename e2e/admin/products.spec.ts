@@ -1,9 +1,6 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Admin Products', () => {
-  // Use saved authentication state
-  test.use({ storageState: 'e2e/.auth/admin.json' });
-
   test.beforeEach(async ({ page }) => {
     await page.goto('/productos');
     await page.waitForLoadState('networkidle');
@@ -72,8 +69,6 @@ test.describe('Admin Products', () => {
 });
 
 test.describe('Admin Create Product', () => {
-  test.use({ storageState: 'e2e/.auth/admin.json' });
-
   test.beforeEach(async ({ page }) => {
     await page.goto('/productos/nuevo');
     await page.waitForLoadState('networkidle');
@@ -128,8 +123,6 @@ test.describe('Admin Create Product', () => {
 });
 
 test.describe('Admin Categories', () => {
-  test.use({ storageState: 'e2e/.auth/admin.json' });
-
   test('should display categories page', async ({ page }) => {
     await page.goto('/categorias');
     await page.waitForLoadState('networkidle');
