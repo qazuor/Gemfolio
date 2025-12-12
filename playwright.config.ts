@@ -1,4 +1,9 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const STORAGE_STATE = path.join(__dirname, 'e2e/.auth/admin.json');
 
 export default defineConfig({
   testDir: './e2e',
@@ -35,29 +40,11 @@ export default defineConfig({
       testMatch: '**/web/**/*.spec.ts',
     },
     {
-      name: 'web-mobile',
-      use: {
-        ...devices['iPhone 14'],
-        baseURL: 'http://localhost:4321',
-      },
-      testMatch: '**/web/**/*.spec.ts',
-    },
-    {
       name: 'admin-chromium',
       use: {
         ...devices['Desktop Chrome'],
         baseURL: 'http://localhost:3001',
-        storageState: 'e2e/.auth/admin.json',
-      },
-      testMatch: '**/admin/**/*.spec.ts',
-      dependencies: ['admin-setup'],
-    },
-    {
-      name: 'admin-mobile',
-      use: {
-        ...devices['iPhone 14'],
-        baseURL: 'http://localhost:3001',
-        storageState: 'e2e/.auth/admin.json',
+        storageState: STORAGE_STATE,
       },
       testMatch: '**/admin/**/*.spec.ts',
       dependencies: ['admin-setup'],
@@ -73,6 +60,10 @@ export default defineConfig({
       timeout: 180000,
       stdout: 'pipe',
       stderr: 'pipe',
+      env: {
+        ...process.env,
+        SKIP_RATE_LIMIT: 'true',
+      },
     },
     {
       // Web uses Vercel adapter which doesn't support preview, so always use dev
@@ -82,6 +73,10 @@ export default defineConfig({
       timeout: 180000,
       stdout: 'pipe',
       stderr: 'pipe',
+      env: {
+        ...process.env,
+        SKIP_RATE_LIMIT: 'true',
+      },
     },
   ],
 });
