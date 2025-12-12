@@ -29,8 +29,8 @@ test.describe('Admin Reviews', () => {
     await page.goto('/resenas');
     await page.waitForLoadState('networkidle');
 
-    // Should show page title
-    await expect(page.getByRole('heading', { name: /reseñas/i })).toBeVisible();
+    // Should show page title (use first() to avoid strict mode violation with "No hay reseñas")
+    await expect(page.getByRole('heading', { name: /reseñas/i }).first()).toBeVisible();
 
     // Should have filter options
     await expect(page.getByText(/estado|status/i).first()).toBeVisible();

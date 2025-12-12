@@ -1,8 +1,11 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { expect, test as setup } from '@playwright/test';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ADMIN_EMAIL = process.env.TEST_ADMIN_EMAIL || 'admin@gemfolio.com';
 const ADMIN_PASSWORD = process.env.TEST_ADMIN_PASSWORD || '123';
-const AUTH_FILE = 'e2e/.auth/admin.json';
+const AUTH_FILE = path.join(__dirname, '../.auth/admin.json');
 
 /**
  * Setup: Authenticate as admin and save session
