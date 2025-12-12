@@ -4,7 +4,7 @@ test.describe('Web Cart', () => {
   test('should have cart icon in header', async ({ page }) => {
     await page.goto('/');
     // Cart icon should exist in header
-    await expect(page.locator('header')).toBeVisible();
+    await expect(page.locator('header').first()).toBeVisible();
   });
 
   test('should navigate to cart page', async ({ page }) => {
