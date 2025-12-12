@@ -48,18 +48,23 @@ const createNext = (): Next => {
 
 describe('Rate Limiter Middleware', () => {
   const originalCI = process.env.CI;
+  const originalSkipRateLimit = process.env.SKIP_RATE_LIMIT;
 
   beforeEach(() => {
     vi.useFakeTimers();
-    // Disable CI check so rate limiting actually works in tests
+    // Disable CI and SKIP_RATE_LIMIT checks so rate limiting actually works in tests
     delete process.env.CI;
+    delete process.env.SKIP_RATE_LIMIT;
   });
 
   afterEach(() => {
     vi.useRealTimers();
-    // Restore CI environment variable
+    // Restore environment variables
     if (originalCI !== undefined) {
       process.env.CI = originalCI;
+    }
+    if (originalSkipRateLimit !== undefined) {
+      process.env.SKIP_RATE_LIMIT = originalSkipRateLimit;
     }
   });
 
