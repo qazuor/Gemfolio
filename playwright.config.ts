@@ -63,6 +63,8 @@ export default defineConfig({
       env: {
         ...process.env,
         SKIP_RATE_LIMIT: 'true',
+        CI: process.env.CI || '',
+        NODE_ENV: 'development',
       },
     },
     {
@@ -76,6 +78,8 @@ export default defineConfig({
       env: {
         ...process.env,
         SKIP_RATE_LIMIT: 'true',
+        CI: process.env.CI || '',
+        NODE_ENV: 'development',
       },
     },
   ],

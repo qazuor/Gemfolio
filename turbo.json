@@ -10,7 +10,7 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "passThroughEnv": ["SKIP_RATE_LIMIT"]
+      "passThroughEnv": ["SKIP_RATE_LIMIT", "CI", "NODE_ENV"]
     },
     "preview": {
       "dependsOn": ["build"],
