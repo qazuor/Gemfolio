@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import type { Database } from '../src/client';
 import {
   type CouponFilters,
   type CouponPaginationOptions,
@@ -15,6 +16,15 @@ import {
   validateCoupon,
 } from '../src/queries/coupons';
 import type { Coupon, NewCoupon } from '../src/schema/coupons';
+
+// Mock database type for testing - uses Partial<Database> to satisfy type checker
+// while allowing vi.fn() mocks for the methods we need
+type MockDatabase = Partial<Database> & {
+  select: ReturnType<typeof vi.fn>;
+  insert?: ReturnType<typeof vi.fn>;
+  update?: ReturnType<typeof vi.fn>;
+  delete?: ReturnType<typeof vi.fn>;
+};
 
 // Mock coupon factory
 function createMockCoupon(overrides: Partial<Coupon> = {}): Coupon {
@@ -162,7 +172,7 @@ describe('validateCoupon', () => {
       }),
     };
 
-    const result = await validateCoupon(mockDb as any, 'INVALID', 100);
+    const result = await validateCoupon(mockDb as MockDatabase, 'INVALID', 100);
     expect(result.valid).toBe(false);
     expect(result.error).toBe('Cupón no encontrado');
   });
@@ -179,7 +189,7 @@ describe('validateCoupon', () => {
       }),
     };
 
-    const result = await validateCoupon(mockDb as any, 'TEST10', 100);
+    const result = await validateCoupon(mockDb as MockDatabase, 'TEST10', 100);
     expect(result.valid).toBe(false);
     expect(result.error).toBe('Cupón inactivo');
   });
@@ -199,7 +209,7 @@ describe('validateCoupon', () => {
       }),
     };
 
-    const result = await validateCoupon(mockDb as any, 'TEST10', 100);
+    const result = await validateCoupon(mockDb as MockDatabase, 'TEST10', 100);
     expect(result.valid).toBe(false);
     expect(result.error).toBe('Cupón aún no es válido');
   });
@@ -219,7 +229,7 @@ describe('validateCoupon', () => {
       }),
     };
 
-    const result = await validateCoupon(mockDb as any, 'TEST10', 100);
+    const result = await validateCoupon(mockDb as MockDatabase, 'TEST10', 100);
     expect(result.valid).toBe(false);
     expect(result.error).toBe('Cupón expirado');
   });
@@ -237,7 +247,7 @@ describe('validateCoupon', () => {
       }),
     };
 
-    const result = await validateCoupon(mockDb as any, 'TEST10', 100);
+    const result = await validateCoupon(mockDb as MockDatabase, 'TEST10', 100);
     expect(result.valid).toBe(false);
     expect(result.error).toBe('Cupón agotado');
   });
@@ -255,7 +265,7 @@ describe('validateCoupon', () => {
       }),
     };
 
-    const result = await validateCoupon(mockDb as any, 'TEST10', 50);
+    const result = await validateCoupon(mockDb as MockDatabase, 'TEST10', 50);
     expect(result.valid).toBe(false);
     expect(result.error).toContain('Compra mínima requerida');
   });
@@ -273,7 +283,7 @@ describe('validateCoupon', () => {
       }),
     };
 
-    const result = await validateCoupon(mockDb as any, 'TEST10', 100);
+    const result = await validateCoupon(mockDb as MockDatabase, 'TEST10', 100);
     expect(result.valid).toBe(true);
     expect(result.coupon).toBeDefined();
   });
@@ -292,7 +302,7 @@ describe('getCouponById', () => {
       }),
     };
 
-    const result = await getCouponById(mockDb as any, 'test-id');
+    const result = await getCouponById(mockDb as MockDatabase, 'test-id');
     expect(result).toEqual(mockCoupon);
   });
 
@@ -307,7 +317,7 @@ describe('getCouponById', () => {
       }),
     };
 
-    const result = await getCouponById(mockDb as any, 'non-existent');
+    const result = await getCouponById(mockDb as MockDatabase, 'non-existent');
     expect(result).toBeNull();
   });
 });
@@ -325,7 +335,7 @@ describe('getCouponByCode', () => {
       }),
     };
 
-    const result = await getCouponByCode(mockDb as any, 'test10');
+    const result = await getCouponByCode(mockDb as MockDatabase, 'test10');
     expect(result).toEqual(mockCoupon);
   });
 
@@ -340,7 +350,7 @@ describe('getCouponByCode', () => {
       }),
     };
 
-    const result = await getCouponByCode(mockDb as any, 'NOTFOUND');
+    const result = await getCouponByCode(mockDb as MockDatabase, 'NOTFOUND');
     expect(result).toBeNull();
   });
 });
@@ -386,7 +396,7 @@ describe('getCoupons', () => {
         }),
       });
 
-    const result = await getCoupons(mockDb as any, {}, { page: 1, limit: 10 });
+    const result = await getCoupons(mockDb as MockDatabase, {}, { page: 1, limit: 10 });
     expect(result.items).toBeDefined();
     expect(result.pagination).toBeDefined();
     expect(result.pagination.page).toBe(1);
@@ -411,7 +421,7 @@ describe('createCoupon', () => {
       }),
     };
 
-    const result = await createCoupon(mockDb as any, newCoupon);
+    const result = await createCoupon(mockDb as MockDatabase, newCoupon);
     expect(result.code).toBe('TEST123');
     expect(mockDb.insert).toHaveBeenCalled();
   });
@@ -431,7 +441,9 @@ describe('createCoupon', () => {
       }),
     };
 
-    await expect(createCoupon(mockDb as any, newCoupon)).rejects.toThrow('Failed to create coupon');
+    await expect(createCoupon(mockDb as MockDatabase, newCoupon)).rejects.toThrow(
+      'Failed to create coupon'
+    );
   });
 });
 
@@ -449,7 +461,9 @@ describe('updateCoupon', () => {
       }),
     };
 
-    const result = await updateCoupon(mockDb as any, 'test-id', { description: 'Updated' });
+    const result = await updateCoupon(mockDb as MockDatabase, 'test-id', {
+      description: 'Updated',
+    });
     expect(result?.description).toBe('Updated');
   });
 
@@ -468,7 +482,7 @@ describe('updateCoupon', () => {
       }),
     };
 
-    await updateCoupon(mockDb as any, 'test-id', { code: 'newcode' });
+    await updateCoupon(mockDb as MockDatabase, 'test-id', { code: 'newcode' });
     expect(mockSet).toHaveBeenCalledWith(expect.objectContaining({ code: 'NEWCODE' }));
   });
 
@@ -483,7 +497,9 @@ describe('updateCoupon', () => {
       }),
     };
 
-    const result = await updateCoupon(mockDb as any, 'non-existent', { description: 'Updated' });
+    const result = await updateCoupon(mockDb as MockDatabase, 'non-existent', {
+      description: 'Updated',
+    });
     expect(result).toBeNull();
   });
 });
@@ -498,7 +514,7 @@ describe('deleteCoupon', () => {
       }),
     };
 
-    const result = await deleteCoupon(mockDb as any, 'test-id');
+    const result = await deleteCoupon(mockDb as MockDatabase, 'test-id');
     expect(result).toBe(true);
   });
 
@@ -511,7 +527,7 @@ describe('deleteCoupon', () => {
       }),
     };
 
-    const result = await deleteCoupon(mockDb as any, 'non-existent');
+    const result = await deleteCoupon(mockDb as MockDatabase, 'non-existent');
     expect(result).toBe(false);
   });
 });
@@ -526,7 +542,7 @@ describe('incrementCouponUsage', () => {
       }),
     };
 
-    await incrementCouponUsage(mockDb as any, 'test-id');
+    await incrementCouponUsage(mockDb as MockDatabase, 'test-id');
     expect(mockDb.update).toHaveBeenCalled();
     expect(mockSet).toHaveBeenCalled();
   });
@@ -555,7 +571,7 @@ describe('toggleCouponStatus', () => {
       }),
     };
 
-    const result = await toggleCouponStatus(mockDb as any, 'test-id');
+    const result = await toggleCouponStatus(mockDb as MockDatabase, 'test-id');
     expect(result?.isActive).toBe(false);
   });
 
@@ -570,7 +586,7 @@ describe('toggleCouponStatus', () => {
       }),
     };
 
-    const result = await toggleCouponStatus(mockDb as any, 'non-existent');
+    const result = await toggleCouponStatus(mockDb as MockDatabase, 'non-existent');
     expect(result).toBeNull();
   });
 });

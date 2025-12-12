@@ -1,4 +1,24 @@
 import { describe, expect, it } from 'vitest';
+
+// Helper type for accessing Drizzle column's internal properties
+interface ColumnWithDefault {
+  default?: () => unknown;
+}
+
+interface ColumnWithOnUpdate {
+  onUpdateFn?: () => unknown;
+}
+
+// Helper to safely get the default function from a Drizzle column
+function getColumnDefault(column: unknown): (() => unknown) | undefined {
+  return (column as ColumnWithDefault).default;
+}
+
+// Helper to safely get the onUpdate function from a Drizzle column
+function getColumnOnUpdate(column: unknown): (() => unknown) | undefined {
+  return (column as ColumnWithOnUpdate).onUpdateFn;
+}
+
 import {
   abandonedCartStatusEnum,
   abandonedCarts,
@@ -525,7 +545,7 @@ describe('Schema Definitions', () => {
       it('should have $defaultFn on products.id that generates valid ID', () => {
         const idColumn = products.id;
         // Access the default function from the column config
-        const defaultFn = (idColumn as any).default;
+        const defaultFn = getColumnDefault(idColumn);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -534,7 +554,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on productVariants.id', () => {
-        const defaultFn = (productVariants.id as any).default;
+        const defaultFn = getColumnDefault(productVariants.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -542,7 +562,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on productImages.id', () => {
-        const defaultFn = (productImages.id as any).default;
+        const defaultFn = getColumnDefault(productImages.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -550,7 +570,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on productVideos.id', () => {
-        const defaultFn = (productVideos.id as any).default;
+        const defaultFn = getColumnDefault(productVideos.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -558,7 +578,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on orders.id', () => {
-        const defaultFn = (orders.id as any).default;
+        const defaultFn = getColumnDefault(orders.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -566,7 +586,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on orders.orderNumber', () => {
-        const defaultFn = (orders.orderNumber as any).default;
+        const defaultFn = getColumnDefault(orders.orderNumber);
         if (typeof defaultFn === 'function') {
           const orderNumber = defaultFn();
           expect(orderNumber).toMatch(/^GEM-\d{4}-[A-Z0-9]{4}$/);
@@ -574,7 +594,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on orderItems.id', () => {
-        const defaultFn = (orderItems.id as any).default;
+        const defaultFn = getColumnDefault(orderItems.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -582,7 +602,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on orderStatusHistory.id', () => {
-        const defaultFn = (orderStatusHistory.id as any).default;
+        const defaultFn = getColumnDefault(orderStatusHistory.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -590,7 +610,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on refunds.id', () => {
-        const defaultFn = (refunds.id as any).default;
+        const defaultFn = getColumnDefault(refunds.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -598,7 +618,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on categories.id', () => {
-        const defaultFn = (categories.id as any).default;
+        const defaultFn = getColumnDefault(categories.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -606,7 +626,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on coupons.id', () => {
-        const defaultFn = (coupons.id as any).default;
+        const defaultFn = getColumnDefault(coupons.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -614,7 +634,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on users.id', () => {
-        const defaultFn = (users.id as any).default;
+        const defaultFn = getColumnDefault(users.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -622,7 +642,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on tags.id', () => {
-        const defaultFn = (tags.id as any).default;
+        const defaultFn = getColumnDefault(tags.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -630,7 +650,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on carts.id', () => {
-        const defaultFn = (carts.id as any).default;
+        const defaultFn = getColumnDefault(carts.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -638,7 +658,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on cartItems.id', () => {
-        const defaultFn = (cartItems.id as any).default;
+        const defaultFn = getColumnDefault(cartItems.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -646,7 +666,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on wishlists.id', () => {
-        const defaultFn = (wishlists.id as any).default;
+        const defaultFn = getColumnDefault(wishlists.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -654,7 +674,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on reviews.id', () => {
-        const defaultFn = (reviews.id as any).default;
+        const defaultFn = getColumnDefault(reviews.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -662,7 +682,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on reviewVotes.id', () => {
-        const defaultFn = (reviewVotes.id as any).default;
+        const defaultFn = getColumnDefault(reviewVotes.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -670,7 +690,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on pages.id', () => {
-        const defaultFn = (pages.id as any).default;
+        const defaultFn = getColumnDefault(pages.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -678,7 +698,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on inventoryMovements.id', () => {
-        const defaultFn = (inventoryMovements.id as any).default;
+        const defaultFn = getColumnDefault(inventoryMovements.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -686,7 +706,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on bundles.id', () => {
-        const defaultFn = (bundles.id as any).default;
+        const defaultFn = getColumnDefault(bundles.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -694,7 +714,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on bundleItems.id', () => {
-        const defaultFn = (bundleItems.id as any).default;
+        const defaultFn = getColumnDefault(bundleItems.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -702,7 +722,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on attributes.id', () => {
-        const defaultFn = (attributes.id as any).default;
+        const defaultFn = getColumnDefault(attributes.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -710,7 +730,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $defaultFn on abandonedCarts.id', () => {
-        const defaultFn = (abandonedCarts.id as any).default;
+        const defaultFn = getColumnDefault(abandonedCarts.id);
         if (typeof defaultFn === 'function') {
           const generatedId = defaultFn();
           expect(generatedId).toMatch(/^[a-z0-9]+$/);
@@ -721,7 +741,7 @@ describe('Schema Definitions', () => {
     // Test $onUpdate callbacks
     describe('updatedAt column $onUpdate callbacks', () => {
       it('should have $onUpdate on products.updatedAt', () => {
-        const onUpdateFn = (products.updatedAt as any).onUpdateFn;
+        const onUpdateFn = getColumnOnUpdate(products.updatedAt);
         if (typeof onUpdateFn === 'function') {
           const result = onUpdateFn();
           expect(result).toBeInstanceOf(Date);
@@ -729,7 +749,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $onUpdate on orders.updatedAt', () => {
-        const onUpdateFn = (orders.updatedAt as any).onUpdateFn;
+        const onUpdateFn = getColumnOnUpdate(orders.updatedAt);
         if (typeof onUpdateFn === 'function') {
           const result = onUpdateFn();
           expect(result).toBeInstanceOf(Date);
@@ -737,7 +757,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $onUpdate on categories.updatedAt', () => {
-        const onUpdateFn = (categories.updatedAt as any).onUpdateFn;
+        const onUpdateFn = getColumnOnUpdate(categories.updatedAt);
         if (typeof onUpdateFn === 'function') {
           const result = onUpdateFn();
           expect(result).toBeInstanceOf(Date);
@@ -745,7 +765,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $onUpdate on coupons.updatedAt', () => {
-        const onUpdateFn = (coupons.updatedAt as any).onUpdateFn;
+        const onUpdateFn = getColumnOnUpdate(coupons.updatedAt);
         if (typeof onUpdateFn === 'function') {
           const result = onUpdateFn();
           expect(result).toBeInstanceOf(Date);
@@ -753,7 +773,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $onUpdate on carts.updatedAt', () => {
-        const onUpdateFn = (carts.updatedAt as any).onUpdateFn;
+        const onUpdateFn = getColumnOnUpdate(carts.updatedAt);
         if (typeof onUpdateFn === 'function') {
           const result = onUpdateFn();
           expect(result).toBeInstanceOf(Date);
@@ -761,7 +781,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $onUpdate on reviews.updatedAt', () => {
-        const onUpdateFn = (reviews.updatedAt as any).onUpdateFn;
+        const onUpdateFn = getColumnOnUpdate(reviews.updatedAt);
         if (typeof onUpdateFn === 'function') {
           const result = onUpdateFn();
           expect(result).toBeInstanceOf(Date);
@@ -769,7 +789,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $onUpdate on pages.updatedAt', () => {
-        const onUpdateFn = (pages.updatedAt as any).onUpdateFn;
+        const onUpdateFn = getColumnOnUpdate(pages.updatedAt);
         if (typeof onUpdateFn === 'function') {
           const result = onUpdateFn();
           expect(result).toBeInstanceOf(Date);
@@ -777,7 +797,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $onUpdate on settings.updatedAt', () => {
-        const onUpdateFn = (settings.updatedAt as any).onUpdateFn;
+        const onUpdateFn = getColumnOnUpdate(settings.updatedAt);
         if (typeof onUpdateFn === 'function') {
           const result = onUpdateFn();
           expect(result).toBeInstanceOf(Date);
@@ -785,7 +805,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $onUpdate on bundles.updatedAt', () => {
-        const onUpdateFn = (bundles.updatedAt as any).onUpdateFn;
+        const onUpdateFn = getColumnOnUpdate(bundles.updatedAt);
         if (typeof onUpdateFn === 'function') {
           const result = onUpdateFn();
           expect(result).toBeInstanceOf(Date);
@@ -793,7 +813,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $onUpdate on attributes.updatedAt', () => {
-        const onUpdateFn = (attributes.updatedAt as any).onUpdateFn;
+        const onUpdateFn = getColumnOnUpdate(attributes.updatedAt);
         if (typeof onUpdateFn === 'function') {
           const result = onUpdateFn();
           expect(result).toBeInstanceOf(Date);
@@ -801,7 +821,7 @@ describe('Schema Definitions', () => {
       });
 
       it('should have $onUpdate on abandonedCarts.updatedAt', () => {
-        const onUpdateFn = (abandonedCarts.updatedAt as any).onUpdateFn;
+        const onUpdateFn = getColumnOnUpdate(abandonedCarts.updatedAt);
         if (typeof onUpdateFn === 'function') {
           const result = onUpdateFn();
           expect(result).toBeInstanceOf(Date);
