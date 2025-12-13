@@ -1,6 +1,24 @@
 import type { Page } from '@playwright/test';
 
 /**
+ * Log current cookies for debugging
+ */
+async function logCookies(page: Page, context: string): Promise<void> {
+  const cookies = await page.context().cookies();
+  const sessionCookies = cookies.filter(
+    (c) => c.name.includes('session') || c.name.includes('auth')
+  );
+  console.log(
+    `[${context}] Cookies (${sessionCookies.length} auth-related of ${cookies.length} total):`
+  );
+  for (const cookie of sessionCookies) {
+    console.log(
+      `  - ${cookie.name}: domain=${cookie.domain}, value=${cookie.value.substring(0, 20)}...`
+    );
+  }
+}
+
+/**
  * Wait for the page to be authenticated.
  * This checks that we're not on the login page and that some authenticated content is visible.
  * If not authenticated, it will wait for a redirect or timeout.
@@ -67,6 +85,9 @@ export async function gotoAuthenticated(
   path: string,
   options?: { waitForLoadState?: boolean }
 ): Promise<void> {
+  // Log cookies before navigation to verify storageState is loaded
+  await logCookies(page, `gotoAuthenticated(${path}) - before navigation`);
+
   await page.goto(path);
 
   if (options?.waitForLoadState !== false) {
@@ -81,6 +102,9 @@ export async function gotoAuthenticated(
   // Check if we got redirected to login
   const currentUrl = page.url();
   if (currentUrl.includes('/login')) {
+    // Log cookies to debug why we were redirected
+    await logCookies(page, `gotoAuthenticated(${path}) - redirected to login`);
+
     // Try to wait for any pending redirects
     await page.waitForTimeout(2000);
 

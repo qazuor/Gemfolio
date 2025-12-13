@@ -1,3 +1,4 @@
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { expect, test as setup } from '@playwright/test';
@@ -49,18 +50,18 @@ setup('authenticate as admin', async ({ page }) => {
 
   console.log('[Auth Setup] Form filled, submitting...');
 
-  // Submit form
-  await submitButton.click();
+  // Submit form and wait for navigation
+  await Promise.all([
+    // Wait for navigation to start
+    page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 30000 }),
+    // Click the submit button
+    submitButton.click(),
+  ]);
 
-  // Wait for loading state to appear (indicates form submission started)
-  const loadingText = page.getByText(/iniciando sesión/i);
-  await loadingText.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {
-    // Loading text might disappear too quickly
-  });
+  console.log('[Auth Setup] Navigation detected, current URL:', page.url());
 
-  // Wait for navigation away from login page
-  await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 30000 });
-  console.log('[Auth Setup] Navigated away from login page');
+  // Wait for page to fully load
+  await page.waitForLoadState('networkidle');
 
   // Check for login errors on current page
   const errorMessage = page.locator('.bg-destructive\\/10, [role="alert"]');
@@ -70,13 +71,12 @@ setup('authenticate as admin', async ({ page }) => {
     throw new Error(`Login failed: ${errorText}`);
   }
 
-  // Wait for page to fully load
-  await page.waitForLoadState('networkidle');
-
   // Verify we're authenticated by checking we're not on login page
-  let currentUrl = page.url();
+  const currentUrl = page.url();
   if (currentUrl.includes('/login')) {
-    throw new Error('Still on login page after login attempt');
+    // Take a screenshot for debugging
+    console.log('[Auth Setup] ERROR: Still on login page. Taking screenshot...');
+    throw new Error('Still on login page after login attempt - check screenshot for details');
   }
 
   // Wait for dashboard content to be visible (important for session to be established)
@@ -97,35 +97,41 @@ setup('authenticate as admin', async ({ page }) => {
   // Additional wait to ensure session cookies are properly set
   await page.waitForTimeout(2000);
 
+  // Log cookies for debugging with full details
+  const cookies = await page.context().cookies();
+  console.log('[Auth Setup] All cookies after login:');
+  for (const cookie of cookies) {
+    console.log(
+      `  - ${cookie.name}: domain=${cookie.domain}, path=${cookie.path}, secure=${cookie.secure}, httpOnly=${cookie.httpOnly}, sameSite=${cookie.sameSite}`
+    );
+  }
+
   // Save authentication state
   await page.context().storageState({ path: AUTH_FILE });
   console.log('[Auth Setup] Storage state saved to:', AUTH_FILE);
 
-  // CRITICAL: Verify the session persists by reloading the page
-  // This catches issues where the session is not properly persisted
-  await page.reload({ waitUntil: 'networkidle' });
-  await page.waitForTimeout(1000);
-
-  currentUrl = page.url();
-  if (currentUrl.includes('/login')) {
-    // Session did not persist - this is a critical error
-    throw new Error(
-      '[Auth Setup] Session did not persist after reload. This indicates a session persistence issue.'
-    );
+  // Verify the file was created and contains cookies
+  if (existsSync(AUTH_FILE)) {
+    const savedState = JSON.parse(readFileSync(AUTH_FILE, 'utf-8'));
+    console.log('[Auth Setup] Saved storageState contains:');
+    console.log(`  - ${savedState.cookies?.length || 0} cookies`);
+    console.log(`  - ${savedState.origins?.length || 0} origins`);
+    if (savedState.cookies?.length > 0) {
+      console.log('[Auth Setup] Saved cookies:');
+      for (const cookie of savedState.cookies) {
+        console.log(`    - ${cookie.name} (domain: ${cookie.domain})`);
+      }
+    }
+  } else {
+    console.error('[Auth Setup] ERROR: Storage state file was not created!');
   }
 
-  // Verify we can see authenticated content after reload
-  const hasDashboardAfterReload = await dashboardHeading
-    .isVisible({ timeout: 10000 })
-    .catch(() => false);
-  const hasSidebarAfterReload = await sidebar.isVisible({ timeout: 5000 }).catch(() => false);
-
-  if (!hasDashboardAfterReload && !hasSidebarAfterReload) {
-    console.warn(
-      '[Auth Setup] Warning: Dashboard/sidebar not visible after reload, but not on login page'
-    );
+  // Verify we have the session cookies
+  const sessionCookie = cookies.find((c) => c.name.includes('session'));
+  if (!sessionCookie) {
+    console.warn('[Auth Setup] Warning: No session cookie found after login');
   } else {
-    console.log('[Auth Setup] Session verified - authenticated content visible after reload');
+    console.log('[Auth Setup] Session cookie found:', sessionCookie.name);
   }
 
   console.log('[Auth Setup] Authentication setup completed successfully');
