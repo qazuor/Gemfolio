@@ -65,6 +65,10 @@ export default defineConfig({
         SKIP_RATE_LIMIT: 'true',
         CI: process.env.CI || '',
         NODE_ENV: 'development',
+        // Explicitly pass auth-related env vars to ensure they're available
+        BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET || '',
+        BETTER_AUTH_URL: process.env.BETTER_AUTH_URL || 'http://localhost:3001',
+        DATABASE_URL: process.env.DATABASE_URL || '',
       },
     },
     {
@@ -80,6 +84,10 @@ export default defineConfig({
         SKIP_RATE_LIMIT: 'true',
         CI: process.env.CI || '',
         NODE_ENV: 'development',
+        // Explicitly pass auth-related env vars to ensure they're available
+        BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET || '',
+        BETTER_AUTH_URL: process.env.BETTER_AUTH_URL || 'http://localhost:4321',
+        DATABASE_URL: process.env.DATABASE_URL || '',
       },
     },
   ],

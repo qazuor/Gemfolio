@@ -17,6 +17,11 @@ setup('authenticate as admin', async ({ page }) => {
   setup.setTimeout(120000);
 
   console.log('[Auth Setup] Starting admin authentication...');
+  console.log('[Auth Setup] Environment:');
+  console.log(`  - NODE_ENV: ${process.env.NODE_ENV}`);
+  console.log(`  - CI: ${process.env.CI}`);
+  console.log(`  - BETTER_AUTH_URL: ${process.env.BETTER_AUTH_URL || 'NOT SET'}`);
+  console.log(`  - BETTER_AUTH_SECRET: ${process.env.BETTER_AUTH_SECRET ? 'SET' : 'NOT SET'}`);
 
   // Go to login page and wait for full load
   await page.goto('/login', { waitUntil: 'networkidle' });
@@ -50,14 +55,28 @@ setup('authenticate as admin', async ({ page }) => {
 
   console.log('[Auth Setup] Form filled, submitting...');
 
-  // Submit form and wait for navigation
-  await Promise.all([
-    // Wait for navigation to start
-    page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 30000 }),
-    // Click the submit button
-    submitButton.click(),
-  ]);
+  // Listen for network response to capture Set-Cookie headers
+  const authResponsePromise = page.waitForResponse(
+    (response) => response.url().includes('/api/auth/sign-in/email') && response.status() === 200,
+    { timeout: 30000 }
+  );
 
+  // Submit form
+  await submitButton.click();
+
+  // Wait for auth response and log headers
+  try {
+    const authResponse = await authResponsePromise;
+    const headers = authResponse.headers();
+    console.log('[Auth Setup] Auth response headers:');
+    console.log('  - set-cookie:', headers['set-cookie'] || 'NOT SET');
+    console.log('  - status:', authResponse.status());
+  } catch (e) {
+    console.log('[Auth Setup] Could not capture auth response:', e);
+  }
+
+  // Wait for navigation away from login page
+  await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 30000 });
   console.log('[Auth Setup] Navigation detected, current URL:', page.url());
 
   // Wait for page to fully load
@@ -97,13 +116,34 @@ setup('authenticate as admin', async ({ page }) => {
   // Additional wait to ensure session cookies are properly set
   await page.waitForTimeout(2000);
 
-  // Log cookies for debugging with full details
+  // Log ALL cookies for debugging - not filtering to see what's actually set
   const cookies = await page.context().cookies();
-  console.log('[Auth Setup] All cookies after login:');
+  console.log(`[Auth Setup] Total cookies after login: ${cookies.length}`);
+  console.log('[Auth Setup] All cookies:');
   for (const cookie of cookies) {
     console.log(
-      `  - ${cookie.name}: domain=${cookie.domain}, path=${cookie.path}, secure=${cookie.secure}, httpOnly=${cookie.httpOnly}, sameSite=${cookie.sameSite}`
+      `  - ${cookie.name}: domain=${cookie.domain}, path=${cookie.path}, secure=${cookie.secure}, httpOnly=${cookie.httpOnly}, sameSite=${cookie.sameSite}, value=${cookie.value.substring(0, 30)}...`
     );
+  }
+
+  // Check specifically for session_token
+  const sessionToken = cookies.find((c) => c.name === 'better-auth.session_token');
+  const sessionData = cookies.find((c) => c.name === 'better-auth.session_data');
+  console.log('[Auth Setup] Cookie check:');
+  console.log(`  - session_token: ${sessionToken ? 'FOUND' : 'MISSING'}`);
+  console.log(`  - session_data: ${sessionData ? 'FOUND' : 'MISSING'}`);
+
+  // Verify session by calling the session endpoint
+  try {
+    const sessionResponse = await page.request.get('/api/auth/get-session');
+    const sessionStatus = sessionResponse.status();
+    const sessionBody = await sessionResponse.json().catch(() => ({}));
+    console.log('[Auth Setup] Session verification:');
+    console.log(`  - status: ${sessionStatus}`);
+    console.log(`  - user: ${sessionBody?.user?.email || 'NOT FOUND'}`);
+    console.log(`  - session: ${sessionBody?.session?.id ? 'VALID' : 'INVALID'}`);
+  } catch (e) {
+    console.log('[Auth Setup] Session verification failed:', e);
   }
 
   // Save authentication state
