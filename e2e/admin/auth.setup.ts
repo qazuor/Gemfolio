@@ -69,6 +69,23 @@ setup('authenticate as admin', async ({ page }) => {
 
     console.log('[Auth Setup] Programmatic login response:', loginResponse.status());
 
+    // Log response headers to see Set-Cookie headers
+    const responseHeaders = loginResponse.headers();
+    console.log('[Auth Setup] Response headers:');
+    for (const [key, value] of Object.entries(responseHeaders)) {
+      if (key.toLowerCase().includes('cookie') || key.toLowerCase() === 'set-cookie') {
+        console.log(`  - ${key}: ${value}`);
+      }
+    }
+
+    // Get all headers as array (Set-Cookie might have multiple values)
+    const allHeaders = loginResponse.headersArray();
+    const setCookieHeaders = allHeaders.filter((h) => h.name.toLowerCase() === 'set-cookie');
+    console.log(`[Auth Setup] Set-Cookie headers count: ${setCookieHeaders.length}`);
+    for (const header of setCookieHeaders) {
+      console.log(`  - ${header.value.substring(0, 100)}...`);
+    }
+
     // Get cookies from the API response context
     const apiCookies = await page.context().cookies();
     console.log(`[Auth Setup] Cookies after API login: ${apiCookies.length}`);

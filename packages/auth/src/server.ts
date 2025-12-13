@@ -4,6 +4,14 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { tanstackStartCookies } from 'better-auth/tanstack-start';
 
+// Debug: Log auth configuration at module load time
+console.log('[Auth Server] Module loading with config:');
+console.log(
+  `  - BETTER_AUTH_SECRET: ${process.env.BETTER_AUTH_SECRET ? `SET (${process.env.BETTER_AUTH_SECRET.length} chars)` : 'NOT SET'}`
+);
+console.log(`  - BETTER_AUTH_URL: ${process.env.BETTER_AUTH_URL || 'NOT SET'}`);
+console.log(`  - NODE_ENV: ${process.env.NODE_ENV}`);
+
 /**
  * Better Auth server configuration
  * Used in API routes to handle authentication

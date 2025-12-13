@@ -157,6 +157,16 @@ jobs:
         run: pnpm --filter @gemfolio/db db:seed
         timeout-minutes: 2
 
+      - name: Create .env file for E2E tests
+        run: |
+          echo "DATABASE_URL=$DATABASE_URL" >> .env
+          echo "BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET" >> .env
+          echo "BETTER_AUTH_URL=$BETTER_AUTH_URL" >> .env
+          echo "NODE_ENV=development" >> .env
+          echo "SKIP_RATE_LIMIT=true" >> .env
+          echo ".env file created with contents:"
+          cat .env
+
       - name: Install Playwright browsers
         run: pnpm e2e:install
 
