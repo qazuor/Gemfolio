@@ -80,6 +80,17 @@ export const auth = betterAuth({
     'http://localhost:4321', // Web
   ],
 
+  // Advanced configuration
+  advanced: {
+    // Disable secure cookies in development/CI (required for localhost HTTP)
+    useSecureCookies: process.env.NODE_ENV === 'production',
+    // Default cookie attributes
+    defaultCookieAttributes: {
+      sameSite: 'lax',
+      // secure is controlled by useSecureCookies
+    },
+  },
+
   // Plugins
   plugins: [tanstackStartCookies()],
 });
