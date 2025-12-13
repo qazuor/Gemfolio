@@ -13,10 +13,13 @@ const AUTH_FILE = path.join(__dirname, '../.auth/admin.json');
  */
 setup('authenticate as admin', async ({ page }) => {
   // Increase default timeout for this test
-  setup.setTimeout(60000);
+  setup.setTimeout(120000);
+
+  console.log('[Auth Setup] Starting admin authentication...');
 
   // Go to login page and wait for full load
   await page.goto('/login', { waitUntil: 'networkidle' });
+  console.log('[Auth Setup] Login page loaded');
 
   // Wait for login form to be visible
   await expect(page.getByRole('heading', { name: /gemfolio/i })).toBeVisible();
@@ -44,6 +47,8 @@ setup('authenticate as admin', async ({ page }) => {
   await expect(emailInput).toHaveValue(ADMIN_EMAIL);
   await expect(passwordInput).toHaveValue(ADMIN_PASSWORD);
 
+  console.log('[Auth Setup] Form filled, submitting...');
+
   // Submit form
   await submitButton.click();
 
@@ -55,6 +60,7 @@ setup('authenticate as admin', async ({ page }) => {
 
   // Wait for navigation away from login page
   await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 30000 });
+  console.log('[Auth Setup] Navigated away from login page');
 
   // Check for login errors on current page
   const errorMessage = page.locator('.bg-destructive\\/10, [role="alert"]');
@@ -68,26 +74,59 @@ setup('authenticate as admin', async ({ page }) => {
   await page.waitForLoadState('networkidle');
 
   // Verify we're authenticated by checking we're not on login page
-  const currentUrl = page.url();
+  let currentUrl = page.url();
   if (currentUrl.includes('/login')) {
     throw new Error('Still on login page after login attempt');
   }
 
-  // Try to find dashboard heading, but don't fail if not found
-  // The important thing is we're authenticated and not on login page
+  // Wait for dashboard content to be visible (important for session to be established)
+  // This ensures the session is fully established before saving
   const dashboardHeading = page.getByRole('heading', { name: /dashboard/i });
-  const hasDashboard = await dashboardHeading.isVisible({ timeout: 5000 }).catch(() => false);
+  const sidebar = page.locator('aside').first();
 
-  // If no dashboard heading, look for any authenticated content
-  if (!hasDashboard) {
-    // Look for sidebar or other authenticated UI elements
-    const authenticatedUI = page.locator('aside, [data-testid="sidebar"], nav');
-    const hasAuthUI = (await authenticatedUI.count()) > 0;
-    if (!hasAuthUI) {
-      console.warn('Dashboard heading not found, but appears to be authenticated');
-    }
-  }
+  // Wait for either dashboard heading or sidebar to be visible
+  await Promise.race([
+    dashboardHeading.waitFor({ state: 'visible', timeout: 15000 }),
+    sidebar.waitFor({ state: 'visible', timeout: 15000 }),
+  ]).catch(() => {
+    console.warn(
+      '[Auth Setup] Dashboard heading/sidebar not found, checking for other authenticated content...'
+    );
+  });
+
+  // Additional wait to ensure session cookies are properly set
+  await page.waitForTimeout(2000);
 
   // Save authentication state
   await page.context().storageState({ path: AUTH_FILE });
+  console.log('[Auth Setup] Storage state saved to:', AUTH_FILE);
+
+  // CRITICAL: Verify the session persists by reloading the page
+  // This catches issues where the session is not properly persisted
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.waitForTimeout(1000);
+
+  currentUrl = page.url();
+  if (currentUrl.includes('/login')) {
+    // Session did not persist - this is a critical error
+    throw new Error(
+      '[Auth Setup] Session did not persist after reload. This indicates a session persistence issue.'
+    );
+  }
+
+  // Verify we can see authenticated content after reload
+  const hasDashboardAfterReload = await dashboardHeading
+    .isVisible({ timeout: 10000 })
+    .catch(() => false);
+  const hasSidebarAfterReload = await sidebar.isVisible({ timeout: 5000 }).catch(() => false);
+
+  if (!hasDashboardAfterReload && !hasSidebarAfterReload) {
+    console.warn(
+      '[Auth Setup] Warning: Dashboard/sidebar not visible after reload, but not on login page'
+    );
+  } else {
+    console.log('[Auth Setup] Session verified - authenticated content visible after reload');
+  }
+
+  console.log('[Auth Setup] Authentication setup completed successfully');
 });
