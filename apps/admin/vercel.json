@@ -2,7 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "pnpm install",
   "buildCommand": "pnpm build",
-  "outputDirectory": ".output",
   "regions": ["gru1"],
   "headers": [
     {
@@ -14,8 +13,5 @@
         }
       ]
     }
-  ],
-  "env": {
-    "NITRO_PRESET": "vercel"
-  }
+  ]
 }
