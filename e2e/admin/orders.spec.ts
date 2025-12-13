@@ -1,8 +1,11 @@
 import { expect, test } from '@playwright/test';
 
+import { ensureAuthenticated, gotoAuthenticated } from '../helpers/auth';
+
 test.describe('Admin Orders', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/pedidos');
+    await gotoAuthenticated(page, '/pedidos');
+    await ensureAuthenticated(page, 'Orders');
     await page.waitForLoadState('networkidle');
   });
 

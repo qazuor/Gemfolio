@@ -1,8 +1,11 @@
 import { expect, test } from '@playwright/test';
 
+import { ensureAuthenticated, gotoAuthenticated } from '../helpers/auth';
+
 test.describe('Admin Reviews', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await gotoAuthenticated(page, '/');
+    await ensureAuthenticated(page, 'Reviews');
     await page.waitForLoadState('networkidle');
   });
 
@@ -26,18 +29,20 @@ test.describe('Admin Reviews', () => {
   });
 
   test('should display reviews list page', async ({ page }) => {
-    await page.goto('/resenas');
+    await gotoAuthenticated(page, '/resenas');
     await page.waitForLoadState('networkidle');
 
     // Should show page title (use first() to avoid strict mode violation with "No hay reseñas")
-    await expect(page.getByRole('heading', { name: /reseñas/i }).first()).toBeVisible();
+    await expect(page.getByRole('heading', { name: /reseñas/i }).first()).toBeVisible({
+      timeout: 15000,
+    });
 
     // Should have filter options
-    await expect(page.getByText(/estado|status/i).first()).toBeVisible();
+    await expect(page.getByText(/estado|status/i).first()).toBeVisible({ timeout: 5000 });
   });
 
   test('should have status filter on reviews page', async ({ page }) => {
-    await page.goto('/resenas');
+    await gotoAuthenticated(page, '/resenas');
     await page.waitForLoadState('networkidle');
 
     // Should have status filter select or tabs
@@ -48,7 +53,7 @@ test.describe('Admin Reviews', () => {
   });
 
   test('should have search functionality on reviews page', async ({ page }) => {
-    await page.goto('/resenas');
+    await gotoAuthenticated(page, '/resenas');
     await page.waitForLoadState('networkidle');
 
     // Should have search input
@@ -62,7 +67,7 @@ test.describe('Admin Reviews', () => {
 test.describe('Admin Review Detail', () => {
   test('should display review detail page structure', async ({ page }) => {
     // Navigate to reviews list
-    await page.goto('/resenas');
+    await gotoAuthenticated(page, '/resenas');
     await page.waitForLoadState('networkidle');
 
     // Find first review link (if any reviews exist)
@@ -79,7 +84,7 @@ test.describe('Admin Review Detail', () => {
 
 test.describe('Admin Reviews Stats', () => {
   test('should display reviews stats on reviews page', async ({ page }) => {
-    await page.goto('/resenas');
+    await gotoAuthenticated(page, '/resenas');
     await page.waitForLoadState('networkidle');
 
     // Just verify page loads

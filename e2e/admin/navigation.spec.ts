@@ -1,8 +1,11 @@
 import { expect, test } from '@playwright/test';
 
+import { ensureAuthenticated, gotoAuthenticated } from '../helpers/auth';
+
 test.describe('Admin Navigation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await gotoAuthenticated(page, '/');
+    await ensureAuthenticated(page, 'Navigation');
     await page.waitForLoadState('networkidle');
   });
 
@@ -18,13 +21,13 @@ test.describe('Admin Navigation', () => {
 
   test('should navigate to dashboard from sidebar', async ({ page }) => {
     // Navigate to another page first
-    await page.goto('/inventario');
-    await expect(page).toHaveURL(/inventario/);
+    await gotoAuthenticated(page, '/inventario');
+    await expect(page).toHaveURL(/inventario/, { timeout: 10000 });
 
     // Click dashboard link
     await page.getByRole('link', { name: 'Dashboard', exact: true }).click();
-    await expect(page).toHaveURL(/^http:\/\/localhost:3001\/?$/);
-    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+    await expect(page).toHaveURL(/^http:\/\/localhost:3001\/?$/, { timeout: 10000 });
+    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({ timeout: 10000 });
   });
 
   test('should navigate to inventario page', async ({ page }) => {

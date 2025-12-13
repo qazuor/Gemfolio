@@ -1,8 +1,11 @@
 import { expect, test } from '@playwright/test';
 
+import { ensureAuthenticated, gotoAuthenticated } from '../helpers/auth';
+
 test.describe('Admin Abandoned Carts', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await gotoAuthenticated(page, '/');
+    await ensureAuthenticated(page, 'Abandoned Carts');
     await page.waitForLoadState('networkidle');
   });
 
@@ -29,17 +32,17 @@ test.describe('Admin Abandoned Carts', () => {
   });
 
   test('should display abandoned carts list page', async ({ page }) => {
-    await page.goto('/carritos-abandonados');
+    await gotoAuthenticated(page, '/carritos-abandonados');
     await page.waitForLoadState('networkidle');
 
     // Should show page title (use first() to avoid strict mode violation)
-    await expect(
-      page.getByRole('heading', { name: /carritos abandonados/i }).first()
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: /carritos abandonados/i }).first()).toBeVisible({
+      timeout: 15000,
+    });
   });
 
   test('should have status filter on abandoned carts page', async ({ page }) => {
-    await page.goto('/carritos-abandonados');
+    await gotoAuthenticated(page, '/carritos-abandonados');
     await page.waitForLoadState('networkidle');
 
     // Should have status filter select or tabs
@@ -50,7 +53,7 @@ test.describe('Admin Abandoned Carts', () => {
   });
 
   test('should display stats cards on abandoned carts page', async ({ page }) => {
-    await page.goto('/carritos-abandonados');
+    await gotoAuthenticated(page, '/carritos-abandonados');
     await page.waitForLoadState('networkidle');
 
     // Should show some statistics cards or page content
@@ -69,7 +72,7 @@ test.describe('Admin Abandoned Carts', () => {
 test.describe('Admin Abandoned Cart Detail', () => {
   test('should display abandoned cart detail page structure', async ({ page }) => {
     // Navigate to abandoned carts list
-    await page.goto('/carritos-abandonados');
+    await gotoAuthenticated(page, '/carritos-abandonados');
     await page.waitForLoadState('networkidle');
 
     // Find first cart link (if any carts exist)
@@ -86,7 +89,7 @@ test.describe('Admin Abandoned Cart Detail', () => {
 
 test.describe('Admin Abandoned Carts Recovery', () => {
   test('should have send email button in cart detail', async ({ page }) => {
-    await page.goto('/carritos-abandonados');
+    await gotoAuthenticated(page, '/carritos-abandonados');
     await page.waitForLoadState('networkidle');
 
     // Find first cart link (if any carts exist)

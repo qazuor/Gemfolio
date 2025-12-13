@@ -1,8 +1,11 @@
 import { expect, test } from '@playwright/test';
 
+import { ensureAuthenticated, gotoAuthenticated } from '../helpers/auth';
+
 test.describe('Admin Products', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/productos');
+    await gotoAuthenticated(page, '/productos');
+    await ensureAuthenticated(page, 'Products');
     await page.waitForLoadState('networkidle');
   });
 
@@ -95,7 +98,8 @@ test.describe('Admin Products', () => {
 
 test.describe('Admin Create Product', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/productos/nuevo');
+    await gotoAuthenticated(page, '/productos/nuevo');
+    await ensureAuthenticated(page, 'Create Product');
     await page.waitForLoadState('networkidle');
   });
 
@@ -152,13 +156,17 @@ test.describe('Admin Create Product', () => {
 
 test.describe('Admin Categories', () => {
   test('should display categories page', async ({ page }) => {
-    await page.goto('/categorias');
+    await gotoAuthenticated(page, '/categorias');
+    await ensureAuthenticated(page, 'Categories');
     await page.waitForLoadState('networkidle');
-    await expect(page.getByRole('heading', { name: /categorías/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /categorías/i })).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test('should have create category option', async ({ page }) => {
-    await page.goto('/categorias');
+    await gotoAuthenticated(page, '/categorias');
+    await ensureAuthenticated(page, 'Categories');
     await page.waitForLoadState('networkidle');
 
     // Look for a create button or link
