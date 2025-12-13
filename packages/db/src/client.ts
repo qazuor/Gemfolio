@@ -1,12 +1,17 @@
 import { neon, neonConfig } from '@neondatabase/serverless';
+import type { NeonHttpDatabase } from 'drizzle-orm/neon-http';
 import { drizzle as drizzleNeon } from 'drizzle-orm/neon-http';
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { drizzle as drizzlePostgres } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
 import * as schema from './schema';
 
-// Determine if we're in production (Neon) or development (local postgres)
-const isProduction = process.env.NODE_ENV === 'production';
+// Database instance type
+type DatabaseInstance = NeonHttpDatabase<typeof schema> | PostgresJsDatabase<typeof schema>;
+
+// Singleton instance - lazy initialized
+let dbInstance: DatabaseInstance | null = null;
 
 // Get database URL with validation
 function getDatabaseUrl(): string {
@@ -18,8 +23,9 @@ function getDatabaseUrl(): string {
 }
 
 // Create the appropriate database connection
-function createDatabaseConnection() {
+function createDatabaseConnection(): DatabaseInstance {
   const databaseUrl = getDatabaseUrl();
+  const isProduction = process.env.NODE_ENV === 'production';
 
   if (isProduction) {
     // Production: Use Neon serverless
@@ -37,11 +43,26 @@ function createDatabaseConnection() {
   return drizzlePostgres(client, { schema });
 }
 
-// Export singleton database instance
-export const db = createDatabaseConnection();
+// Lazy getter for database instance
+// This ensures the connection is only created when first accessed at runtime,
+// not during module initialization (important for serverless deployments)
+function getDb(): DatabaseInstance {
+  if (!dbInstance) {
+    dbInstance = createDatabaseConnection();
+  }
+  return dbInstance;
+}
+
+export const db = new Proxy({} as DatabaseInstance, {
+  get(_target, prop) {
+    const instance = getDb();
+    // biome-ignore lint/suspicious/noExplicitAny: Proxy requires any for dynamic property access
+    return (instance as any)[prop];
+  },
+});
 
 // Export types
-export type Database = typeof db;
+export type Database = DatabaseInstance;
 
 // Re-export schema for convenience
 export { schema };
