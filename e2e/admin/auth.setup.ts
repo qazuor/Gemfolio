@@ -53,30 +53,45 @@ setup('authenticate as admin', async ({ page }) => {
   await expect(emailInput).toHaveValue(ADMIN_EMAIL);
   await expect(passwordInput).toHaveValue(ADMIN_PASSWORD);
 
-  console.log('[Auth Setup] Form filled, submitting...');
+  console.log('[Auth Setup] Form filled, attempting programmatic login first...');
 
-  // Listen for network response to capture Set-Cookie headers
-  const authResponsePromise = page.waitForResponse(
-    (response) => response.url().includes('/api/auth/sign-in/email') && response.status() === 200,
-    { timeout: 30000 }
-  );
-
-  // Submit form
-  await submitButton.click();
-
-  // Wait for auth response and log headers
+  // Try programmatic login first (more reliable in CI)
   try {
-    const authResponse = await authResponsePromise;
-    const headers = authResponse.headers();
-    console.log('[Auth Setup] Auth response headers:');
-    console.log('  - set-cookie:', headers['set-cookie'] || 'NOT SET');
-    console.log('  - status:', authResponse.status());
+    const loginResponse = await page.request.post('/api/auth/sign-in/email', {
+      data: {
+        email: ADMIN_EMAIL,
+        password: ADMIN_PASSWORD,
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log('[Auth Setup] Programmatic login response:', loginResponse.status());
+
+    // Get cookies from the API response context
+    const apiCookies = await page.context().cookies();
+    console.log(`[Auth Setup] Cookies after API login: ${apiCookies.length}`);
+    for (const cookie of apiCookies) {
+      console.log(`  - ${cookie.name}: ${cookie.value.substring(0, 20)}...`);
+    }
+
+    // Check if we got the session_token from API
+    const hasSessionToken = apiCookies.some((c) => c.name === 'better-auth.session_token');
+    if (hasSessionToken) {
+      console.log('[Auth Setup] Session token obtained via API! Navigating to dashboard...');
+      await page.goto('/', { waitUntil: 'networkidle' });
+    } else {
+      console.log('[Auth Setup] No session token from API, falling back to form submission...');
+      await submitButton.click();
+      await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 30000 });
+    }
   } catch (e) {
-    console.log('[Auth Setup] Could not capture auth response:', e);
+    console.log('[Auth Setup] Programmatic login failed, using form submission:', e);
+    await submitButton.click();
+    await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 30000 });
   }
 
-  // Wait for navigation away from login page
-  await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 30000 });
   console.log('[Auth Setup] Navigation detected, current URL:', page.url());
 
   // Wait for page to fully load
