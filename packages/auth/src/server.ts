@@ -2,7 +2,9 @@ import { db } from '@gemfolio/db/client';
 import * as schema from '@gemfolio/db/schema';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { tanstackStartCookies } from 'better-auth/tanstack-start';
+
+// tanstackStartCookies is disabled - see plugins section for details
+// import { tanstackStartCookies } from 'better-auth/tanstack-start';
 
 // Debug: Log auth configuration at module load time
 console.log('[Auth Server] Module loading with config:');
@@ -100,7 +102,11 @@ export const auth = betterAuth({
   },
 
   // Plugins
-  plugins: [tanstackStartCookies()],
+  // Note: tanstackStartCookies() is disabled because it interferes with
+  // cookie handling in E2E tests. The standard cookie handling works fine
+  // for both browser and API calls.
+  // plugins: [tanstackStartCookies()],
+  plugins: [],
 });
 
 // Export auth type for client
