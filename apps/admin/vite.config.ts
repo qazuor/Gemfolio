@@ -32,6 +32,9 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: {
       exclude: ['@tanstack/start-server-core', '@tanstack/react-start-server'],
     },
+    ssr: {
+      noExternal: ['zod'],
+    },
     // Make server-side env vars available
     define: {
       'process.env.UPLOADTHING_TOKEN': JSON.stringify(env.UPLOADTHING_TOKEN),

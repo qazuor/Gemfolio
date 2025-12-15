@@ -128,6 +128,9 @@ export default defineConfig({
     optimizeDeps: {
       exclude: ['@gemfolio/ui'],
     },
+    ssr: {
+      noExternal: ['zod'],
+    },
   },
   // i18n ready
   i18n: {
