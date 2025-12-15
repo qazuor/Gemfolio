@@ -329,7 +329,7 @@ export const adminProductsRoutes = new Hono()
             comparePrice: z.string().optional(),
             stock: z.number().int().min(0).default(0),
             lowStockThreshold: z.number().int().min(0).default(5),
-            attributes: z.record(z.string()).default({}),
+            attributes: z.record(z.string(), z.string()).default({}),
             image: z.string().url().optional(),
             isDefault: z.boolean().optional(),
           })
@@ -370,7 +370,7 @@ export const adminProductsRoutes = new Hono()
         comparePrice: z.string().nullable().optional(),
         stock: z.number().int().min(0).optional(),
         lowStockThreshold: z.number().int().min(0).optional(),
-        attributes: z.record(z.string()).optional(),
+        attributes: z.record(z.string(), z.string()).optional(),
         image: z.string().url().nullable().optional(),
         isDefault: z.boolean().optional(),
       })

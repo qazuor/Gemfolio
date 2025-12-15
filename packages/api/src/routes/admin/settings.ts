@@ -33,7 +33,7 @@ const updateMultipleSchema = z.object({
 });
 
 const updateGroupSchema = z.object({
-  settings: z.record(z.unknown()),
+  settings: z.record(z.string(), z.unknown()),
 });
 
 export const adminSettingsRoutes = new Hono()
