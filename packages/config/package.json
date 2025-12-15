@@ -12,6 +12,6 @@
     "./tailwind/tokens": "./tailwind/tokens.js"
   },
   "devDependencies": {
-    "tailwindcss": "^4.0.0"
+    "tailwindcss": "^4.1.18"
   }
 }
