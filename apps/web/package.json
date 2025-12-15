@@ -17,7 +17,7 @@
     "@astrojs/vercel": "^8.0.2",
     "@formkit/auto-animate": "^0.8.2",
     "@nanostores/persistent": "^1.2.0",
-    "@nanostores/react": "^0.8.0",
+    "@nanostores/react": "^1.0.0",
     "@tailwindcss/vite": "^4.1.17",
     "@vite-pwa/astro": "^1.2.0",
     "astro": "^5.1.1",
