@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  zod: 3.25.76
+
 importers:
 
   .:
@@ -168,7 +171,7 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(typescript@5.9.3)(vite@7.2.4(@types/node@22.19.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))
       zod:
-        specifier: ^3.24.1
+        specifier: 3.25.76
         version: 3.25.76
       zustand:
         specifier: ^5.0.2
@@ -253,7 +256,7 @@ importers:
         specifier: ^2.6.0
         version: 2.6.0
       zod:
-        specifier: ^3.24.1
+        specifier: 3.25.76
         version: 3.25.76
     devDependencies:
       '@gemfolio/config':
@@ -290,8 +293,8 @@ importers:
         specifier: workspace:*
         version: link:../validators
       '@hono/zod-validator':
-        specifier: ^0.4.3
-        version: 0.4.3(hono@4.10.7)(zod@3.25.76)
+        specifier: ^0.7.5
+        version: 0.7.5(hono@4.10.7)(zod@3.25.76)
       '@sentry/node':
         specifier: ^8.48.0
         version: 8.55.0
@@ -302,7 +305,7 @@ importers:
         specifier: ^2.11.0
         version: 2.11.0
       zod:
-        specifier: ^3.24.1
+        specifier: 3.25.76
         version: 3.25.76
     devDependencies:
       '@gemfolio/config':
@@ -555,13 +558,13 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.19.1)(@vitest/ui@4.0.14)(happy-dom@20.0.10)(jsdom@25.0.1)(lightningcss@1.30.2)(terser@5.44.1)
       zod:
-        specifier: ^3.24.1
+        specifier: 3.25.76
         version: 3.25.76
 
   packages/validators:
     dependencies:
       zod:
-        specifier: ^3.24.1
+        specifier: 3.25.76
         version: 3.25.76
     devDependencies:
       '@gemfolio/config':
@@ -2395,11 +2398,11 @@ packages:
   '@formkit/auto-animate@0.8.4':
     resolution: {integrity: sha512-DHHC01EJ1p70Q0z/ZFRBIY8NDnmfKccQoyoM84Tgb6omLMat6jivCdf272Y8k3nf4Lzdin/Y4R9q8uFtU0GbnA==}
 
-  '@hono/zod-validator@0.4.3':
-    resolution: {integrity: sha512-xIgMYXDyJ4Hj6ekm9T9Y27s080Nl9NXHcJkOvkXPhubOLj8hZkOL8pDnnXfvCf5xEE8Q4oMFenQUZZREUY2gqQ==}
+  '@hono/zod-validator@0.7.5':
+    resolution: {integrity: sha512-n4l4hutkfYU07PzRUHBOVzUEn38VSfrh+UVE5d0w4lyfWDOEhzxIupqo5iakRiJL44c3vTuFJBvcmUl8b9agIA==}
     peerDependencies:
       hono: '>=3.9.0'
-      zod: ^3.19.1
+      zod: 3.25.76
 
   '@hookform/resolvers@3.10.0':
     resolution: {integrity: sha512-79Dv+3mDF7i+2ajj7SkypSKHhl1cbln1OGavqrsF7p6mbUv11xpqpacPsGDCTRvCSjEEIez2ef1NveSVL3b0Ag==}
@@ -4894,7 +4897,7 @@ packages:
     engines: {node: '>=12'}
     peerDependencies:
       '@tanstack/react-router': '>=1.43.2'
-      zod: ^3.23.8
+      zod: 3.25.76
 
   '@testing-library/dom@10.4.1':
     resolution: {integrity: sha512-o4PXJQidqJl82ckFaXUeoAW+XysPLauYI43Abki5hABd853iMhitooc6znOnczgbTYmEP6U6/y1ZyKAIsvMKGg==}
@@ -10015,19 +10018,16 @@ packages:
   zod-to-json-schema@3.25.0:
     resolution: {integrity: sha512-HvWtU2UG41LALjajJrML6uQejQhNJx+JBO9IflpSja4R03iNWfKXrj6W2h7ljuLyc1nKS+9yDyL/9tD1U/yBnQ==}
     peerDependencies:
-      zod: ^3.25 || ^4
+      zod: 3.25.76
 
   zod-to-ts@1.2.0:
     resolution: {integrity: sha512-x30XE43V+InwGpvTySRNz9kB7qFU8DlyEy7BsSTCHPH1R0QasMmHWZDCzYm6bVXtj/9NNJAZF3jW8rzFvH5OFA==}
     peerDependencies:
       typescript: ^4.9.4 || ^5.0.2
-      zod: ^3
+      zod: 3.25.76
 
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
-
-  zod@4.1.13:
-    resolution: {integrity: sha512-AvvthqfqrAhNH9dnfmrfKzX5upOdjUVJYFqNSlkmGf64gRaTzlPwz99IHYnVs28qYAybvAlBV+H7pn0saFY4Ig==}
 
   zustand@5.0.8:
     resolution: {integrity: sha512-gyPKpIaxY9XcO2vSMrLbiER7QMAMGOQZVRdJ6Zi782jkbzZygq5GI9nG8g+sMgitRtndwaBSl7uiqC49o1SSiw==}
@@ -11176,7 +11176,7 @@ snapshots:
       jose: 6.1.2
       kysely: 0.28.8
       nanostores: 1.1.0
-      zod: 4.1.13
+      zod: 3.25.76
 
   '@better-auth/telemetry@1.4.3(@better-auth/core@1.4.3(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.18)(better-call@1.1.0)(jose@6.1.2)(kysely@0.28.8)(nanostores@1.1.0))':
     dependencies:
@@ -11871,7 +11871,7 @@ snapshots:
 
   '@formkit/auto-animate@0.8.4': {}
 
-  '@hono/zod-validator@0.4.3(hono@4.10.7)(zod@3.25.76)':
+  '@hono/zod-validator@0.7.5(hono@4.10.7)(zod@3.25.76)':
     dependencies:
       hono: 4.10.7
       zod: 3.25.76
@@ -15595,7 +15595,7 @@ snapshots:
       jose: 6.1.2
       kysely: 0.28.8
       nanostores: 1.1.0
-      zod: 4.1.13
+      zod: 3.25.76
     optionalDependencies:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
@@ -20512,8 +20512,6 @@ snapshots:
       zod: 3.25.76
 
   zod@3.25.76: {}
-
-  zod@4.1.13: {}
 
   zustand@5.0.8(@types/react@19.2.7)(immer@11.0.1)(react@19.2.0)(use-sync-external-store@1.6.0(react@19.2.0)):
     optionalDependencies:
