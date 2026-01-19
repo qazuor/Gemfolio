@@ -23,10 +23,10 @@
     "@gemfolio/email": "workspace:*",
     "@gemfolio/storage": "workspace:*",
     "@gemfolio/validators": "workspace:*",
-    "@hono/zod-validator": "^0.7.5",
+    "@hono/zod-validator": "^0.7.6",
     "@sentry/node": "^8.48.0",
-    "hono": "^4.7.7",
-    "mercadopago": "^2.11.0",
+    "hono": "^4.11.4",
+    "mercadopago": "^2.12.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {
