@@ -29,7 +29,7 @@
     "react": "^18 || ^19"
   },
   "devDependencies": {
-    "@types/react": "^19.0.1",
+    "@types/react": "^19.2.14",
     "typescript": "^5.7.2"
   }
 }
